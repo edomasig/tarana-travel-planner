@@ -135,9 +135,9 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Call OpenAI GPT-4 API
+    // Call OpenAI GPT-4 Turbo API
     const completion = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",

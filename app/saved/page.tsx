@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { MessageSquare, Calendar, Trash2, Eye, Download, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import { AdBanner } from '@/components/ads/ad-banner'
 
 interface SavedConversation {
   id: string
@@ -72,6 +73,9 @@ export default function SavedPage() {
       </div>
 
       <div className="max-w-4xl mx-auto p-4">
+        {/* Top Banner Ad */}
+        <AdBanner position="top" className="mb-6" />
+        
         {savedConversations.length === 0 ? (
           <Card>
             <CardContent className="p-8 text-center">
@@ -140,6 +144,9 @@ export default function SavedPage() {
             ))}
           </div>
         )}
+        
+        {/* Bottom Banner Ad */}
+        <AdBanner position="bottom" className="mt-8" />
       </div>
     </div>
   )

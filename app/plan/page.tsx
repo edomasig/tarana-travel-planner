@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator'
 import { MapPin, Clock, DollarSign, Download, Save, Share2, Loader2 } from 'lucide-react'
 import { generateItinerary } from '@/lib/ai-service'
 import { ItineraryDisplay } from '@/components/itinerary-display'
+import { AdBanner } from '@/components/ads/ad-banner'
 
 export default function PlanPage() {
   const [prompt, setPrompt] = useState('')
@@ -31,6 +32,9 @@ export default function PlanPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
+      {/* Top Banner Ad */}
+      <AdBanner position="top" className="mb-6" />
+      
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Plan Your Philippine Adventure</h1>
         <p className="text-gray-600">Tell us what you're looking for and we'll create a personalized itinerary just for you.</p>
@@ -38,7 +42,7 @@ export default function PlanPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Input Section */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 space-y-6">
           <Card className="sticky top-4">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -92,6 +96,9 @@ export default function PlanPage() {
               </Button>
             </CardContent>
           </Card>
+          
+          {/* Sidebar Ad */}
+          <AdBanner position="sidebar" />
         </div>
 
         {/* Results Section */}
@@ -116,6 +123,9 @@ export default function PlanPage() {
           )}
         </div>
       </div>
+      
+      {/* Bottom Banner Ad */}
+      <AdBanner position="bottom" className="mt-8" />
     </div>
   )
 }

@@ -1,8 +1,45 @@
 // Client-side AI service - now uses server-side API route for security
 // System prompt from PRD: You are GalaGPT.ph, a friendly and helpful Filipino AI travel assistant.
 
+import { generateAffiliateLink } from './affiliate-config'
+
+// Extract destination from user message for affiliate recommendations
+export function extractDestination(message: string): string {
+  const destinations = [
+    'palawan', 'el nido', 'coron', 'puerto princesa',
+    'baguio', 'sagada', 'vigan', 'boracay', 'bohol', 
+    'cebu', 'siquijor', 'siargao', 'manila', 'makati',
+    'bgc', 'quezon city', 'ilocos', 'bataan', 'laguna'
+  ]
+  
+  const lowerMessage = message.toLowerCase()
+  return destinations.find(dest => lowerMessage.includes(dest)) || 'philippines'
+}
+
+// Add affiliate recommendations to AI responses
+export function addAffiliateRecommendations(response: string, destination: string): string {
+  const hotelLink = generateAffiliateLink('hotels', destination, {})
+  const activityLink = generateAffiliateLink('activities', destination, {})
+  
+  const affiliateSection = `
+
+---
+
+**💡 Quick Booking Options:**
+- 🏨 [Find Hotels in ${destination}](${hotelLink || '#'}) - Compare prices & book instantly
+- 🎯 [Discover Activities](${activityLink || '#'}) - Tours, experiences & attractions
+- 🚗 Transportation booking available through our partners
+
+*Affiliate partnerships help keep GalaGPT.ph free for all travelers!*`
+
+  return response + affiliateSection
+}
+
 export async function generateTravelResponse(userMessage: string): Promise<string> {
   try {
+    // Extract destination for affiliate recommendations
+    const destination = extractDestination(userMessage)
+    
     // Call our server-side API route instead of OpenAI directly
     const response = await fetch('/api/chat', {
       method: 'POST',
@@ -22,16 +59,20 @@ export async function generateTravelResponse(userMessage: string): Promise<strin
       throw new Error(data.error)
     }
 
-    return data.response
+    // Add affiliate recommendations to the AI response
+    return addAffiliateRecommendations(data.response, destination)
 
   } catch (error) {
     console.error('AI Service Error:', error)
+    
+    // Extract destination for fallback responses too
+    const destination = extractDestination(userMessage)
     
     // Fallback responses if the API call fails
     const message = userMessage.toLowerCase()
     
     if (message.includes('palawan') || message.includes('el nido') || message.includes('coron')) {
-      return `🏝️ **5-Day Palawan Island Paradise**
+      const fallbackResponse = `🏝️ **5-Day Palawan Island Paradise**
 
 **Day 1 – Puerto Princesa**
 - Morning: Arrive Puerto Princesa Airport
@@ -56,10 +97,12 @@ export async function generateTravelResponse(userMessage: string): Promise<strin
 **📅 Best Time:** November to April for perfect weather
 
 *Note: Currently experiencing technical difficulties but can still help you plan!*`
+      
+      return addAffiliateRecommendations(fallbackResponse, destination)
     }
     
     if (message.includes('baguio') && (message.includes('weekend') || message.includes('budget'))) {
-      return `🏔️ **Weekend Baguio Budget Guide**
+      const fallbackResponse = `🏔️ **Weekend Baguio Budget Guide**
 
 **Day 1 – Saturday**
 - Morning: Travel from Manila via bus (₱700, 6 hours)
@@ -79,10 +122,12 @@ export async function generateTravelResponse(userMessage: string): Promise<strin
 **🧥 What to Bring:** Jacket (temp drops to 15°C), comfortable walking shoes
 
 *Note: Currently experiencing technical difficulties but can still help you plan!*`
+      
+      return addAffiliateRecommendations(fallbackResponse, destination)
     }
     
     // Default fallback
-    return `👋 **Kumusta! I'm GalaGPT.ph, your Filipino travel assistant!**
+    const defaultResponse = `👋 **Kumusta! I'm GalaGPT.ph, your Filipino travel assistant!**
 
 I'd love to help you plan your perfect Philippines adventure! Here are some things I can help you with:
 
@@ -109,6 +154,8 @@ I'd love to help you plan your perfect Philippines adventure! Here are some thin
 What would you like to explore in the beautiful Philippines? 🌴✨
 
 *Note: I'm currently experiencing some technical difficulties, but I can still help you plan your Philippines adventure!*`
+
+    return addAffiliateRecommendations(defaultResponse, destination)
   }
 }
 

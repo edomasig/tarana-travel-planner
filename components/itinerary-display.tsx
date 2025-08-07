@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { MapPin, Clock, DollarSign, Download, Save, Share2, Camera, Utensils, Bed } from 'lucide-react'
+import { AdBanner } from '@/components/ads/ad-banner'
 
 interface ItineraryProps {
   itinerary: {
@@ -76,6 +77,9 @@ export function ItineraryDisplay({ itinerary }: ItineraryProps) {
             </div>
           </CardContent>
         </Card>
+        
+        {/* Ad between content sections */}
+        <AdBanner position="between-messages" />
       </div>
     )
   }

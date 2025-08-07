@@ -14,7 +14,7 @@ export function Navbar() {
     { name: 'Plan Trip', href: '/plan' },
     { name: 'Seasonal', href: '/seasonal' },
     { name: 'Saved', href: '/saved' },
-    { name: 'Pricing', href: '/pricing' }
+    // { name: 'Pricing', href: '/pricing' } // Hidden for now
   ]
 
   return (
@@ -40,6 +40,7 @@ export function Navbar() {
           </div>
 
           {/* Desktop Actions */}
+          {/* Hidden for now
           <div className="hidden md:flex items-center gap-4">
             <Button variant="ghost" size="sm">
               <User className="h-4 w-4 mr-2" />
@@ -49,6 +50,7 @@ export function Navbar() {
               Get Started
             </Button>
           </div>
+          */}
 
           {/* Mobile Menu Button */}
           <Button
@@ -75,6 +77,7 @@ export function Navbar() {
                   {item.name}
                 </Link>
               ))}
+              {/* Hidden for now
               <div className="pt-4 space-y-2">
                 <Button variant="ghost" size="sm" className="w-full justify-start">
                   <User className="h-4 w-4 mr-2" />
@@ -84,6 +87,7 @@ export function Navbar() {
                   Get Started
                 </Button>
               </div>
+              */}
             </div>
           </div>
         )}

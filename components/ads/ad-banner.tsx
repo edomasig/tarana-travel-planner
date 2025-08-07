@@ -1,6 +1,7 @@
 import { GoogleAdSense } from './google-adsense'
 import { MockAd } from './mock-ad'
 import { Card } from '@/components/ui/card'
+import { ADSENSE_CONFIG, AD_SIZES } from '@/lib/adsense-config'
 
 interface AdBannerProps {
   position: 'top' | 'sidebar' | 'between-messages' | 'bottom'
@@ -19,33 +20,33 @@ export function AdBanner({ position, className = '' }: AdBannerProps) {
     switch (position) {
       case 'top':
         return {
-          adSlot: '1234567890', // Replace with actual ad slot
+          adSlot: ADSENSE_CONFIG.adSlots.topBanner,
           adFormat: 'horizontal' as const,
-          style: { width: '100%', height: '90px' }
+          style: AD_SIZES.leaderboard
         }
       case 'sidebar':
         return {
-          adSlot: '1234567891', // Replace with actual ad slot
+          adSlot: ADSENSE_CONFIG.adSlots.sidebarAd,
           adFormat: 'vertical' as const,
-          style: { width: '300px', height: '600px' }
+          style: AD_SIZES.skyscraper
         }
       case 'between-messages':
         return {
-          adSlot: '1234567892', // Replace with actual ad slot
+          adSlot: ADSENSE_CONFIG.adSlots.betweenMessages,
           adFormat: 'rectangle' as const,
-          style: { width: '100%', height: '250px' }
+          style: AD_SIZES.mediumRectangle
         }
       case 'bottom':
         return {
-          adSlot: '1234567893', // Replace with actual ad slot
+          adSlot: ADSENSE_CONFIG.adSlots.bottomBanner,
           adFormat: 'horizontal' as const,
-          style: { width: '100%', height: '90px' }
+          style: AD_SIZES.leaderboard
         }
       default:
         return {
-          adSlot: '1234567890',
+          adSlot: ADSENSE_CONFIG.adSlots.topBanner,
           adFormat: 'auto' as const,
-          style: {}
+          style: AD_SIZES.responsive
         }
     }
   }
