@@ -1,11 +1,29 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Montserrat, Poppins, Inter } from 'next/font/google'
 import './globals.css'
 import Script from 'next/script'
 import { Navbar } from '@/components/navbar'
-import { ADSENSE_CONFIG } from '@/lib/adsense-config'
+// import { ADSENSE_CONFIG } from '@/lib/adsense-config' // Temporarily disabled
 
-const inter = Inter({ subsets: ['latin'] })
+// Modern font stack: Montserrat (primary), Poppins (secondary), Inter (fallback)
+const montserrat = Montserrat({ 
+  subsets: ['latin'],
+  variable: '--font-montserrat',
+  display: 'swap',
+})
+
+const poppins = Poppins({ 
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-poppins',
+  display: 'swap',
+})
+
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: {
@@ -82,31 +100,16 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: [
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-    ],
-    shortcut: '/favicon.ico',
-    apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
-    ],
-    other: [
-      {
-        rel: 'mask-icon',
-        url: '/safari-pinned-tab.svg',
-        color: '#5bbad5',
-      },
-    ],
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
   },
   manifest: '/site.webmanifest',
   other: {
-    'msapplication-TileColor': '#da532c',
-    'theme-color': '#ffffff',
+    'theme-color': '#2563eb',
   },
   verification: {
-    google: 'your-google-verification-code', // Add your Google Search Console verification
-    yandex: 'your-yandex-verification-code',
-    yahoo: 'your-yahoo-verification-code',
+    // google: 'your-google-verification-code', // Add your Google Search Console verification when ready
   },
   category: 'travel',
 }
@@ -119,8 +122,8 @@ export default function RootLayout({
   return (
     <html lang="en-PH">
       <head>
-        {/* Additional SEO Meta Tags */}
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        {/* Critical viewport meta tag for mobile responsiveness */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="format-detection" content="telephone=no, address=no, email=no" />
         
@@ -177,8 +180,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={inter.className}>
-        {/* Google AdSense */}
+      <body className={`${montserrat.variable} ${poppins.variable} ${inter.variable} font-montserrat antialiased`}>
+        {/* Google AdSense - Temporarily disabled for debugging */}
+        {/*
         <Script
           async
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CONFIG.publisherId}`}
@@ -186,7 +190,6 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
         
-        {/* Google Analytics for Ad Performance */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${ADSENSE_CONFIG.googleAnalyticsId}`}
           strategy="afterInteractive"
@@ -206,6 +209,7 @@ export default function RootLayout({
             });
           `}
         </Script>
+        */}
         
         <Navbar />
         {children}

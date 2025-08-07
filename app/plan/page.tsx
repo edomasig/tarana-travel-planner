@@ -31,22 +31,22 @@ export default function PlanPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="container mx-auto px-4 py-6 md:py-8 max-w-6xl">
       {/* Top Banner Ad */}
-      <AdBanner position="top" className="mb-6" />
+      <AdBanner position="top" className="mb-4 md:mb-6" />
       
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Plan Your Philippine Adventure</h1>
-        <p className="text-gray-600">Tell us what you're looking for and we'll create a personalized itinerary just for you.</p>
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Plan Your Philippine Adventure</h1>
+        <p className="text-sm md:text-base text-gray-600">Tell us what you're looking for and we'll create a personalized itinerary just for you.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
         {/* Input Section */}
-        <div className="lg:col-span-1 space-y-6">
-          <Card className="sticky top-4">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-blue-600" />
+        <div className="lg:col-span-1 space-y-4 md:space-y-6">
+          <Card className="lg:sticky lg:top-4">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
+                <MapPin className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
                 Describe Your Trip
               </CardTitle>
             </CardHeader>

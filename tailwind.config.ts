@@ -8,6 +8,12 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'montserrat': ['var(--font-montserrat)', 'Montserrat', 'system-ui', 'sans-serif'],
+        'poppins': ['var(--font-poppins)', 'Poppins', 'system-ui', 'sans-serif'],
+        'inter': ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
+        'sans': ['var(--font-montserrat)', 'Montserrat', 'system-ui', 'sans-serif'], // Default sans font
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

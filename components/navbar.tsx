@@ -20,19 +20,19 @@ export function Navbar() {
   return (
     <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
-          <Link href="/">
+          <Link href="/" className="flex-shrink-0">
             <GalaGPTLogoHorizontal size="sm" />
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6 lg:gap-8">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                className="text-gray-600 hover:text-gray-900 font-medium transition-colors text-sm lg:text-base"
               >
                 {item.name}
               </Link>
@@ -65,20 +65,20 @@ export function Navbar() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t">
-            <div className="space-y-4">
+          <div className="md:hidden py-4 border-t bg-white">
+            <div className="space-y-3">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="block text-gray-600 hover:text-gray-900 font-medium"
+                  className="block text-gray-600 hover:text-gray-900 font-medium py-2 px-1 text-base"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
                 </Link>
               ))}
               {/* Hidden for now
-              <div className="pt-4 space-y-2">
+              <div className="pt-4 space-y-2 border-t">
                 <Button variant="ghost" size="sm" className="w-full justify-start">
                   <User className="h-4 w-4 mr-2" />
                   Sign In

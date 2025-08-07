@@ -31,21 +31,21 @@ export function Footer() {
 
   return (
     <footer className="bg-gray-900 text-white">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
+      <div className="container mx-auto px-4 py-8 md:py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 md:gap-8">
           {/* Brand */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 mb-6 md:mb-0">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <MapPin className="h-5 w-5 text-white" />
+              <div className="w-7 h-7 md:w-8 md:h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <MapPin className="h-4 w-4 md:h-5 md:w-5 text-white" />
               </div>
-              <span className="text-xl font-bold">GalaGPT.ph</span>
+              <span className="text-lg md:text-xl font-bold">GalaGPT.ph</span>
             </Link>
-            <p className="text-gray-400 mb-6 max-w-sm">
+            <p className="text-gray-400 mb-4 md:mb-6 max-w-sm text-sm md:text-base">
               Discover the beauty of the Philippines with AI-powered travel planning. 
               Create personalized itineraries in seconds.
             </p>
-            <div className="flex gap-4">
+            <div className="flex gap-3 md:gap-4">
               <a href="#" className="text-gray-400 hover:text-white transition-colors">
                 <Facebook className="h-5 w-5" />
               </a>

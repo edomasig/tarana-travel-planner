@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 
-// OpenAI client - server-side only
-const openai = new OpenAI({
+// OpenAI client - server-side only with fallback handling
+const openai = process.env.OPENAI_API_KEY ? new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-})
+}) : null
 
 // System prompt from PRD
 const SYSTEM_PROMPT = `You are GalaGPT.ph, a friendly and helpful Filipino AI travel assistant. Your role is to create personalized, real-world travel itineraries in the Philippines based on user questions. Always suggest real destinations and give practical travel advice like transportation, estimated budget, places to eat, and local tips. Use a warm and informative tone, and format answers in a clear day-by-day breakdown when possible. Avoid repeating information unless asked.
@@ -135,7 +135,11 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // Call OpenAI GPT-4 Turbo API
+    // Call OpenAI GPT-4 Turbo API (only if API key is available)
+    if (!openai) {
+      throw new Error('OpenAI client not initialized')
+    }
+    
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [

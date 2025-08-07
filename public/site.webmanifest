@@ -1,0 +1,41 @@
+{
+  "name": "GalaGPT.ph - AI Travel Assistant for the Philippines",
+  "short_name": "GalaGPT.ph",
+  "description": "Plan your perfect Philippine adventure with AI-powered travel recommendations and personalized itineraries.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "categories": ["travel", "lifestyle", "productivity"],
+  "lang": "en-PH",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/placeholder-logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Plan Trip",
+      "short_name": "Plan",
+      "description": "Start planning your Philippine adventure",
+      "url": "/plan",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Saved Itineraries",
+      "short_name": "Saved",
+      "description": "View your saved travel plans",
+      "url": "/saved",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    }
+  ]
+}
