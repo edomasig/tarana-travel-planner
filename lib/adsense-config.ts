@@ -4,7 +4,7 @@
 export const ADSENSE_CONFIG = {
   // Replace with your actual AdSense Publisher ID
   // Get this from your AdSense account dashboard
-  publisherId: 'ca-pub-XXXXXXXXXXXXXXXXX',
+  publisherId: 'ca-pub-5880649563057228',
   
   // Replace with your actual Google Analytics ID (optional)
   googleAnalyticsId: 'GA_MEASUREMENT_ID',

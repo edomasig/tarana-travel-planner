@@ -21,26 +21,26 @@ export function AdBanner({ position, className = '' }: AdBannerProps) {
       case 'top':
         return {
           adSlot: ADSENSE_CONFIG.adSlots.topBanner,
-          adFormat: 'horizontal' as const,
-          style: AD_SIZES.leaderboard
+          adFormat: 'auto' as const,
+          style: AD_SIZES.responsive
         }
       case 'sidebar':
         return {
           adSlot: ADSENSE_CONFIG.adSlots.sidebarAd,
           adFormat: 'vertical' as const,
-          style: AD_SIZES.skyscraper
+          style: AD_SIZES.responsive
         }
       case 'between-messages':
         return {
           adSlot: ADSENSE_CONFIG.adSlots.betweenMessages,
-          adFormat: 'rectangle' as const,
-          style: AD_SIZES.mediumRectangle
+          adFormat: 'auto' as const,
+          style: AD_SIZES.responsive
         }
       case 'bottom':
         return {
           adSlot: ADSENSE_CONFIG.adSlots.bottomBanner,
-          adFormat: 'horizontal' as const,
-          style: AD_SIZES.leaderboard
+          adFormat: 'auto' as const,
+          style: AD_SIZES.responsive
         }
       default:
         return {

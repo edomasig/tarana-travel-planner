@@ -11,9 +11,10 @@ export function Navbar() {
 
   const navigation = [
     { name: 'Chat', href: '/' },
-    { name: 'About', href: '/about' },
+    { name: 'Seasonal', href: '/seasonal' },
     { name: 'Plan Trip', href: '/plan' },
     { name: 'Saved', href: '/saved' },
+    { name: 'About', href: '/about' },
     // { name: 'Pricing', href: '/pricing' } // Hidden for now
   ]
 

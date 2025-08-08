@@ -158,7 +158,7 @@ export default function HomePage() {
           
           <AdBanner position="sidebar" />
           
-          <div className="bg-purple-50 p-4 rounded-lg">
+          {/* <div className="bg-purple-50 p-4 rounded-lg">
             <h4 className="font-semibold text-purple-900 mb-2">Upgrade to Premium</h4>
             <p className="text-sm text-purple-700 mb-3">
               Get unlimited messages and ad-free experience
@@ -166,7 +166,7 @@ export default function HomePage() {
             <Button size="sm" className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
               Upgrade Now
             </Button>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -195,12 +195,15 @@ export default function HomePage() {
         </div>
 
         {/* Top Banner Ad */}
+        <div className="block md:hidden flex-shrink-0">
+          <AdBanner position="top" className="px-2 pt-2" />
+        </div>
         <div className="hidden md:block flex-shrink-0">
           <AdBanner position="top" className="mx-4" />
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-2 md:p-4 space-y-3 md:space-y-4 min-h-0">
+        <div className="flex-1 overflow-y-auto p-2 md:p-4 space-y-3 md:space-y-4 min-h-0 pb-28 md:pb-4">
           {messages.map((message, index) => (
             <div key={message.id}>
               <div className={`flex gap-3 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -351,7 +354,7 @@ export default function HomePage() {
         )}
 
         {/* Input */}
-        <div className="bg-white border-t border-gray-200 p-2 md:p-4 flex-shrink-0">
+        <div className="bg-white border-t border-gray-200 p-2 md:p-4 flex-shrink-0 sticky bottom-0 z-40">
           <div className="max-w-4xl mx-auto flex gap-2 md:gap-3">
             <Input
               value={input}
@@ -378,10 +381,10 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Bottom Banner Ad */}
+        {/* Bottom Banner Ad
         <div className="hidden md:block flex-shrink-0">
           <AdBanner position="bottom" className="mx-4 mb-2" />
-        </div>
+        </div> */}
       </div>
     </div>
   )

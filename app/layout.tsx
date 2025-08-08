@@ -3,7 +3,7 @@ import { Montserrat, Poppins, Inter } from 'next/font/google'
 import './globals.css'
 import Script from 'next/script'
 import { Navbar } from '@/components/navbar'
-// import { ADSENSE_CONFIG } from '@/lib/adsense-config' // Temporarily disabled
+import { ADSENSE_CONFIG } from '@/lib/adsense-config'
 
 // Modern font stack: Montserrat (primary), Poppins (secondary), Inter (fallback)
 const montserrat = Montserrat({ 
@@ -140,6 +140,17 @@ export default function RootLayout({
         {/* Canonical URL */}
         <link rel="canonical" href="https://galagpt.ph" />
         
+        {/* Google AdSense script from user */}
+        {process.env.NODE_ENV === 'production' && (
+          <Script
+            id="adsense-script"
+            async
+            strategy="afterInteractive"
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CONFIG.publisherId}`}
+            crossOrigin="anonymous"
+          />
+        )}
+        
         {/* Structured Data for SEO */}
         <Script
           id="structured-data"
@@ -181,35 +192,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${montserrat.variable} ${poppins.variable} ${inter.variable} font-montserrat antialiased`}>
-        {/* Google AdSense - Temporarily disabled for debugging */}
-        {/*
-        <Script
-          async
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CONFIG.publisherId}`}
-          crossOrigin="anonymous"
-          strategy="beforeInteractive"
-        />
-        
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${ADSENSE_CONFIG.googleAnalyticsId}`}
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${ADSENSE_CONFIG.googleAnalyticsId}', {
-              page_title: document.title,
-              page_location: window.location.href,
-              content_group1: 'Travel Planning',
-              custom_map: {
-                'dimension1': 'user_engagement'
-              }
-            });
-          `}
-        </Script>
-        */}
+        {/* Google Analytics scripts can be added here when needed */}
         
         <Navbar />
         {children}
