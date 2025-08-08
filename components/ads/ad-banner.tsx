@@ -54,9 +54,9 @@ export function AdBanner({ position, className = '' }: AdBannerProps) {
   const config = getAdConfig()
 
   return (
-    <Card className={`ad-banner bg-gray-50 border-dashed ${className}`}>
-      <div className="p-2">
-        <div className="text-xs text-gray-500 text-center mb-2">Advertisement</div>
+    <Card className={`ad-banner bg-transparent border-0 shadow-none ${className}`}>
+      <div className="p-0">
+        <div className="sr-only">Advertisement</div>
         <GoogleAdSense 
           {...config}
           className="w-full"

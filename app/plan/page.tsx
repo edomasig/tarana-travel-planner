@@ -32,10 +32,10 @@ export default function PlanPage() {
 
   return (
     <div className="container mx-auto px-4 py-6 md:py-8 max-w-6xl">
-      {/* Top Banner Ad */}
-      <AdBanner position="top" className="mb-4 md:mb-6" />
+      {/* Top Banner Ad - Smaller on mobile */}
+      <AdBanner position="top" className="mb-3 md:mb-6" />
       
-      <div className="mb-6 md:mb-8">
+      <div className="mb-4 md:mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Plan Your Philippine Adventure</h1>
         <p className="text-sm md:text-base text-gray-600">Tell us what you're looking for and we'll create a personalized itinerary just for you.</p>
       </div>
@@ -97,8 +97,10 @@ export default function PlanPage() {
             </CardContent>
           </Card>
           
-          {/* Sidebar Ad */}
-          <AdBanner position="sidebar" />
+          {/* Sidebar Ad - Hidden on mobile, shown on desktop */}
+          <div className="hidden lg:block">
+            <AdBanner position="sidebar" />
+          </div>
         </div>
 
         {/* Results Section */}
@@ -124,8 +126,8 @@ export default function PlanPage() {
         </div>
       </div>
       
-      {/* Bottom Banner Ad */}
-      <AdBanner position="bottom" className="mt-8" />
+      {/* Bottom Banner Ad - Smaller margin on mobile */}
+      <AdBanner position="bottom" className="mt-4 md:mt-8" />
     </div>
   )
 }

@@ -11,27 +11,41 @@ export function MockAd({ position, className = '' }: MockAdProps) {
   const getAdConfig = () => {
     switch (position) {
       case 'top':
-        return { width: '100%', height: '90px', text: 'Top Banner Ad' }
+        return { 
+          containerClass: 'h-[90px] md:h-[90px]',
+          text: 'Top Banner Ad'
+        }
       case 'sidebar':
-        return { width: '300px', height: '600px', text: 'Sidebar Ad' }
+        return { 
+          containerClass: 'h-[200px] md:h-[400px] w-full md:w-[300px]',
+          text: 'Sidebar Ad'
+        }
       case 'between-messages':
-        return { width: '100%', height: '250px', text: 'Content Ad' }
+        return { 
+          containerClass: 'h-[150px] md:h-[200px]',
+          text: 'Content Ad'
+        }
       case 'bottom':
-        return { width: '100%', height: '90px', text: 'Bottom Banner Ad' }
+        return { 
+          containerClass: 'h-[60px] md:h-[90px]',
+          text: 'Bottom Banner Ad'
+        }
       default:
-        return { width: '100%', height: '90px', text: 'Advertisement' }
+        return { 
+          containerClass: 'h-[60px] md:h-[90px]', 
+          text: 'Advertisement'
+        }
     }
   }
 
   const config = getAdConfig()
 
   return (
-    <Card className={`ad-mock bg-gray-100 border-dashed border-gray-300 ${className}`}>
+    <Card className={`ad-mock bg-transparent border-0 shadow-none ${className}`}>
       <div 
-        className="flex items-center justify-center text-gray-500 text-sm"
-        style={{ width: config.width, height: config.height }}
+        className={`flex items-center justify-center text-gray-500 text-xs md:text-sm w-full ${config.containerClass}`}
       >
-        {config.text} (Mock)
+        <span className="text-center">{config.text} (Mock)</span>
       </div>
     </Card>
   )

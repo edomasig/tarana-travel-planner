@@ -10,9 +10,9 @@ export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const navigation = [
-    { name: 'Home', href: '/' },
+    { name: 'Chat', href: '/' },
+    { name: 'About', href: '/about' },
     { name: 'Plan Trip', href: '/plan' },
-    { name: 'Seasonal', href: '/seasonal' },
     { name: 'Saved', href: '/saved' },
     // { name: 'Pricing', href: '/pricing' } // Hidden for now
   ]

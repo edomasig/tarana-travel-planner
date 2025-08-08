@@ -12,9 +12,9 @@ export function HeroSection() {
 
   const handleQuickPlan = () => {
     if (quickPrompt.trim()) {
-      router.push(`/plan?prompt=${encodeURIComponent(quickPrompt)}`)
+      router.push(`/chat?prompt=${encodeURIComponent(quickPrompt)}`)
     } else {
-      router.push('/plan')
+      router.push('/chat')
     }
   }
 
