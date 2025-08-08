@@ -287,7 +287,7 @@ export default function HomePage() {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-2 md:p-4 space-y-3 md:space-y-4 min-h-0 pb-28 md:pb-4">
+        <div className="flex-1 overflow-y-auto p-2 md:p-4 space-y-3 md:space-y-4 min-h-0 pb-40 md:pb-48 pb-[env(safe-area-inset-bottom)]">
           {messages.map((message, index) => (
             <div key={message.id}>
               <div className={`flex gap-3 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -417,7 +417,7 @@ export default function HomePage() {
 
         {/* Suggested Questions */}
         {messages.length === 1 && (
-          <div className="px-4 pb-4 flex-shrink-0">
+          <div className="px-4 pb-44 md:pb-56 pb-[env(safe-area-inset-bottom)] flex-shrink-0">
             <div className="max-w-4xl mx-auto">
               <p className="text-sm text-gray-600 mb-3">Try asking:</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -437,38 +437,39 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* Input */}
-        <div className="bg-white border-t border-gray-200 p-2 md:p-4 flex-shrink-0 sticky bottom-0 z-40">
-          <div className="max-w-4xl mx-auto flex gap-2 md:gap-3">
-            <Input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder={
-                messageCount >= 10 
-                  ? "Upgrade to Premium for unlimited messages..." 
-                  : "Ask me anything about traveling in the Philippines..."
-              }
-              className="flex-1 text-sm md:text-base"
-              disabled={isLoading || messageCount >= 10}
-            />
-            <Button 
-              onClick={handleSendMessage}
-              disabled={!input.trim() || isLoading || messageCount >= 10}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 flex-shrink-0 px-3 md:px-4"
-            >
-              <Send className="h-3 w-3 md:h-4 md:w-4" />
-            </Button>
+        {/* Floating Input - ChatGPT style */}
+        <div className="fixed inset-x-0 bottom-0 z-40 pointer-events-none">
+          {/* subtle gradient to separate input from content */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-full h-10 bg-gradient-to-t from-gray-50 to-transparent" />
+          <div className="mx-auto max-w-3xl w-full px-3 pb-3 md:pb-6">
+            <div className="rounded-2xl border border-gray-200 bg-gray-50 shadow-md p-2 md:p-3 pointer-events-auto">
+              <div className="flex gap-2 md:gap-3 items-center">
+                <Input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder={
+                    messageCount >= 10 
+                      ? "Upgrade to Premium for unlimited messages..." 
+                      : "Ask me anything about traveling in the Philippines..."
+                  }
+                  className="flex-1 text-sm md:text-base"
+                  disabled={isLoading || messageCount >= 10}
+                />
+                <Button 
+                  onClick={handleSendMessage}
+                  disabled={!input.trim() || isLoading || messageCount >= 10}
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 flex-shrink-0 px-3 md:px-4"
+                >
+                  <Send className="h-3 w-3 md:h-4 md:w-4" />
+                </Button>
+              </div>
+              <p className="text-[10px] md:text-xs text-gray-500 text-center mt-1 md:mt-2">
+                GalaGPT.ph can make mistakes. Consider checking important information.
+              </p>
+            </div>
           </div>
-          <p className="text-xs text-gray-500 text-center mt-1 md:mt-2">
-            GalaGPT.ph can make mistakes. Consider checking important information.
-          </p>
         </div>
-
-        {/* Bottom Banner Ad
-        <div className="hidden md:block flex-shrink-0">
-          <AdBanner position="bottom" className="mx-4 mb-2" />
-        </div> */}
       </div>
     </div>
   )
