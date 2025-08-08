@@ -127,3 +127,14 @@
     }
   }
 }
+
+/* Prevent horizontal overflow in chat */
+.chat-container {
+  overflow-x: hidden;
+}
+
+/* Break long words and URLs in message content */
+.prose-break {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}

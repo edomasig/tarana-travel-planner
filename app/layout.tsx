@@ -130,6 +130,9 @@ export default function RootLayout({
         {/* AdSense site verification meta */}
         <meta name="google-adsense-account" content={ADSENSE_CONFIG.publisherId} />
         
+        {/* Agoda partner manual verification */}
+        <meta name="agd-partner-manual-verification" />
+        
         {/* Preconnect to external domains for performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

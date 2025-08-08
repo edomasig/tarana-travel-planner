@@ -17,7 +17,7 @@ export function Footer() {
     ],
     support: [
       { name: 'Help Center', href: '#help' },
-      { name: 'Contact Us', href: '#contact' },
+      { name: 'Contact Us', href: 'mailto:admin@galagpt.ph' },
       { name: 'Travel Tips', href: '#tips' },
       { name: 'Community', href: '#community' }
     ],
@@ -54,6 +54,13 @@ export function Footer() {
               </a>
               <a href="#" className="text-gray-400 hover:text-white transition-colors">
                 <Instagram className="h-5 w-5" />
+              </a>
+            </div>
+            {/* Contact email */}
+            <div className="mt-4 flex items-center gap-2 text-gray-300 text-sm">
+              <Mail className="h-4 w-4" />
+              <a href="mailto:admin@galagpt.ph" className="hover:text-white transition-colors">
+                admin@galagpt.ph
               </a>
             </div>
           </div>

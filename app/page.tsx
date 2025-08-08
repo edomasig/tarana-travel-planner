@@ -8,6 +8,7 @@ import { Send, MapPin, Sparkles, User, Bot, Loader2, Download, Share } from 'luc
 import { generateTravelResponse } from '@/lib/ai-service'
 import { AdBanner } from '@/components/ads/ad-banner'
 import { NativeAd } from '@/components/ads/native-ad'
+import { saveConversationsToCookies, loadConversationsFromCookies, getConversationById } from '@/lib/cookie-utils'
 
 interface Message {
   id: string
@@ -111,6 +112,55 @@ export default function HomePage() {
     alert('Itinerary copied to clipboard! You can paste it anywhere to save.')
   }
 
+  const saveConversation = (silent = false) => {
+    if (messages.length <= 1) return // Don't save if only initial message
+    
+    const conversationTitle = messages[1]?.content.slice(0, 50) + (messages[1]?.content.length > 50 ? '...' : '') || 'Travel Conversation'
+    const conversation = {
+      id: Date.now().toString(),
+      title: conversationTitle,
+      preview: messages[messages.length - 1]?.content.slice(0, 100) + '...' || 'Travel conversation',
+      messageCount: messages.length - 1, // Exclude initial message
+      createdAt: new Date().toISOString(),
+      lastMessage: messages[messages.length - 1]?.content.slice(0, 80) + '...' || '',
+      messages: messages
+    }
+    
+    // Load existing conversations from cookies
+    const savedConversations = loadConversationsFromCookies()
+    // De-duplicate/update the top item if it's the same conversation snapshot
+    if (savedConversations.length > 0 && savedConversations[0]?.lastMessage === conversation.lastMessage) {
+      savedConversations[0] = conversation
+    } else {
+      savedConversations.unshift(conversation) // Add to beginning
+    }
+    
+    // Save back to cookies
+    const success = saveConversationsToCookies(savedConversations)
+    if (success) {
+      try {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('savedConversations', JSON.stringify(savedConversations))
+        }
+      } catch (e) {
+        console.warn('Could not write to localStorage, continuing with cookies only')
+      }
+      if (!silent) alert('Conversation saved! You can view it in the Saved page.')
+    } else {
+      if (!silent) alert('Error saving conversation. Please try again.')
+      else console.error('Error saving conversation silently')
+    }
+  }
+
+  // Auto-save once when the first user/assistant messages are exchanged
+  const autoSavedRef = useRef(false)
+  useEffect(() => {
+    if (messages.length > 1 && !autoSavedRef.current) {
+      saveConversation(true) // silent auto-save
+      autoSavedRef.current = true
+    }
+  }, [messages.length])
+
   const suggestedQuestions = [
     "Where should I go in Palawan for 5 days?",
     "How much is the budget for a Baguio weekend trip?",
@@ -130,6 +180,27 @@ export default function HomePage() {
     if (content.includes('transport') || content.includes('flight') || content.includes('bus')) return 'transport'
     return 'hotel'
   }
+
+  useEffect(() => {
+    // Restore conversation if convId is in the URL
+    try {
+      const params = new URLSearchParams(window.location.search)
+      const convId = params.get('convId')
+      if (convId) {
+        const conv = getConversationById(convId)
+        if (conv?.messages?.length) {
+          // Convert timestamp strings back to Date objects if needed
+          const restored = conv.messages.map((m: any) => ({
+            ...m,
+            timestamp: typeof m.timestamp === 'string' ? new Date(m.timestamp) : m.timestamp
+          }))
+          setMessages(restored)
+        }
+      }
+    } catch (e) {
+      console.error('Error restoring conversation from URL:', e)
+    }
+  }, [])
 
   if (!mounted) {
     return (
@@ -184,12 +255,25 @@ export default function HomePage() {
             </div>
           </div>
           
-          <div className="bg-purple-50 border border-purple-200 rounded-lg px-2 md:px-3 py-1 md:py-2 flex-shrink-0">
-            <div className="text-xs md:text-sm text-purple-700 font-medium">
-              {messageCount}/10 messages used
-            </div>
-            <div className="text-xs text-purple-600">
-              Free tier
+          <div className="flex items-center gap-2">
+            {messages.length > 1 && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => saveConversation()}
+                className="text-xs flex"
+              >
+                <Download className="h-3 w-3 mr-1" />
+                Save Chat
+              </Button>
+            )}
+            <div className="bg-purple-50 border border-purple-200 rounded-lg px-2 md:px-3 py-1 md:py-2 flex-shrink-0">
+              <div className="text-xs md:text-sm text-purple-700 font-medium">
+                {messageCount}/10 messages used
+              </div>
+              <div className="text-xs text-purple-600">
+                Free tier
+              </div>
             </div>
           </div>
         </div>
@@ -217,8 +301,8 @@ export default function HomePage() {
                   message.type === 'user' 
                     ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white ml-4 sm:ml-12' 
                     : 'bg-white'
-                }`}>
-                  <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                } overflow-hidden`}>
+                  <div className="whitespace-pre-wrap break-words prose-break text-sm leading-relaxed">
                     {message.content}
                   </div>
                   <div className="flex items-center justify-between mt-3">
