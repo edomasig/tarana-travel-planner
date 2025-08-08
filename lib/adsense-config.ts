@@ -11,9 +11,9 @@ export const ADSENSE_CONFIG = {
   
   // Ad slot IDs - create these in your AdSense dashboard
   adSlots: {
-    topBanner: '1234567890',      // Top banner ad (728x90 or responsive)
-    sidebarAd: '1234567891',      // Left sidebar ad (300x600 or responsive)  
-    bottomBanner: '1234567892',   // Bottom banner ad (728x90 or responsive)
+    topBanner: '9456430377',      // Top banner ad (728x90 or responsive)
+    sidebarAd: '7038134686',      // Left sidebar ad (300x600 or responsive)  
+    bottomBanner: '1785808004',   // Bottom banner ad (728x90 or responsive)
     betweenMessages: '1234567893', // Between chat messages (300x250)
     nativeAd: '1234567894',       // Native ads for content
     planPageTop: '1234567895',    // Plan page top banner

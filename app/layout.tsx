@@ -126,6 +126,9 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="format-detection" content="telephone=no, address=no, email=no" />
+
+        {/* AdSense site verification meta */}
+        <meta name="google-adsense-account" content={ADSENSE_CONFIG.publisherId} />
         
         {/* Preconnect to external domains for performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />

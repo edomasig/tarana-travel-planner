@@ -21,40 +21,78 @@ export function GoogleAdSense({
   const adRef = useRef<HTMLModElement>(null)
   const [hasLoaded, setHasLoaded] = useState(false)
   const [adError, setAdError] = useState(false)
+  const [isVisibleWidth, setIsVisibleWidth] = useState(false)
+
+  // Observe element width and only initialize when width > 0
+  useEffect(() => {
+    const el = adRef.current as unknown as HTMLElement | null
+    if (!el) return
+
+    const checkWidth = () => {
+      const w = el.offsetWidth || el.parentElement?.offsetWidth || 0
+      if (w > 0) {
+        setIsVisibleWidth(true)
+        return true
+      }
+      return false
+    }
+
+    if (checkWidth()) return
+
+    const ro = new ResizeObserver(() => {
+      checkWidth()
+    })
+    ro.observe(el)
+    if (el.parentElement) ro.observe(el.parentElement)
+    return () => ro.disconnect()
+  }, [])
 
   useEffect(() => {
-    if (hasLoaded || !adRef.current) return
-    
-    const loadAd = async () => {
+    if (hasLoaded || adError || !isVisibleWidth || !adRef.current) return
+
+    let cancelled = false
+    let retries = 0
+
+    const tryInit = async () => {
       try {
-        // Check if AdSense script is loaded
+        if (cancelled) return
+
+        // Ensure AdSense script is loaded
         if (typeof window === 'undefined' || !(window as any).adsbygoogle) {
-          console.log('AdSense script not loaded yet')
+          if (retries < 10) {
+            retries += 1
+            setTimeout(tryInit, 300)
+            return
+          }
           return
         }
 
-        // Check if the ad element already has ads loaded
-        const existingAds = adRef.current?.querySelector('.adsbygoogle')
-        if (existingAds && existingAds.getAttribute('data-adsbygoogle-status')) {
-          return // Ad already loaded
-        }
-
-        // Add a small delay to ensure DOM is ready
-        await new Promise(resolve => setTimeout(resolve, 100))
-
-        if (adRef.current) {
-          // @ts-ignore
-          (window.adsbygoogle = window.adsbygoogle || []).push({})
+        const ins = adRef.current as unknown as HTMLElement
+        // If already initialized, skip
+        const already = ins.getAttribute('data-adsbygoogle-status')
+        if (already === 'done') {
           setHasLoaded(true)
+          return
         }
+
+        // Small delay to allow layout settle
+        await new Promise<void>((resolve) => setTimeout(resolve, 50))
+
+        // @ts-ignore
+        ;(window.adsbygoogle = (window.adsbygoogle || [])).push({})
+        setHasLoaded(true)
       } catch (err) {
         console.error('AdSense error:', err)
         setAdError(true)
       }
     }
 
-    loadAd()
-  }, [hasLoaded])
+    tryInit()
+
+    return () => {
+      cancelled = true
+    }
+  }, [hasLoaded, adError, isVisibleWidth])
 
   if (adError) {
     return (
@@ -65,16 +103,17 @@ export function GoogleAdSense({
   }
 
   return (
-    <div className={`adsense-container ${className}`} style={style}>
+    <div className={`adsense-container ${className}`} style={{ width: '100%', ...style }}>
       <ins
         ref={adRef}
         className="adsbygoogle"
-        style={{ display: 'block', ...style }}
+        style={{ display: 'block', width: '100%' }}
         data-ad-client={ADSENSE_CONFIG.publisherId}
         data-ad-slot={adSlot}
         data-ad-format={adFormat}
         data-full-width-responsive={fullWidthResponsive}
-        key={`ad-${adSlot}-${Date.now()}`}
+        // Stable key to avoid remount loops
+        key={`ad-${adSlot}`}
       />
     </div>
   )
