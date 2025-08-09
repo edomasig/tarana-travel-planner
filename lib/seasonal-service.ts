@@ -543,7 +543,7 @@ export async function getSeasonalRecommendations(season: string): Promise<Season
           name: 'Manila',
           location: 'National Capital Region',
           description: 'Explore world-class museums, shopping malls, and historical sites perfect for rainy day adventures.',
-          image: '/manila-rainy.png',
+          image: '/manila.jpg',
           rating: '4.5',
           bestTime: 'June - October',
           budget: '₱8,000 - ₱15,000',
@@ -553,7 +553,7 @@ export async function getSeasonalRecommendations(season: string): Promise<Season
           name: 'Tagaytay',
           location: 'Cavite',
           description: 'Cool mountain air, cozy cafes, and stunning Taal Volcano views make rainy days romantic.',
-          image: '/tagaytay-rainy.png',
+          image: '/tagaytay.jpg',
           rating: '4.6',
           bestTime: 'June - November',
           budget: '₱6,000 - ₱12,000',
@@ -563,7 +563,7 @@ export async function getSeasonalRecommendations(season: string): Promise<Season
           name: 'Iloilo City',
           location: 'Iloilo',
           description: 'Rich heritage sites, covered markets, and delicious local cuisine perfect for rainy season exploration.',
-          image: '/iloilo-rainy.png',
+          image: '/iloilo.jpg',
           rating: '4.4',
           bestTime: 'June - October',
           budget: '₱7,000 - ₱13,000',
@@ -580,7 +580,7 @@ export async function getSeasonalRecommendations(season: string): Promise<Season
           {
             day: 1,
             location: 'Intramuros Historical District',
-            image: '/manila-day1.png',
+            image: '/intramuros-historic-district.jpg',
             activities: [
               {
                 time: '9:00 AM',
@@ -616,7 +616,7 @@ export async function getSeasonalRecommendations(season: string): Promise<Season
           {
             day: 2,
             location: 'Museums & Cultural Centers',
-            image: '/manila-day2.png',
+            image: '/National-Museum-Complex.jpg',
             activities: [
               {
                 time: '9:00 AM',
@@ -652,7 +652,7 @@ export async function getSeasonalRecommendations(season: string): Promise<Season
           {
             day: 3,
             location: 'Shopping & Entertainment',
-            image: '/manila-day3.png',
+            image: '/SM_Mall_of_Asia_in_2024.png',
             activities: [
               {
                 time: '10:00 AM',
@@ -688,7 +688,7 @@ export async function getSeasonalRecommendations(season: string): Promise<Season
           {
             day: 4,
             location: 'Chinatown & Departure',
-            image: '/manila-day4.png',
+            image: '/Binondo-Church.jpg',
             activities: [
               {
                 time: '9:00 AM',

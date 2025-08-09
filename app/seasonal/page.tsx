@@ -112,6 +112,15 @@ export default function SeasonalPage() {
         {/* Weather & Travel Tips */}
         <Card className="bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200">
           <CardContent className="p-6">
+            {/* Added illustrative seasonal image */}
+            <div className="mb-6">
+              <img
+                src={seasonalData.season.image || '/philippine-landscape.png'}
+                alt={`${seasonalData.season.name} season in the Philippines`}
+                className="w-full h-40 md:h-56 object-cover rounded-xl shadow-sm"
+                loading="lazy"
+              />
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center">
                 <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -303,28 +312,41 @@ export default function SeasonalPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-semibold text-gray-900 mb-3">What to Pack</h4>
-                <ul className="space-y-2">
-                  {seasonalData.tips.packing.map((item, index) => (
-                    <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
-                      <div className="w-1.5 h-1.5 bg-green-600 rounded-full mt-2 flex-shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+              {/* Added contextual image for tips */}
+              <div className="md:col-span-1 order-last md:order-first">
+                <img
+                  src={(seasonalData.tips.image) || '/tour-ad.png'}
+                  alt={`Travel tips for ${seasonalData.season.name} season`}
+                  className="w-full h-40 md:h-full object-cover rounded-lg shadow-sm"
+                  loading="lazy"
+                />
               </div>
-              <div>
-                <h4 className="font-semibold text-gray-900 mb-3">Travel Advice</h4>
-                <ul className="space-y-2">
-                  {seasonalData.tips.advice.map((tip, index) => (
-                    <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
-                      <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
-                      {tip}
-                    </li>
-                  ))}
-                </ul>
+              <div className="space-y-6 md:col-span-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-3">What to Pack</h4>
+                    <ul className="space-y-2">
+                      {seasonalData.tips.packing.map((item, index) => (
+                        <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
+                          <div className="w-1.5 h-1.5 bg-green-600 rounded-full mt-2 flex-shrink-0" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-3">Travel Advice</h4>
+                    <ul className="space-y-2">
+                      {seasonalData.tips.advice.map((tip, index) => (
+                        <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
+                          <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
+                          {tip}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </CardContent>
