@@ -10,11 +10,11 @@ export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const navigation = [
-    { name: 'Chat', href: '/' },
+    { name: 'Chat', href: '/chat' },
     { name: 'Seasonal', href: '/seasonal' },
     { name: 'Plan Trip', href: '/plan' },
     { name: 'Saved', href: '/saved' },
-    { name: 'About', href: '/about' },
+    // { name: 'About', href: '/about' },
     // { name: 'Pricing', href: '/pricing' } // Hidden for now
   ]
 

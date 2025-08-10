@@ -1,29 +1,20 @@
-'use client'
+// 'use client'
 
-import { useState, useEffect } from 'react'
+import { loadSeason } from '@/lib/seasonal-loader'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Calendar, MapPin, Thermometer, Umbrella, Sun, Snowflake, Heart, Star, Clock, DollarSign, Camera, Utensils, Bed } from 'lucide-react'
+import { SeasonSwitcher } from './SeasonSwitcher'
+import Link from 'next/link'
 import { getSeasonalRecommendations, getCurrentSeason, type SeasonalData } from '@/lib/seasonal-service'
+import { AdBanner } from '@/components/ads/ad-banner'
 
-export default function SeasonalPage() {
-  const [seasonalData, setSeasonalData] = useState<SeasonalData | null>(null)
-  const [currentSeason, setCurrentSeason] = useState('')
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    const loadSeasonalData = async () => {
-      setIsLoading(true)
-      const season = getCurrentSeason()
-      const data = await getSeasonalRecommendations(season)
-      setCurrentSeason(season)
-      setSeasonalData(data)
-      setIsLoading(false)
-    }
-
-    loadSeasonalData()
-  }, [])
+export default async function SeasonalPage({ searchParams }: { searchParams?: { season?: string } }) {
+  const target = searchParams?.season || getCurrentSeason()
+  const seasonalData = await loadSeason(target)
+  const currentSeason = target
+  const isLoading = false
 
   const getSeasonIcon = (season: string) => {
     switch (season) {
@@ -74,7 +65,9 @@ export default function SeasonalPage() {
     )
   }
 
-  if (!seasonalData) return null
+  if (!seasonalData) {
+    return <div className="min-h-screen flex items-center justify-center">No seasonal data found.</div>
+  }
 
   const SeasonIcon = getSeasonIcon(currentSeason)
 
@@ -94,6 +87,7 @@ export default function SeasonalPage() {
             <p className="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
               {seasonalData.season.description}
             </p>
+            <SeasonSwitcher active={currentSeason} />
             <div className="flex items-center justify-center gap-6 mt-6 text-blue-100">
               <div className="flex items-center gap-2">
                 <Thermometer className="h-5 w-5" />
@@ -108,6 +102,11 @@ export default function SeasonalPage() {
         </div>
       </div>
 
+      {/* Top Ad */}
+      <div className="container mx-auto px-4 mt-4">
+        <AdBanner position="top" />
+      </div>
+
       <div className="container mx-auto px-4 py-8 space-y-12">
         {/* Weather & Travel Tips */}
         <Card className="bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200">
@@ -115,7 +114,7 @@ export default function SeasonalPage() {
             {/* Added illustrative seasonal image */}
             <div className="mb-6">
               <img
-                src={seasonalData.season.image || '/philippine-landscape.png'}
+                src={'/philippine-landscape.png'}               
                 alt={`${seasonalData.season.name} season in the Philippines`}
                 className="w-full h-40 md:h-56 object-cover rounded-xl shadow-sm"
                 loading="lazy"
@@ -193,14 +192,27 @@ export default function SeasonalPage() {
                       ))}
                     </div>
                   </div>
-                  <Button className="w-full mt-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
-                    View Itinerary
+                  <Button asChild className="w-full mt-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+                    {(() => {
+                      const destPrompt = destination.prompt
+                      const itineraryPrompt = seasonalData.featuredItinerary.prompt
+                      const fallback = `Generate a detailed ${seasonalData.season.name} itinerary for ${destination.name} including highlights: ${destination.highlights.join(', ')}. Provide budget guidance, local food suggestions, and practical travel tips.`
+                      const effective = destPrompt || itineraryPrompt || fallback
+                      const href = `/chat?prompt=${encodeURIComponent(effective)}`
+                      return <Link href={href} aria-label={`Open AI itinerary for ${destination.name}`}>View Itinerary</Link>
+                    })()}
                   </Button>
                 </CardContent>
               </Card>
             ))}
+
           </div>
         </section>
+
+        {/* Mid-page Ad (after destinations) */}
+        <div className="flex justify-center">
+          <AdBanner position="between-messages" />
+        </div>
 
         {/* Featured Itinerary */}
         <section>
@@ -300,6 +312,7 @@ export default function SeasonalPage() {
                 </CardContent>
               </Card>
             ))}
+
           </div>
         </section>
 
@@ -316,7 +329,8 @@ export default function SeasonalPage() {
               {/* Added contextual image for tips */}
               <div className="md:col-span-1 order-last md:order-first">
                 <img
-                  src={(seasonalData.tips.image) || '/tour-ad.png'}
+                  src={'/tour-ad.png'}
+                  
                   alt={`Travel tips for ${seasonalData.season.name} season`}
                   className="w-full h-40 md:h-full object-cover rounded-lg shadow-sm"
                   loading="lazy"
@@ -351,6 +365,11 @@ export default function SeasonalPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Bottom Ad */}
+        <div className="flex justify-center">
+          <AdBanner position="bottom" />
+        </div>
 
         {/* CTA Section */}
         <Card className="bg-gradient-to-r from-purple-600 to-blue-600 text-white">
