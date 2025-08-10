@@ -8,6 +8,7 @@ import { Send, MapPin, Sparkles, User, Bot, Loader2, Download, Share } from 'luc
 import { generateTravelResponse } from '@/lib/ai-service'
 import { AdBanner } from '@/components/ads/ad-banner'
 import { NativeAd } from '@/components/ads/native-ad'
+import { KlookWidget } from '@/components/affiliate/klook-widget'
 import { saveConversationsToCookies, loadConversationsFromCookies, getConversationById } from '@/lib/cookie-utils'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -169,6 +170,8 @@ export default function ChatPage() {
               <NativeAd type="hotel" />
               <NativeAd type="tour" />
               <NativeAd type="restaurant" />
+              {/* Klook affiliate widget */}
+              <KlookWidget />
             </div>
           </div>
           <AdBanner position="sidebar" />
