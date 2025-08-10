@@ -24,28 +24,47 @@ export function KlookWidget({ title = "Klook Deals", className = "", snippetPath
       try {
         const res = await fetch(snippetPath, { cache: "no-cache" });
         if (!res.ok) throw new Error("Failed to load Klook snippet");
-        const html = await res.text();
+        let html = await res.text();
+        html = html.trim();
+        if (!html.startsWith("<ins")) {
+          console.warn("Klook snippet missing <ins> tag start");
+        }
         if (cancelled || !containerRef.current) return;
-
-        // Inject raw snippet
         containerRef.current.innerHTML = html;
 
-        // Ensure script present
         const SCRIPT_SRC = "https://affiliate.klook.com/widget/fetch-iframe-init.js";
+        const ensureInit = () => {
+          // @ts-ignore
+          if (window.KLOOK_AFFILIATE_WIDGET?.init) {
+            try {
+              // @ts-ignore
+              window.KLOOK_AFFILIATE_WIDGET.init();
+            } catch (err) {
+              console.error("Klook init error", err);
+            }
+            return true;
+          }
+          return false;
+        };
+
         if (!document.querySelector(`script[src="${SCRIPT_SRC}"]`)) {
           const s = document.createElement("script");
-          (s as any).dataset.klookLoader = "true";
           s.src = SCRIPT_SRC;
           s.async = true;
           s.type = "text/javascript";
+          s.onload = () => {
+            ensureInit();
+          };
           document.body.appendChild(s);
         } else {
-          // Re-init if global available
-          // @ts-ignore
-          if (window.KLOOK_AFFILIATE_WIDGET?.init) {
-            // @ts-ignore
-            window.KLOOK_AFFILIATE_WIDGET.init();
-          }
+          // Delay a couple times to allow script’s async load to populate global
+          let attempts = 0;
+          const maxAttempts = 10;
+          const interval = setInterval(() => {
+            if (ensureInit() || attempts++ >= maxAttempts || cancelled) {
+              clearInterval(interval);
+            }
+          }, 400);
         }
       } catch (e) {
         if (containerRef.current) {
@@ -58,7 +77,9 @@ export function KlookWidget({ title = "Klook Deals", className = "", snippetPath
     loadSnippet();
     initializedRef.current = true;
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [snippetPath]);
 
   return (
