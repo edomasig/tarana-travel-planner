@@ -16,6 +16,7 @@ bestTime: March - May
 budget: ₱20,000 - ₱35,000
 image: /palawan-summer.png
 highlights: Hidden Lagoons; Island Hopping; Snorkeling; Kayaking
+prompt: Generate a 7-day Palawan summer itinerary optimizing lagoon tours, snorkeling variety, minimal transit fatigue, and realistic daily budgets.
 description:
 Pristine lagoons, limestone cliffs, and crystal-clear waters perfect for summer exploration.
 
@@ -26,6 +27,7 @@ bestTime: March - October
 budget: ₱15,000 - ₱25,000
 image: /siargao-summer.png
 highlights: Cloud 9 Surf Break; Island Hopping; Magpupungko Pools; Coconut Forest
+prompt: Create a surf-friendly Siargao plan with progressive skill sessions, island hopping, food stops, and rainy afternoon contingency.
 description:
 Surfing paradise with perfect waves and laid-back island vibes.
 
@@ -36,11 +38,13 @@ bestTime: March - May
 budget: ₱12,000 - ₱22,000
 image: /bohol-summer.png
 highlights: Chocolate Hills; Tarsier Sanctuary; Alona Beach; Dolphin Watching
+prompt: Produce a family-friendly Bohol itinerary balancing wildlife, gentle adventure, eco-ethics, and crowd avoidance strategies.
 description:
 Chocolate Hills, beaches, and rich marine life for summer adventures.
 
 ## Featured Itinerary
 title: 7-Day Ultimate Palawan Summer Adventure
+prompt: Craft a comprehensive Palawan summer route (Puerto Princesa → El Nido → Coron) minimizing backtracking, with per-activity cost guidance and marine conservation tips.
 duration: 7 Days
 budget: ₱25,000 - ₱40,000
 difficulty: Moderate

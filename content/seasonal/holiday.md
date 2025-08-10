@@ -16,6 +16,7 @@ bestTime: December - February
 budget: ₱15,000 - ₱25,000
 image: /boracay-holiday.png
 highlights: White Beach; Holiday Parties; Water Sports; Sunset Sailing
+prompt: Generate a festive Boracay holiday itinerary blending beach relaxation, sunset sailing, local cuisine, and budget tracking.
 description:
 World-famous white sand beaches with festive holiday atmosphere, perfect for Christmas and New Year celebrations.
 
@@ -26,6 +27,7 @@ bestTime: December - January
 budget: ₱8,000 - ₱15,000
 image: /baguio-christmas.png
 highlights: Christmas Village; Strawberry Fields; Cool Weather; Night Market
+prompt: Create a cozy Christmas season Baguio plan featuring lights, markets, local treats, and cool-weather layering tips.
 description:
 Cool mountain air and Christmas decorations make this the perfect holiday destination for a cozy getaway.
 
@@ -36,11 +38,13 @@ bestTime: January (Sinulog Festival)
 budget: ₱12,000 - ₱20,000
 image: /cebu-sinulog.png
 highlights: Sinulog Festival; Historical Sites; Lechon; Island Hopping
+prompt: Build a Sinulog-focused Cebu itinerary with cultural immersion, pacing, crowd navigation, and lechon tasting stops.
 description:
 Experience the grand Sinulog Festival and explore historical sites during the festive holiday season.
 
 ## Featured Itinerary
 title: 5-Day Holiday Magic in Boracay
+prompt: Craft a 5-day Boracay holiday itinerary emphasizing festive evenings, balanced daytime activities, and cost-saving tips despite peak pricing.
 duration: 5 Days
 budget: ₱18,000 - ₱28,000
 difficulty: Easy

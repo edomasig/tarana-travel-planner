@@ -54,6 +54,7 @@ function parseDestinations(lines: string[], idxRef: { i: number }) {
       const key = kv[1]
       const value = kv[2].trim()
       if (key === 'highlights') current.highlights = splitAndTrim(value)
+      else if (key === 'prompt') current.prompt = value
       else if (key === 'description') {
         // Multiline description: collect following indented/non key: lines until blank or heading
         const descLines: string[] = []
@@ -144,6 +145,7 @@ function parseItinerary(lines: string[], idxRef: { i: number }) : SeasonalData['
     budget: baseMeta.budget || '',
     difficulty: baseMeta.difficulty || '',
     season: baseMeta.season || '',
+    prompt: baseMeta.prompt,
     days
   }
 }

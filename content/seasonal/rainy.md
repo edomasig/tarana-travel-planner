@@ -16,6 +16,7 @@ bestTime: June - August
 budget: ₱8,000 - ₱15,000
 image: /baguio.jpg
 highlights: Burnham Park; Session Road; BenCab Museum; Strawberry Taho
+prompt: Create a cozy 3-5 day rainy season Baguio plan focusing on coffee culture, light walks, and budget-friendly comfort food with cost ranges.
 description:
 Cool mountain air, coffee culture, and pine scenery ideal for rainy escapes.
 
@@ -26,6 +27,7 @@ bestTime: July - September
 budget: ₱10,000 - ₱18,000
 image: /sagada.jpg
 highlights: Hanging Coffins; Echo Valley; Cave Exploration; Coffee Farms
+prompt: Generate an adventurous yet safe rainy season Sagada itinerary emphasizing caves, culture, sunrise views, and weather contingencies.
 description:
 Mystical highlands with foggy mornings, rich tradition, and scenic rice terraces.
 
@@ -36,11 +38,13 @@ bestTime: June - September
 budget: ₱9,000 - ₱16,000
 image: /iloilo.jpg
 highlights: Old Churches; La Paz Batchoy; River Esplanade; Heritage Houses
+prompt: Produce a cultural food-focused Iloilo rainy season itinerary highlighting heritage churches, La Paz Batchoy spots, and indoor alternatives.
 description:
 Laid-back heritage city with culinary delights and cultural sites.
 
 ## Featured Itinerary
 title: 5-Day Baguio & Sagada Highland Retreat
+prompt: Craft a balanced 5-day rainy season Baguio + Sagada itinerary with culture, coffee, light trekking, indoor backups for heavy rain, and itemized budget ranges.
 duration: 5 Days
 budget: ₱14,000 - ₱22,000
 difficulty: Moderate

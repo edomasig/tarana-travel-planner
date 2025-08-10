@@ -13,7 +13,8 @@ title: ...
 ### Destination Name
 location: ...
 rating: ...
-...
+highlights: A; B; C
+prompt: Generate a 4-day family-focused itinerary highlighting A, B and C with budget tips.
 
 description:
 Multiline text until blank/key/heading.
@@ -22,6 +23,7 @@ Multiline text until blank/key/heading.
 
 ## Featured Itinerary
 title: ...
+prompt: Create a 5-day culturally rich rainy season retreat across Baguio and Sagada including budget estimates.
 ... itinerary meta
 
 ### Day 1 | Location | /image.png

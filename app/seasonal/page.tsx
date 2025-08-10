@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Calendar, MapPin, Thermometer, Umbrella, Sun, Snowflake, Heart, Star, Clock, DollarSign, Camera, Utensils, Bed } from 'lucide-react'
 import { SeasonSwitcher } from './SeasonSwitcher'
+import Link from 'next/link'
 
 export default async function SeasonalPage({ searchParams }: { searchParams?: { season?: string } }) {
   const target = searchParams?.season || getCurrentSeason()
@@ -185,8 +186,15 @@ export default async function SeasonalPage({ searchParams }: { searchParams?: { 
                       ))}
                     </div>
                   </div>
-                  <Button className="w-full mt-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
-                    View Itinerary
+                  <Button asChild className="w-full mt-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+                    {(() => {
+                      const destPrompt = destination.prompt
+                      const itineraryPrompt = seasonalData.featuredItinerary.prompt
+                      const fallback = `Generate a detailed ${seasonalData.season.name} itinerary for ${destination.name} including highlights: ${destination.highlights.join(', ')}. Provide budget guidance, local food suggestions, and practical travel tips.`
+                      const effective = destPrompt || itineraryPrompt || fallback
+                      const href = `/chat?prompt=${encodeURIComponent(effective)}`
+                      return <Link href={href} aria-label={`Open AI itinerary for ${destination.name}`}>View Itinerary</Link>
+                    })()}
                   </Button>
                 </CardContent>
               </Card>

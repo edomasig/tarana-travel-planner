@@ -16,6 +16,7 @@ bestTime: December - February
 budget: ₱10,000 - ₱18,000
 image: /cebu-dry.png
 highlights: Kawasan Canyoneering; Whale Sharks (Oslob); Temple of Leah; Lechon
+prompt: Build a dry season Cebu itinerary mixing waterfalls, ethical whale shark options, heritage, and iconic food stops with budget ranges.
 description:
 Vibrant city gateway to waterfalls, beaches, and historic landmarks.
 
@@ -26,6 +27,7 @@ bestTime: November - February
 budget: ₱15,000 - ₱28,000
 image: /boracay-dry.png
 highlights: White Beach; Paraw Sailing; Puka Shell; Sunset Nightlife
+prompt: Generate a crowd-aware Boracay peak season plan balancing relaxation, low-impact water sports, sunsets, and nightlife pacing.
 description:
 World-famous white sand and aquamarine waters ideal for peak-season fun.
 
@@ -36,11 +38,13 @@ bestTime: December - February
 budget: ₱8,000 - ₱14,000
 image: /vigan-dry.png
 highlights: Calle Crisologo; Heritage Houses; Pottery; Vigan Empanada
+prompt: Create a heritage immersion Vigan itinerary with colonial streets, food tastings, pottery demo, and sustainable travel tips.
 description:
 UNESCO heritage charm with preserved colonial streets and cuisine.
 
 ## Featured Itinerary
 title: 6-Day Cebu & Boracay Festival Escape
+prompt: Craft a 6-day dry season Cebu + Boracay festival-oriented itinerary with efficient transfers, festival etiquette, and night/day energy balance.
 duration: 6 Days
 budget: ₱20,000 - ₱35,000
 difficulty: Easy

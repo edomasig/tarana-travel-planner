@@ -20,6 +20,7 @@ export interface SeasonalData {
     bestTime: string
     budget: string
     highlights: string[]
+    prompt?: string
   }>
   featuredItinerary: {
     title: string
@@ -27,6 +28,7 @@ export interface SeasonalData {
     budget: string
     difficulty: string
     season: string
+    prompt?: string
     days: Array<{
       day: number
       location: string
