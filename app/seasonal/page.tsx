@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Calendar, MapPin, Thermometer, Umbrella, Sun, Snowflake, Heart, Star, Clock, DollarSign, Camera, Utensils, Bed } from 'lucide-react'
 import { getSeasonalRecommendations, getCurrentSeason, type SeasonalData } from '@/lib/seasonal-service'
+import { AdBanner } from '@/components/ads/ad-banner'
 
 export default function SeasonalPage() {
   const [seasonalData, setSeasonalData] = useState<SeasonalData | null>(null)
@@ -108,6 +109,11 @@ export default function SeasonalPage() {
         </div>
       </div>
 
+      {/* Top Ad */}
+      <div className="container mx-auto px-4 mt-4">
+        <AdBanner position="top" />
+      </div>
+
       <div className="container mx-auto px-4 py-8 space-y-12">
         {/* Weather & Travel Tips */}
         <Card className="bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200">
@@ -115,7 +121,7 @@ export default function SeasonalPage() {
             {/* Added illustrative seasonal image */}
             <div className="mb-6">
               <img
-                src={seasonalData.season.image || '/philippine-landscape.png'}
+                src={'/philippine-landscape.png'}
                 alt={`${seasonalData.season.name} season in the Philippines`}
                 className="w-full h-40 md:h-56 object-cover rounded-xl shadow-sm"
                 loading="lazy"
@@ -201,6 +207,11 @@ export default function SeasonalPage() {
             ))}
           </div>
         </section>
+
+        {/* Mid-page Ad (after destinations) */}
+        <div className="flex justify-center">
+          <AdBanner position="between-messages" />
+        </div>
 
         {/* Featured Itinerary */}
         <section>
@@ -316,7 +327,7 @@ export default function SeasonalPage() {
               {/* Added contextual image for tips */}
               <div className="md:col-span-1 order-last md:order-first">
                 <img
-                  src={(seasonalData.tips.image) || '/tour-ad.png'}
+                  src={'/tour-ad.png'}
                   alt={`Travel tips for ${seasonalData.season.name} season`}
                   className="w-full h-40 md:h-full object-cover rounded-lg shadow-sm"
                   loading="lazy"
@@ -351,6 +362,11 @@ export default function SeasonalPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Bottom Ad */}
+        <div className="flex justify-center">
+          <AdBanner position="bottom" />
+        </div>
 
         {/* CTA Section */}
         <Card className="bg-gradient-to-r from-purple-600 to-blue-600 text-white">

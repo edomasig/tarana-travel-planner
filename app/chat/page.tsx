@@ -276,6 +276,8 @@ export default function ChatPage() {
           </div>
         )}
 
+        {/* Suggested questions temporarily disabled */}
+        {/**
         {messages.length === 1 && (
           <div className="px-4 pb-44 md:pb-56 pb-[env(safe-area-inset-bottom)] flex-shrink-0">
             <div className="max-w-4xl mx-auto">
@@ -291,6 +293,8 @@ export default function ChatPage() {
             </div>
           </div>
         )}
+        */}
+        {/* End suggested questions */}
 
         <div className="fixed inset-x-0 bottom-0 z-40 pointer-events-none">
           <div className="pointer-events-none absolute inset-x-0 bottom-full h-10 bg-gradient-to-t from-gray-50 to-transparent" />
