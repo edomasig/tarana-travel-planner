@@ -33,12 +33,12 @@ export function FeaturesSection() {
       description: 'Stay informed with current weather, events, and travel advisories for your destinations.',
       color: 'text-red-600 bg-red-100'
     },
-    {
-      icon: Users,
-      title: 'Community Insights',
-      description: 'Benefit from reviews and tips shared by fellow travelers who have explored the Philippines.',
-      color: 'text-indigo-600 bg-indigo-100'
-    }
+    // {
+    //   icon: Users,
+    //   title: 'Community Insights',
+    //   description: 'Benefit from reviews and tips shared by fellow travelers who have explored the Philippines.',
+    //   color: 'text-indigo-600 bg-indigo-100'
+    // }
   ]
 
   return (
