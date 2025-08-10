@@ -168,10 +168,9 @@ export default function ChatPage() {
             <h3 className="font-semibold text-gray-900 mb-3">Travel Deals</h3>
             <div className="space-y-3">
               <NativeAd type="hotel" />
-              <NativeAd type="tour" />
-              <NativeAd type="restaurant" />
-              {/* Klook affiliate widget */}
+              {/* Klook affiliate widget replaces one mock ad */}
               <KlookWidget />
+              <NativeAd type="restaurant" />
             </div>
           </div>
           <AdBanner position="sidebar" />
