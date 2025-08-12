@@ -10,8 +10,9 @@ import Link from 'next/link'
 import { getSeasonalRecommendations, getCurrentSeason, type SeasonalData } from '@/lib/seasonal-service'
 import { AdBanner } from '@/components/ads/ad-banner'
 
-export default async function SeasonalPage({ searchParams }: { searchParams?: { season?: string } }) {
-  const target = searchParams?.season || getCurrentSeason()
+export default async function SeasonalPage({ searchParams }: { searchParams?: Promise<{ season?: string }> }) {
+  const params = await searchParams
+  const target = params?.season || getCurrentSeason()
   const seasonalData = await loadSeason(target)
   const currentSeason = target
   const isLoading = false
