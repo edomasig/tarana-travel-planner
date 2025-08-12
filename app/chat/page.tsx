@@ -27,6 +27,103 @@ const tightenMarkdown = (md: string) => md
   .trim()
 
 export default function ChatPage() {
+  try {
+    return <ChatPageComponent />
+  } catch (error) {
+    console.error('ChatPage error:', error)
+    return <ChatPageError error={error} />
+  }
+}
+
+function ChatPageError({ error }: { error: any }) {
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="max-w-md w-full text-center">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          Something went wrong
+        </h2>
+        <p className="text-gray-600 mb-6">
+          Please try refreshing the page or go back to the home page.
+        </p>
+        <div className="space-y-3">
+          <button
+            onClick={() => window.location.reload()}
+            className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Refresh Page
+          </button>
+          <button
+            onClick={() => window.location.href = '/'}
+            className="w-full bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+          >
+            Go to Home Page
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ChatPageComponent() {
+  // Check for essential browser APIs on iPad
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const missingAPIs = []
+      
+      // Check for essential APIs
+      if (!window.fetch) missingAPIs.push('fetch')
+      if (!window.Promise) missingAPIs.push('Promise')
+      if (!window.console) missingAPIs.push('console')
+      if (!document.querySelector) missingAPIs.push('querySelector')
+      if (!document.addEventListener) missingAPIs.push('addEventListener')
+      
+      if (missingAPIs.length > 0) {
+        console.warn('Missing browser APIs:', missingAPIs)
+      }
+      
+      // Log browser information for debugging
+      const browserInfo = {
+        userAgent: navigator.userAgent,
+        vendor: navigator.vendor,
+        cookieEnabled: navigator.cookieEnabled,
+        onLine: navigator.onLine,
+        language: navigator.language,
+        platform: navigator.platform,
+        maxTouchPoints: navigator.maxTouchPoints,
+        hardwareConcurrency: navigator.hardwareConcurrency
+      }
+      
+      console.log('Browser info:', browserInfo)
+      setDebugInfo((prev: any) => ({ ...prev, browser: browserInfo }))
+    }
+  }, [])
+
+  // Add global error handler for unhandled errors
+  useEffect(() => {
+    const handleGlobalError = (event: ErrorEvent) => {
+      console.error('Global error caught:', event.error)
+      console.error('Error details:', {
+        message: event.message,
+        filename: event.filename,
+        lineno: event.lineno,
+        colno: event.colno,
+        error: event.error
+      })
+    }
+    
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      console.error('Unhandled promise rejection:', event.reason)
+    }
+    
+    window.addEventListener('error', handleGlobalError)
+    window.addEventListener('unhandledrejection', handleUnhandledRejection)
+    
+    return () => {
+      window.removeEventListener('error', handleGlobalError)
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection)
+    }
+  }, [])
+
   const [messages, setMessages] = useState<Message[]>(
     [
       {
@@ -43,28 +140,63 @@ export default function ChatPage() {
   const [messageCount, setMessageCount] = useState(0)
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [showDebug, setShowDebug] = useState(false)
+  const [debugInfo, setDebugInfo] = useState<any>({})
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const autoSavedRef = useRef(false)
   const autoPromptRef = useRef(false)
 
-  useEffect(() => { setMounted(true) }, [])
-
-  // iOS Safari viewport fix
-  useEffect(() => {
-    if (typeof window !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent)) {
-      const setVh = () => {
-        const vh = window.innerHeight * 0.01
-        document.documentElement.style.setProperty('--vh', `${vh}px`)
-      }
+  useEffect(() => { 
+    try {
+      setMounted(true) 
       
-      setVh()
-      window.addEventListener('resize', setVh)
-      window.addEventListener('orientationchange', setVh)
-      
-      return () => {
-        window.removeEventListener('resize', setVh)
-        window.removeEventListener('orientationchange', setVh)
+      // Enhanced iOS detection and debugging
+      if (typeof window !== 'undefined') {
+        // Log device information for debugging
+        const deviceInfo = {
+          userAgent: navigator.userAgent,
+          platform: navigator.platform,
+          maxTouchPoints: navigator.maxTouchPoints,
+          screenWidth: window.screen.width,
+          screenHeight: window.screen.height,
+          innerWidth: window.innerWidth,
+          innerHeight: window.innerHeight
+        }
+        console.log('Device info:', deviceInfo)
+        
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+        
+        if (isIOS) {
+          console.log('iOS device detected, applying fixes')
+          
+          const setVh = () => {
+            try {
+              const vh = window.innerHeight * 0.01
+              document.documentElement.style.setProperty('--vh', `${vh}px`)
+              console.log('Viewport height set:', vh)
+            } catch (e) {
+              console.warn('VH calculation failed:', e)
+            }
+          }
+          
+          setVh()
+          
+          // Use passive listeners for better performance
+          window.addEventListener('resize', setVh, { passive: true })
+          window.addEventListener('orientationchange', () => {
+            setTimeout(setVh, 100) // Delay for orientation change
+          }, { passive: true })
+          
+          return () => {
+            window.removeEventListener('resize', setVh)
+            window.removeEventListener('orientationchange', setVh)
+          }
+        }
       }
+    } catch (error) {
+      console.error('iOS setup failed:', error)
+      // Continue without iOS-specific fixes
     }
   }, [])
 
@@ -103,9 +235,37 @@ export default function ChatPage() {
   const isItinerary = (content: string) => content.includes('Day 1') || content.includes('Day 2') || content.includes('Budget') || content.includes('₱')
 
   const saveItinerary = (content: string) => {
-    const text = content.replace(/\*\*/g, '').replace(/🏝️|🏔️|🏙️|🏄|💰/g, '')
-    navigator.clipboard.writeText(`GalaGPT.ph Travel Itinerary\n\n${text}\n\nGenerated by GalaGPT.ph - Your AI Travel Assistant for the Philippines`)
-    alert('Itinerary copied to clipboard!')
+    try {
+      const text = content.replace(/\*\*/g, '').replace(/🏝️|🏔️|🏙️|🏄|💰/g, '')
+      const itineraryText = `GalaGPT.ph Travel Itinerary\n\n${text}\n\nGenerated by GalaGPT.ph - Your AI Travel Assistant for the Philippines`
+      
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(itineraryText).then(() => {
+          alert('Itinerary copied to clipboard!')
+        }).catch(() => {
+          // Fallback for older browsers
+          const textArea = document.createElement('textarea')
+          textArea.value = itineraryText
+          document.body.appendChild(textArea)
+          textArea.select()
+          document.execCommand('copy')
+          document.body.removeChild(textArea)
+          alert('Itinerary copied to clipboard!')
+        })
+      } else {
+        // Fallback for browsers without clipboard API
+        const textArea = document.createElement('textarea')
+        textArea.value = itineraryText
+        document.body.appendChild(textArea)
+        textArea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textArea)
+        alert('Itinerary copied to clipboard!')
+      }
+    } catch (error) {
+      console.error('Copy failed:', error)
+      alert('Unable to copy to clipboard. Please copy the text manually.')
+    }
   }
 
   const saveConversation = (silent = false) => {
@@ -180,7 +340,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50 ios-fix chat-container">
+    <div className="flex min-h-screen md:h-screen bg-gray-50">
       <div className="hidden lg:block w-80 bg-white">
         <div className="sticky top-0 p-4 space-y-4">
           <div>
@@ -196,7 +356,7 @@ export default function ChatPage() {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col min-w-0 chat-container">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <div className="bg-white border-b border-gray-200 px-3 md:px-4 py-2 md:py-3 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-2 md:gap-3 min-w-0">
             <div className="w-6 h-6 md:w-8 md:h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
@@ -208,6 +368,13 @@ export default function ChatPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowDebug(!showDebug)}
+              className="text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded transition-colors"
+              title="Toggle debug info"
+            >
+              Debug
+            </button>
             {messages.length > 1 && (
               <Button size="sm" variant="outline" onClick={() => saveConversation()} className="text-xs flex">
                 <Download className="h-3 w-3 mr-1" />
@@ -224,9 +391,25 @@ export default function ChatPage() {
         <div className="block md:hidden flex-shrink-0"><AdBanner position="top" className="px-2 pt-2" /></div>
         <div className="hidden md:block flex-shrink-0"><AdBanner position="top" className="mx-4" /></div>
 
-        <div className="flex-1 overflow-y-auto p-2 md:p-4 space-y-3 md:space-y-4 min-h-0 chat-messages safe-area-bottom" style={{ 
-          paddingBottom: 'calc(180px + env(safe-area-inset-bottom, 20px))'
-        }}>
+        {/* Debug Overlay */}
+        {showDebug && (
+          <div className="bg-yellow-50 border-b border-yellow-200 p-2">
+            <div className="text-xs font-mono">
+              <div className="font-bold mb-1">Debug Info (iPad Testing)</div>
+              <div>User Agent: {debugInfo.browser?.userAgent || 'Loading...'}</div>
+              <div>Platform: {debugInfo.browser?.platform || 'Loading...'}</div>
+              <div>Touch Points: {debugInfo.browser?.maxTouchPoints || 'N/A'}</div>
+              <div>Vendor: {debugInfo.browser?.vendor || 'Loading...'}</div>
+              <div>Online: {debugInfo.browser?.onLine ? 'Yes' : 'No'}</div>
+              <div>Cookies: {debugInfo.browser?.cookieEnabled ? 'Enabled' : 'Disabled'}</div>
+              <div>Language: {debugInfo.browser?.language || 'N/A'}</div>
+              <div>Mounted: {mounted ? 'Yes' : 'No'}</div>
+              <div>Message Count: {messageCount}</div>
+            </div>
+          </div>
+        )}
+
+        <div className="flex-1 overflow-y-auto p-2 md:p-4 space-y-3 md:space-y-4 min-h-0 pb-40 md:pb-48 pb-[env(safe-area-inset-bottom)]">
           {messages.map((message, index) => (
             <div key={message.id}>
               <div className={`flex gap-3 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -250,7 +433,22 @@ export default function ChatPage() {
                         <Button size="sm" variant="outline" onClick={() => saveItinerary(message.content)} className="text-[10px] h-6 px-2">
                           <Download className="h-3 w-3 mr-1" />Save
                         </Button>
-                        <Button size="sm" variant="outline" onClick={() => { if (navigator.share) { navigator.share({ title: 'My Philippines Travel Itinerary', text: message.content.replace(/\*\*/g, ''), url: window.location.href }) } else { saveItinerary(message.content) } }} className="text-[10px] h-6 px-2">
+                        <Button size="sm" variant="outline" onClick={async () => { 
+                          try {
+                            if (navigator.share && typeof navigator.share === 'function') { 
+                              await navigator.share({ 
+                                title: 'My Philippines Travel Itinerary', 
+                                text: message.content.replace(/\*\*/g, ''), 
+                                url: window.location.href 
+                              })
+                            } else { 
+                              saveItinerary(message.content) 
+                            } 
+                          } catch (error) {
+                            console.log('Share failed, falling back to copy:', error)
+                            saveItinerary(message.content)
+                          }
+                        }} className="text-[10px] h-6 px-2">
                           <Share className="h-3 w-3 mr-1" />Share
                         </Button>
                       </div>
@@ -319,30 +517,13 @@ export default function ChatPage() {
         */}
         {/* End suggested questions */}
 
-        <div className="fixed inset-x-0 bottom-0 z-40 pointer-events-none safe-area-bottom">
+        <div className="fixed inset-x-0 bottom-0 z-40 pointer-events-none">
           <div className="pointer-events-none absolute inset-x-0 bottom-full h-10 bg-gradient-to-t from-gray-50 to-transparent" />
-          <div className="mx-auto max-w-3xl w-full px-3 pb-3 md:pb-6 pointer-events-auto">
-            <div className="rounded-2xl border border-gray-200 bg-gray-50 shadow-md p-2 md:p-3">
+          <div className="mx-auto max-w-3xl w-full px-3 pb-3 md:pb-6">
+            <div className="rounded-2xl border border-gray-200 bg-gray-50 shadow-md p-2 md:p-3 pointer-events-auto">
               <div className="flex gap-2 md:gap-3 items-center">
-                <Input 
-                  value={input} 
-                  onChange={(e) => setInput(e.target.value)} 
-                  onKeyPress={(e) => { 
-                    if (e.key === 'Enter' && !e.shiftKey) { 
-                      e.preventDefault(); 
-                      handleSendMessage() 
-                    } 
-                  }} 
-                  placeholder={messageCount >= 10 ? 'Upgrade to Premium for unlimited messages...' : 'Ask me anything about traveling in the Philippines...'} 
-                  className="flex-1 text-sm md:text-base" 
-                  disabled={isLoading || messageCount >= 10}
-                  style={{ fontSize: '16px' }} // Prevents zoom on iOS
-                />
-                <Button 
-                  onClick={() => handleSendMessage()} 
-                  disabled={!input.trim() || isLoading || messageCount >= 10} 
-                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 flex-shrink-0 px-3 md:px-4"
-                >
+                <Input value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage() } }} placeholder={messageCount >= 10 ? 'Upgrade to Premium for unlimited messages...' : 'Ask me anything about traveling in the Philippines...'} className="flex-1 text-sm md:text-base" disabled={isLoading || messageCount >= 10} />
+                <Button onClick={() => handleSendMessage()} disabled={!input.trim() || isLoading || messageCount >= 10} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 flex-shrink-0 px-3 md:px-4">
                   <Send className="h-3 w-3 md:h-4 md:w-4" />
                 </Button>
               </div>

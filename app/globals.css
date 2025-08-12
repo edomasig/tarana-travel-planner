@@ -192,20 +192,10 @@
   .prose-tight :where(pre){margin:0.75rem 0 !important;}
 }
 
-/* iOS Safari specific fixes */
+/* iOS Safari and iPad specific fixes */
 @supports (-webkit-touch-callout: none) {
   :root {
     --vh: 1vh;
-  }
-  
-  .ios-fix {
-    /* Fix for iOS Safari viewport units */
-    min-height: -webkit-fill-available;
-    min-height: calc(var(--vh, 1vh) * 100);
-  }
-  
-  .chat-container {
-    height: calc(var(--vh, 1vh) * 100);
   }
   
   /* Prevent zoom on input focus in iOS */
@@ -213,19 +203,15 @@
     font-size: 16px !important;
   }
   
-  /* Fix for iOS Safari address bar */
-  body {
-    height: -webkit-fill-available;
-  }
-  
   /* Smooth scrolling for iOS */
   .overflow-y-auto {
     -webkit-overflow-scrolling: touch;
   }
   
-  /* Fix for safe area on iOS */
-  .safe-area-bottom {
-    padding-bottom: env(safe-area-inset-bottom, 20px);
+  /* Better height handling for iOS */
+  .ios-safe-height {
+    min-height: -webkit-fill-available;
+    min-height: calc(var(--vh, 1vh) * 100);
   }
 }
 
@@ -239,6 +225,7 @@
   .chat-container {
     height: 100vh;
     height: 100dvh;
+    overflow: hidden;
   }
   
   /* Ensure proper scrolling */
