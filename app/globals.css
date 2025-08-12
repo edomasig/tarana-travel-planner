@@ -191,3 +191,59 @@
   .prose-tight :where(blockquote){margin:0.75rem 0 !important;}
   .prose-tight :where(pre){margin:0.75rem 0 !important;}
 }
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  :root {
+    --vh: 1vh;
+  }
+  
+  .ios-fix {
+    /* Fix for iOS Safari viewport units */
+    min-height: -webkit-fill-available;
+    min-height: calc(var(--vh, 1vh) * 100);
+  }
+  
+  .chat-container {
+    height: calc(var(--vh, 1vh) * 100);
+  }
+  
+  /* Prevent zoom on input focus in iOS */
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+  
+  /* Fix for iOS Safari address bar */
+  body {
+    height: -webkit-fill-available;
+  }
+  
+  /* Smooth scrolling for iOS */
+  .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Fix for safe area on iOS */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+}
+
+/* iPad specific media query */
+@media only screen 
+  and (min-device-width: 768px) 
+  and (max-device-width: 1024px) 
+  and (-webkit-min-device-pixel-ratio: 1) {
+  
+  /* Chat page specific fixes for iPad */
+  .chat-container {
+    height: 100vh;
+    height: 100dvh;
+  }
+  
+  /* Ensure proper scrolling */
+  .chat-messages {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

@@ -49,6 +49,25 @@ export default function ChatPage() {
 
   useEffect(() => { setMounted(true) }, [])
 
+  // iOS Safari viewport fix
+  useEffect(() => {
+    if (typeof window !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent)) {
+      const setVh = () => {
+        const vh = window.innerHeight * 0.01
+        document.documentElement.style.setProperty('--vh', `${vh}px`)
+      }
+      
+      setVh()
+      window.addEventListener('resize', setVh)
+      window.addEventListener('orientationchange', setVh)
+      
+      return () => {
+        window.removeEventListener('resize', setVh)
+        window.removeEventListener('orientationchange', setVh)
+      }
+    }
+  }, [])
+
   const formatTime = (timestamp: Date) => {
     if (!mounted) return ''
     return timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -161,7 +180,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex min-h-screen md:h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gray-50 ios-fix chat-container">
       <div className="hidden lg:block w-80 bg-white">
         <div className="sticky top-0 p-4 space-y-4">
           <div>
@@ -177,7 +196,7 @@ export default function ChatPage() {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 chat-container">
         <div className="bg-white border-b border-gray-200 px-3 md:px-4 py-2 md:py-3 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-2 md:gap-3 min-w-0">
             <div className="w-6 h-6 md:w-8 md:h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
@@ -205,7 +224,9 @@ export default function ChatPage() {
         <div className="block md:hidden flex-shrink-0"><AdBanner position="top" className="px-2 pt-2" /></div>
         <div className="hidden md:block flex-shrink-0"><AdBanner position="top" className="mx-4" /></div>
 
-        <div className="flex-1 overflow-y-auto p-2 md:p-4 space-y-3 md:space-y-4 min-h-0 pb-40 md:pb-48 pb-[env(safe-area-inset-bottom)]">
+        <div className="flex-1 overflow-y-auto p-2 md:p-4 space-y-3 md:space-y-4 min-h-0 chat-messages safe-area-bottom" style={{ 
+          paddingBottom: 'calc(180px + env(safe-area-inset-bottom, 20px))'
+        }}>
           {messages.map((message, index) => (
             <div key={message.id}>
               <div className={`flex gap-3 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -298,13 +319,30 @@ export default function ChatPage() {
         */}
         {/* End suggested questions */}
 
-        <div className="fixed inset-x-0 bottom-0 z-40 pointer-events-none">
+        <div className="fixed inset-x-0 bottom-0 z-40 pointer-events-none safe-area-bottom">
           <div className="pointer-events-none absolute inset-x-0 bottom-full h-10 bg-gradient-to-t from-gray-50 to-transparent" />
-          <div className="mx-auto max-w-3xl w-full px-3 pb-3 md:pb-6">
-            <div className="rounded-2xl border border-gray-200 bg-gray-50 shadow-md p-2 md:p-3 pointer-events-auto">
+          <div className="mx-auto max-w-3xl w-full px-3 pb-3 md:pb-6 pointer-events-auto">
+            <div className="rounded-2xl border border-gray-200 bg-gray-50 shadow-md p-2 md:p-3">
               <div className="flex gap-2 md:gap-3 items-center">
-                <Input value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage() } }} placeholder={messageCount >= 10 ? 'Upgrade to Premium for unlimited messages...' : 'Ask me anything about traveling in the Philippines...'} className="flex-1 text-sm md:text-base" disabled={isLoading || messageCount >= 10} />
-                <Button onClick={() => handleSendMessage()} disabled={!input.trim() || isLoading || messageCount >= 10} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 flex-shrink-0 px-3 md:px-4">
+                <Input 
+                  value={input} 
+                  onChange={(e) => setInput(e.target.value)} 
+                  onKeyPress={(e) => { 
+                    if (e.key === 'Enter' && !e.shiftKey) { 
+                      e.preventDefault(); 
+                      handleSendMessage() 
+                    } 
+                  }} 
+                  placeholder={messageCount >= 10 ? 'Upgrade to Premium for unlimited messages...' : 'Ask me anything about traveling in the Philippines...'} 
+                  className="flex-1 text-sm md:text-base" 
+                  disabled={isLoading || messageCount >= 10}
+                  style={{ fontSize: '16px' }} // Prevents zoom on iOS
+                />
+                <Button 
+                  onClick={() => handleSendMessage()} 
+                  disabled={!input.trim() || isLoading || messageCount >= 10} 
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 flex-shrink-0 px-3 md:px-4"
+                >
                   <Send className="h-3 w-3 md:h-4 md:w-4" />
                 </Button>
               </div>
