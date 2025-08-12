@@ -22,10 +22,10 @@ export function Footer() {
       { name: 'Community', href: '#community' }
     ],
     company: [
-      { name: 'About Us', href: '#about' },
-      { name: 'Blog', href: '#blog' },
-      { name: 'Careers', href: '#careers' },
-      { name: 'Press', href: '#press' }
+      { name: 'About Us', href: '/about' },
+      { name: 'Contact', href: 'mailto:admin@galagpt.ph' },
+      { name: 'Privacy Policy', href: '/privacy' },
+      { name: 'Terms of Service', href: '/terms' }
     ]
   }
 
@@ -125,14 +125,14 @@ export function Footer() {
               © 2024 GalaGPT.ph. All rights reserved.
             </div>
             <div className="flex gap-6 text-sm">
-              <Link href="#privacy" className="text-gray-400 hover:text-white transition-colors">
+              <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">
                 Privacy Policy
               </Link>
-              <Link href="#terms" className="text-gray-400 hover:text-white transition-colors">
+              <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">
                 Terms of Service
               </Link>
-              <Link href="#cookies" className="text-gray-400 hover:text-white transition-colors">
-                Cookie Policy
+              <Link href="/contact" className="text-gray-400 hover:text-white transition-colors">
+                Contact Us
               </Link>
             </div>
           </div>
