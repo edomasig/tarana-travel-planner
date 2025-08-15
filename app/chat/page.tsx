@@ -368,13 +368,7 @@ function ChatPageComponent() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowDebug(!showDebug)}
-              className="text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded transition-colors"
-              title="Toggle debug info"
-            >
-              Debug
-            </button>
+           
             {messages.length > 1 && (
               <Button size="sm" variant="outline" onClick={() => saveConversation()} className="text-xs flex">
                 <Download className="h-3 w-3 mr-1" />
