@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeft, Mail, MessageSquare, Globe, Users } from 'lucide-react'
 import Link from 'next/link'
+import { Footer } from '@/components/footer'
 
 export default function ContactPage() {
   return (
@@ -201,6 +202,7 @@ export default function ContactPage() {
           </Card>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

@@ -9,6 +9,7 @@ import { SeasonSwitcher } from './SeasonSwitcher'
 import Link from 'next/link'
 import { getSeasonalRecommendations, getCurrentSeason, type SeasonalData } from '@/lib/seasonal-service'
 import { AdBanner } from '@/components/ads/ad-banner'
+import { Footer } from '@/components/footer'
 
 export default async function SeasonalPage({ searchParams }: { searchParams: Promise<{ season?: string }> }) {
   const params = await searchParams
@@ -390,6 +391,7 @@ export default async function SeasonalPage({ searchParams }: { searchParams: Pro
           </CardContent>
         </Card>
       </div>
+      <Footer />
     </div>
   )
 }

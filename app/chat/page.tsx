@@ -10,6 +10,7 @@ import { AdBanner } from '@/components/ads/ad-banner'
 import { NativeAd } from '@/components/ads/native-ad'
 import { KlookWidget } from '@/components/affiliate/klook-widget'
 import { FallbackAgodaBanner } from '@/components/affiliate/fallback-agoda-banner'
+import { AgodaBadge } from '@/components/affiliate/agoda-badge'
 import { AgodaResponsiveSearchBox } from '@/components/affiliate/agoda-search-box'
 import { FloatingTagaytaySearch } from '@/components/affiliate/floating-agoda-search'
 import { saveConversationsToCookies, loadConversationsFromCookies, getConversationById } from '@/lib/cookie-utils'
@@ -371,6 +372,11 @@ function ChatPageComponent() {
             <div className="w-full max-w-full overflow-hidden">
               <NativeAd type="restaurant" />
             </div>
+          </div>
+          
+          {/* Partner Badge */}
+          <div className="text-center w-full max-w-full pt-2">
+            <AgodaBadge size="small" className="opacity-80" />
           </div>
         </div>
       </div>

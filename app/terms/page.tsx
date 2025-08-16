@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import { Footer } from '@/components/footer'
 
 export default function TermsOfServicePage() {
   return (
@@ -187,6 +188,7 @@ export default function TermsOfServicePage() {
           </CardContent>
         </Card>
       </div>
+      <Footer />
     </div>
   )
 }
