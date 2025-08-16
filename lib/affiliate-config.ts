@@ -10,9 +10,18 @@ export const AFFILIATE_CONFIG = {
       commission: '25-40%'
     },
     agoda: {
-      partnerId: 'YOUR_AGODA_PARTNER_ID', 
+      cid: '1947165',
+      apiKey: 'ed9ce8b0-3f76-40b3-a3e5-8da361fb865b',
       baseUrl: 'https://www.agoda.com/search',
-      commission: '25-35%'
+      commission: '25-35%',
+      currency: 'PHP',
+      language: 'en-us',
+      searchBox: {
+        crt: '10041263910060',
+        referenceKey: 'Xg0+iUgRKN9NAexFRjF9ig==',
+        defaultCity: '18218',
+        defaultDestination: 'Tagaytay, Philippines'
+      }
     }
   },
 
@@ -53,6 +62,12 @@ export function generateAffiliateLink(type: string, destination: string, params:
     return `${hotelConfig.baseUrl}?ss=${destination}&aid=${hotelConfig.partnerId}&utm_source=galagpt&utm_medium=ai_chat&utm_campaign=travel_planning`
   }
 
+  if (type === 'agoda') {
+    const agodaConfig = AFFILIATE_CONFIG.hotels.agoda
+    const cityParam = params?.cityCode || ''
+    return `https://www.agoda.com/search?cid=${agodaConfig.cid}&city=${cityParam}&utm_source=galagpt&utm_medium=ai_chat&utm_campaign=travel_planning`
+  }
+
   if (type === 'activities') {
     const activityConfig = AFFILIATE_CONFIG.activities.klook
     return `${activityConfig.baseUrl}/${destination}?partner_id=${activityConfig.partnerId}&utm_source=galagpt`
@@ -64,6 +79,25 @@ export function generateAffiliateLink(type: string, destination: string, params:
   }
 
   return null
+}
+
+// Generate Agoda search link for specific destinations
+export function generateAgodaLink(destination: string, checkIn?: string, checkOut?: string, guests?: number) {
+  const agodaConfig = AFFILIATE_CONFIG.hotels.agoda
+  const baseUrl = 'https://www.agoda.com/search'
+  
+  const params = new URLSearchParams({
+    cid: agodaConfig.cid,
+    destination: destination,
+    ...(checkIn && { checkIn }),
+    ...(checkOut && { checkOut }),
+    ...(guests && { adults: guests.toString() }),
+    utm_source: 'galagpt',
+    utm_medium: 'ai_chat',
+    utm_campaign: 'travel_planning'
+  })
+
+  return `${baseUrl}?${params.toString()}`
 }
 
 // Track affiliate clicks and conversions
