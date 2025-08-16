@@ -9,6 +9,9 @@ import { generateTravelResponse } from '@/lib/ai-service'
 import { AdBanner } from '@/components/ads/ad-banner'
 import { NativeAd } from '@/components/ads/native-ad'
 import { KlookWidget } from '@/components/affiliate/klook-widget'
+import { AgodaResponsiveBanner } from '@/components/affiliate/agoda-banner'
+import { AgodaResponsiveSearchBox } from '@/components/affiliate/agoda-search-box'
+import { FloatingTagaytaySearch } from '@/components/affiliate/floating-agoda-search'
 import { saveConversationsToCookies, loadConversationsFromCookies, getConversationById } from '@/lib/cookie-utils'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -340,19 +343,35 @@ function ChatPageComponent() {
   }
 
   return (
-    <div className="flex min-h-screen md:h-screen bg-gray-50">
-      <div className="hidden lg:block w-80 bg-white">
-        <div className="sticky top-0 p-4 space-y-4">
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-3">Travel Deals</h3>
-            <div className="space-y-3">
-              <NativeAd type="hotel" />
-              {/* Klook affiliate widget replaces one mock ad */}
+    <div className="flex min-h-screen md:h-screen bg-gray-50 overflow-hidden w-full max-w-full">
+      <div className="hidden xl:block w-80 bg-white border-r border-gray-200 flex-shrink-0 max-w-80">
+        <div className="sticky top-0 p-4 space-y-5 overflow-y-auto overflow-x-hidden max-h-screen scrollbar-thin w-full">
+          {/* Hotel Search Section */}
+          <div className="w-full max-w-full">
+            <h3 className="font-semibold text-gray-900 mb-3">🏨 Find Hotels</h3>
+            <div className="w-full max-w-full overflow-hidden">
+              <AgodaResponsiveSearchBox 
+                cityCode="18218" 
+                destinationName="Tagaytay, Philippines"
+              />
+            </div>
+          </div>
+          
+          {/* Travel Activities Section */}
+          <div className="w-full max-w-full">
+            <h3 className="font-semibold text-gray-900 mb-3">🎯 Activities</h3>
+            <div className="min-h-[200px] w-full max-w-full overflow-hidden">
               <KlookWidget />
+            </div>
+          </div>
+          
+          {/* Restaurant Recommendations */}
+          <div className="text-center w-full max-w-full">
+            <h3 className="font-semibold text-gray-900 mb-3 text-sm">🍽️ Dining</h3>
+            <div className="w-full max-w-full overflow-hidden">
               <NativeAd type="restaurant" />
             </div>
           </div>
-          <AdBanner position="sidebar" />
         </div>
       </div>
 
@@ -525,6 +544,11 @@ function ChatPageComponent() {
             </div>
           </div>
         </div>
+      </div>
+      
+      {/* Floating Agoda Search Box - Mobile Only (since desktop has sidebar) */}
+      <div className="xl:hidden">
+        <FloatingTagaytaySearch position="bottom-left" />
       </div>
     </div>
   )
