@@ -7,7 +7,7 @@ import { TestimonialsSection } from '@/components/testimonials-section'
 import { CTASection } from '@/components/cta-section'
 import { Footer } from '@/components/footer'
 import { AdBanner } from '@/components/ads/ad-banner'
-import { AgodaResponsiveBanner } from '@/components/affiliate/agoda-banner'
+import { FallbackAgodaBanner } from '@/components/affiliate/fallback-agoda-banner'
 import { FloatingTagaytaySearch } from '@/components/affiliate/floating-agoda-search'
 
 export default function MarketingHomePage() {
@@ -19,9 +19,9 @@ export default function MarketingHomePage() {
         <AdBanner position="top" className="mx-4" />
       </div>
       <FeaturesSection />
-      {/* Agoda hotel booking banner */}
+      {/* Agoda hotel booking banner - using fallback for better design */}
       <div className="my-8 flex justify-center">
-        <AgodaResponsiveBanner variant="manila" />
+        <FallbackAgodaBanner variant="manila" />
       </div>
       {/* <HowItWorksSection /> */}
       {/* <TestimonialsSection /> */}
