@@ -85,10 +85,12 @@ import { AgodaResponsiveBanner } from '@/components/affiliate/agoda-banner'
 ### 🔗 **Affiliate Link Generation**
 
 ```tsx
-import { generateAgodaLink } from '@/lib/affiliate-config'
+import { generateAgodaLink, generateKlookLink } from '@/lib/affiliate-config'
 
-// Basic search link
-const link = generateAgodaLink('Manila')
+// Agoda hotel links with city targeting
+const link = generateAgodaLink('palawan') // Auto-maps to city code 17196
+const link = generateAgodaLink('cebu')    // Auto-maps to city code 16185
+const link = generateAgodaLink('baguio')  // Auto-maps to city code 16411
 
 // With dates and guests
 const link = generateAgodaLink(
@@ -97,7 +99,18 @@ const link = generateAgodaLink(
   '2025-09-03',  // check-out  
   2              // guests
 )
+
+// Klook activities link (your affiliate ID: 96417)
+const activityLink = generateKlookLink()
 ```
+
+### 📊 **AI Chat Integration**
+
+**Chat responses now include:**
+- **Agoda hotel links** instead of Booking.com
+- **Your Klook affiliate ID** (96417) for activities
+- **Automatic city code mapping** for better targeting
+- **UTM tracking** for performance monitoring
 
 ### 📊 **Revenue Tracking**
 

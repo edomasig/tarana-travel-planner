@@ -28,8 +28,10 @@ export const AFFILIATE_CONFIG = {
   // Activity & Tour Affiliates  
   activities: {
     klook: {
-      partnerId: 'YOUR_KLOOK_PARTNER_ID',
-      baseUrl: 'https://www.klook.com/activity',
+      aid: '96417',
+      affAdid: '1106707',
+      baseUrl: 'https://affiliate.klook.com/redirect',
+      directUrl: 'https://www.klook.com',
       commission: '8-12%'
     },
     getyourguide: {
@@ -54,23 +56,50 @@ export const AFFILIATE_CONFIG = {
   }
 }
 
+// City code mapping for Agoda destinations
+const AGODA_CITY_CODES = {
+  'palawan': '17196',
+  'el nido': '17196', 
+  'coron': '17196',
+  'puerto princesa': '17196',
+  'manila': '17196',
+  'makati': '17196',
+  'bgc': '17196',
+  'quezon city': '17196',
+  'baguio': '16411',
+  'cebu': '16185',
+  'boracay': '16315',
+  'bohol': '18004',
+  'siargao': '17733',
+  'tagaytay': '18218',
+  'iloilo': '16199',
+  'davao': '16424',
+  'cagayan de oro': '16191',
+  'philippines': '17196' // Default to Manila area
+}
+
 // Generate affiliate links for AI responses
 export function generateAffiliateLink(type: string, destination: string, params: any) {
-  // Example: Generate hotel booking link
-  if (type === 'hotels') {
-    const hotelConfig = AFFILIATE_CONFIG.hotels.booking
-    return `${hotelConfig.baseUrl}?ss=${destination}&aid=${hotelConfig.partnerId}&utm_source=galagpt&utm_medium=ai_chat&utm_campaign=travel_planning`
-  }
-
-  if (type === 'agoda') {
+  // Generate Agoda hotel booking link (primary hotel affiliate)
+  if (type === 'hotels' || type === 'agoda') {
     const agodaConfig = AFFILIATE_CONFIG.hotels.agoda
-    const cityParam = params?.cityCode || ''
-    return `https://www.agoda.com/search?cid=${agodaConfig.cid}&city=${cityParam}&utm_source=galagpt&utm_medium=ai_chat&utm_campaign=travel_planning`
+    const cityCode = params?.cityCode || AGODA_CITY_CODES[destination.toLowerCase() as keyof typeof AGODA_CITY_CODES] || AGODA_CITY_CODES['philippines']
+    const checkIn = params?.checkIn || ''
+    const checkOut = params?.checkOut || ''
+    
+    let url = `https://www.agoda.com/search?cid=${agodaConfig.cid}`
+    if (cityCode) url += `&city=${cityCode}`
+    if (checkIn) url += `&checkIn=${checkIn}`
+    if (checkOut) url += `&checkOut=${checkOut}`
+    url += `&utm_source=galagpt&utm_medium=ai_chat&utm_campaign=travel_planning`
+    
+    return url
   }
 
   if (type === 'activities') {
-    const activityConfig = AFFILIATE_CONFIG.activities.klook
-    return `${activityConfig.baseUrl}/${destination}?partner_id=${activityConfig.partnerId}&utm_source=galagpt`
+    const klookConfig = AFFILIATE_CONFIG.activities.klook
+    // Use your specific Klook affiliate redirect URL
+    return `${klookConfig.baseUrl}?aid=${klookConfig.aid}&aff_adid=${klookConfig.affAdid}&k_site=${encodeURIComponent(klookConfig.directUrl)}`
   }
 
   if (type === 'transport') {
@@ -84,11 +113,12 @@ export function generateAffiliateLink(type: string, destination: string, params:
 // Generate Agoda search link for specific destinations
 export function generateAgodaLink(destination: string, checkIn?: string, checkOut?: string, guests?: number) {
   const agodaConfig = AFFILIATE_CONFIG.hotels.agoda
+  const cityCode = AGODA_CITY_CODES[destination.toLowerCase() as keyof typeof AGODA_CITY_CODES] || AGODA_CITY_CODES['philippines']
   const baseUrl = 'https://www.agoda.com/search'
   
   const params = new URLSearchParams({
     cid: agodaConfig.cid,
-    destination: destination,
+    city: cityCode,
     ...(checkIn && { checkIn }),
     ...(checkOut && { checkOut }),
     ...(guests && { adults: guests.toString() }),
@@ -98,6 +128,12 @@ export function generateAgodaLink(destination: string, checkIn?: string, checkOu
   })
 
   return `${baseUrl}?${params.toString()}`
+}
+
+// Generate Klook activity link
+export function generateKlookLink(destination?: string) {
+  const klookConfig = AFFILIATE_CONFIG.activities.klook
+  return `${klookConfig.baseUrl}?aid=${klookConfig.aid}&aff_adid=${klookConfig.affAdid}&k_site=${encodeURIComponent(klookConfig.directUrl)}`
 }
 
 // Track affiliate clicks and conversions

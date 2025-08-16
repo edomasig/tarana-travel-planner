@@ -26,8 +26,8 @@ export function addAffiliateRecommendations(response: string, destination: strin
 ---
 
 **💡 Quick Booking Options:**
-- 🏨 [Find Hotels in ${destination}](${hotelLink || '#'}) - Compare prices & book instantly
-- 🎯 [Discover Activities](${activityLink || '#'}) - Tours, experiences & attractions
+- 🏨 [Find Hotels in ${destination}](${hotelLink || '#'}) - Compare prices & book instantly via Agoda
+- 🎯 [Discover Activities](${activityLink || '#'}) - Tours, experiences & attractions via Klook
 - 🚗 Transportation booking available through our partners
 
 *Affiliate partnerships help keep GalaGPT.ph free for all travelers!*`
