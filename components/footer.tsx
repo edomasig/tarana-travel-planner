@@ -1,5 +1,6 @@
 import { MapPin, Mail, Phone, Facebook, Twitter, Instagram } from 'lucide-react'
 import Link from 'next/link'
+import { AgodaBadge } from './affiliate/agoda-badge'
 
 export function Footer() {
   const footerLinks = {
@@ -121,8 +122,12 @@ export function Footer() {
 
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="text-gray-400 text-sm">
-              © 2024 GalaGPT.ph. All rights reserved.
+            <div className="flex flex-col md:flex-row items-center gap-4">
+              <div className="text-gray-400 text-sm">
+                © 2024 GalaGPT.ph. All rights reserved.
+              </div>
+              {/* Agoda Partner Badge */}
+              <AgodaBadge size="small" className="opacity-75" />
             </div>
             <div className="flex gap-6 text-sm">
               <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">

@@ -11,6 +11,7 @@ import { generateItinerary } from '@/lib/ai-service'
 import { ItineraryDisplay } from '@/components/itinerary-display'
 import { AdBanner } from '@/components/ads/ad-banner'
 
+
 export default function PlanPage() {
   const [prompt, setPrompt] = useState('')
   const [itinerary, setItinerary] = useState<any>(null)
@@ -128,6 +129,7 @@ export default function PlanPage() {
       
       {/* Bottom Banner Ad - Smaller margin on mobile */}
       <AdBanner position="bottom" className="mt-4 md:mt-8" />
+    
     </div>
   )
 }

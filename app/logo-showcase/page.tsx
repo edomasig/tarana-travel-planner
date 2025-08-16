@@ -4,6 +4,7 @@ import { TaranaLogoIcon } from '@/components/logos/tarana-logo-icon'
 import { TaranaLogoHorizontal } from '@/components/logos/tarana-logo-horizontal'
 import { TaranaLogoBadge } from '@/components/logos/tarana-logo-badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Footer } from '@/components/footer'
 
 export default function LogoShowcase() {
   return (
@@ -135,6 +136,7 @@ export default function LogoShowcase() {
           </CardContent>
         </Card>
       </div>
+      <Footer />
     </div>
   )
 }

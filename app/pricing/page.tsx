@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Check, Star, ArrowLeft, MessageSquare } from 'lucide-react'
 import Link from 'next/link'
 import { AdBanner } from '@/components/ads/ad-banner'
+import { Footer } from '@/components/footer'
 
 export default function PricingPage() {
   const plans = [
@@ -237,6 +238,7 @@ export default function PricingPage() {
         {/* Bottom Banner Ad */}
         <AdBanner position="bottom" className="mt-8" />
       </div>
+      <Footer />
     </div>
   )
 }

@@ -8,6 +8,7 @@ import { MessageSquare, Calendar, Trash2, Eye, Download, ArrowLeft } from 'lucid
 import Link from 'next/link'
 import { AdBanner } from '@/components/ads/ad-banner'
 import { loadConversationsFromCookies, deleteConversationFromCookies } from '@/lib/cookie-utils'
+import { Footer } from '@/components/footer'
 
 interface SavedConversation {
   id: string
@@ -180,6 +181,7 @@ export default function SavedPage() {
         {/* Bottom Banner Ad */}
         <AdBanner position="bottom" className="mt-8" />
       </div>
+      <Footer />
     </div>
   )
 }
