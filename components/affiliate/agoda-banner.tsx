@@ -53,11 +53,20 @@ export function AgodaBanner({
       script.type = 'text/javascript'
       script.src = '//cdn0.agoda.net/images/sherpa/js/init-dynamic_v8.min.js'
       script.async = true
+      script.onload = () => {
+        console.log('Agoda script loaded successfully')
+        initBanner()
+      }
+      script.onerror = () => {
+        console.error('Failed to load Agoda script')
+      }
       document.head.appendChild(script)
+    } else {
+      initBanner()
     }
 
     // Initialize Agoda banner when script is ready
-    const initBanner = () => {
+    function initBanner() {
       if (typeof window !== 'undefined' && (window as any).AgdDynamic) {
         const stg = {
           crt: config.crt,
@@ -82,48 +91,82 @@ export function AgodaBanner({
         }
 
         try {
+          console.log('Initializing Agoda banner with config:', stg)
           new (window as any).AgdDynamic(finalContainerId).initialize(stg)
         } catch (error) {
           console.error('Agoda banner initialization error:', error)
         }
+      } else {
+        // Retry initialization
+        setTimeout(() => {
+          if ((window as any).AgdDynamic) {
+            initBanner()
+          }
+        }, 500)
       }
-    }
-
-    // Check if AgdDynamic is available, if not wait for script to load
-    if ((window as any).AgdDynamic) {
-      initBanner()
-    } else {
-      const checkAgoda = setInterval(() => {
-        if ((window as any).AgdDynamic) {
-          clearInterval(checkAgoda)
-          initBanner()
-        }
-      }, 100)
-
-      // Cleanup interval after 10 seconds
-      setTimeout(() => clearInterval(checkAgoda), 10000)
     }
   }, [variant, width, height, cityCode, areaCode, finalContainerId, config])
 
   return (
-    <div className="agoda-banner-container">
+    <div className="agoda-banner-container w-full">
       <div 
         id={finalContainerId}
         style={{ 
           width, 
           height,
           minHeight: height,
-          background: '#f8f9fa',
-          border: '1px solid #e9ecef',
-          borderRadius: '8px',
+          maxWidth: '100%',
+          background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
+          border: '1px solid #0ea5e9',
+          borderRadius: '12px',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          overflow: 'hidden',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+          position: 'relative'
         }}
       >
-        <div className="text-sm text-gray-500">
-          Loading Agoda Hotels...
+        {/* Loading State with Hotel Theme */}
+        <div className="text-center p-4">
+          <div className="animate-pulse">
+            <div className="w-16 h-16 bg-blue-200 rounded-lg mx-auto mb-3 flex items-center justify-center">
+              🏨
+            </div>
+            <div className="text-sm font-medium text-blue-700 mb-1">
+              Loading Agoda Hotels...
+            </div>
+            <div className="text-xs text-blue-500">
+              Best prices guaranteed
+            </div>
+          </div>
         </div>
+        
+        {/* Decorative Elements */}
+        <div 
+          style={{
+            position: 'absolute',
+            top: '-2px',
+            right: '-2px',
+            width: '20px',
+            height: '20px',
+            background: '#0ea5e9',
+            borderRadius: '0 12px 0 12px',
+            opacity: 0.1
+          }}
+        />
+        <div 
+          style={{
+            position: 'absolute',
+            bottom: '-2px',
+            left: '-2px',
+            width: '16px',
+            height: '16px',
+            background: '#0ea5e9',
+            borderRadius: '12px 0 12px 0',
+            opacity: 0.1
+          }}
+        />
       </div>
     </div>
   )
@@ -147,12 +190,25 @@ export function AgodaResponsiveBanner({
   className?: string 
 }) {
   return (
-    <div className={`w-full max-w-sm mx-auto ${className}`}>
-      <AgodaBanner 
-        variant={variant}
-        width="100%"
-        height="300px"
-      />
+    <div className={`w-full max-w-md mx-auto ${className}`}>
+      <div className="bg-white p-4 rounded-xl shadow-lg border border-gray-100">
+        <div className="text-center mb-3">
+          <h3 className="text-lg font-semibold text-gray-800 flex items-center justify-center gap-2">
+            🏨 Find Hotels with Agoda
+          </h3>
+          <p className="text-sm text-gray-600">Best prices guaranteed</p>
+        </div>
+        <AgodaBanner 
+          variant={variant}
+          width="100%"
+          height="280px"
+        />
+        <div className="mt-3 text-center">
+          <p className="text-xs text-gray-500">
+            Powered by Agoda • Trusted by millions
+          </p>
+        </div>
+      </div>
     </div>
   )
 }
