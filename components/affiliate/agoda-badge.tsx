@@ -1,5 +1,7 @@
 'use client'
 
+import { trackAffiliateLinkClick } from '@/lib/gtm-tracking'
+
 interface AgodaBadgeProps {
   className?: string
   size?: 'small' | 'medium' | 'large'
@@ -12,6 +14,10 @@ export function AgodaBadge({ className = '', size = 'medium' }: AgodaBadgeProps)
     large: 'w-24 h-auto'
   }
 
+  const handleClick = () => {
+    trackAffiliateLinkClick('agoda', 'general', 'badge')
+  }
+
   return (
     <div className={`inline-block ${className}`}>
       <a 
@@ -20,6 +26,7 @@ export function AgodaBadge({ className = '', size = 'medium' }: AgodaBadgeProps)
         rel="noopener noreferrer"
         className="inline-block transition-opacity hover:opacity-80"
         title="Book hotels with Agoda - Our trusted partner"
+        onClick={handleClick}
       >
         <img 
           src="//sherpa.agoda.com/Badge/GetBadge?badgetype=4&refkey=f%2B5sovBnlpUOWrWie0%2BOqw%3D%3D" 
