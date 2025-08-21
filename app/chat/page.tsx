@@ -11,6 +11,7 @@ import { NativeAd } from '@/components/ads/native-ad'
 import { KlookWidget } from '@/components/affiliate/klook-widget'
 import { FallbackAgodaBanner } from '@/components/affiliate/fallback-agoda-banner'
 import { AgodaBadge } from '@/components/affiliate/agoda-badge'
+import { trackTravelPlanRequest, trackConversationSave } from '@/lib/gtm-tracking'
 import { AgodaResponsiveSearchBox } from '@/components/affiliate/agoda-search-box'
 import { FloatingTagaytaySearch } from '@/components/affiliate/floating-agoda-search'
 import { saveConversationsToCookies, loadConversationsFromCookies, getConversationById } from '@/lib/cookie-utils'
@@ -217,6 +218,9 @@ function ChatPageComponent() {
     if (!text || isLoading) return
     if (messageCount >= 10) { setShowUpgradePrompt(true); return }
 
+    // Track travel plan requests
+    trackTravelPlanRequest(text, 'unknown', 'free_tier')
+
     const userMessage: Message = { id: Date.now().toString(), type: 'user', content: text, timestamp: new Date() }
     setMessages(prev => [...prev, userMessage])
     if (!override) setInput('')
@@ -289,6 +293,12 @@ function ChatPageComponent() {
       savedConversations[0] = conversation
     } else { savedConversations.unshift(conversation) }
     const success = saveConversationsToCookies(savedConversations)
+    
+    // Track conversation save
+    if (success) {
+      trackConversationSave(conversation.messageCount, conversation.id)
+    }
+    
     if (success) {
       try { if (typeof window !== 'undefined') localStorage.setItem('savedConversations', JSON.stringify(savedConversations)) } catch {}
       if (!silent) alert('Conversation saved!')
