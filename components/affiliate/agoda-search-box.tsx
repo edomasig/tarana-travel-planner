@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { trackSearchBoxUsage } from '@/lib/gtm-tracking'
 
 interface AgodaSearchBoxProps {
   /** Custom width (default: 320px) */
@@ -58,6 +59,8 @@ export function AgodaSearchBox({
 
         try {
           new (window as any).AgdSherpa(stg).initialize()
+          // Track search box usage
+          trackSearchBoxUsage('hotel', destinationName)
         } catch (error) {
           console.error('Agoda search box initialization error:', error)
         }
