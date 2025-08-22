@@ -1,7 +1,5 @@
-// Client-side AI service - now uses server-side API route for security
-// System prompt from PRD: You are GalaGPT.ph, a friendly and helpful Filipino AI travel assistant.
-
-import { generateAffiliateLink } from './affiliate-config'
+// Client-side AI service - uses server-side API route for security.
+// Booking links are appended server-side only to avoid duplication.
 
 // Extract destination from user message for affiliate recommendations
 export function extractDestination(message: string): string {
@@ -16,30 +14,11 @@ export function extractDestination(message: string): string {
   return destinations.find(dest => lowerMessage.includes(dest)) || 'philippines'
 }
 
-// Add affiliate recommendations to AI responses
-export function addAffiliateRecommendations(response: string, destination: string): string {
-  const hotelLink = generateAffiliateLink('hotels', destination, {})
-  const activityLink = generateAffiliateLink('activities', destination, {})
-  
-  const affiliateSection = `
-
----
-
-**💡 Quick Booking Options:**
-- 🏨 [Find Hotels in ${destination}](${hotelLink || '#'}) - Compare prices & book instantly via Agoda
-- 🎯 [Discover Activities](${activityLink || '#'}) - Tours, experiences & attractions via Klook
-- 🚗 Transportation booking available through our partners
-
-*Affiliate partnerships help keep GalaGPT.ph free for all travelers!*`
-
-  return response + affiliateSection
-}
+// Deprecated: booking links are injected by the server.
+export function addAffiliateRecommendations(response: string): string { return response }
 
 export async function generateTravelResponse(userMessage: string): Promise<string> {
   try {
-    // Extract destination for affiliate recommendations
-    const destination = extractDestination(userMessage)
-    
     // Call our server-side API route instead of OpenAI directly
     const response = await fetch('/api/chat', {
       method: 'POST',
@@ -59,14 +38,11 @@ export async function generateTravelResponse(userMessage: string): Promise<strin
       throw new Error(data.error)
     }
 
-    // Add affiliate recommendations to the AI response
-    return addAffiliateRecommendations(data.response, destination)
+  // Server already appends booking links. Return as-is.
+  return data.response
 
   } catch (error) {
     console.error('AI Service Error:', error)
-    
-    // Extract destination for fallback responses too
-    const destination = extractDestination(userMessage)
     
     // Fallback responses if the API call fails
     const message = userMessage.toLowerCase()
@@ -85,7 +61,7 @@ export async function generateTravelResponse(userMessage: string): Promise<strin
 - Afternoon: Nacpan Beach relaxation
 - Evening: Sunset dinner at The Alternative (₱600/person)
 - Stay: Mad Monkey Hostel El Nido (~₱1,800/night)
-
+      return defaultResponse
 **Day 3 – El Nido Island Hopping Tour A**
 - Morning: Big Lagoon and Small Lagoon visit
 - Lunch: Beach picnic included in tour (₱1,800/person)
@@ -98,7 +74,7 @@ export async function generateTravelResponse(userMessage: string): Promise<strin
 
 *Note: Currently experiencing technical difficulties but can still help you plan!*`
       
-      return addAffiliateRecommendations(fallbackResponse, destination)
+  return fallbackResponse
     }
     
     if (message.includes('baguio') && (message.includes('weekend') || message.includes('budget'))) {
@@ -123,7 +99,7 @@ export async function generateTravelResponse(userMessage: string): Promise<strin
 
 *Note: Currently experiencing technical difficulties but can still help you plan!*`
       
-      return addAffiliateRecommendations(fallbackResponse, destination)
+  return fallbackResponse
     }
     
     // Default fallback
@@ -154,8 +130,7 @@ I'd love to help you plan your perfect Philippines adventure! Here are some thin
 What would you like to explore in the beautiful Philippines? 🌴✨
 
 *Note: I'm currently experiencing some technical difficulties, but I can still help you plan your Philippines adventure!*`
-
-    return addAffiliateRecommendations(defaultResponse, destination)
+  return defaultResponse
   }
 }
 

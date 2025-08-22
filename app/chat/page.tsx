@@ -450,7 +450,24 @@ function ChatPageComponent() {
                 <Card className={`max-w-2xl w-full p-3 sm:p-3 ${message.type === 'user' ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white ml-4 sm:ml-12' : 'bg-white'} overflow-hidden`}>
                   {message.type === 'assistant' ? (
                     <div className="whitespace-pre-wrap break-words prose prose-tight prose-sm md:prose-base max-w-none tracking-tight prose-headings:mt-2 prose-headings:mb-1 prose-p:my-1 prose-li:my-[2px] prose-ul:my-1 prose-ol:my-1 prose-p:text-gray-700 prose-li:marker:text-blue-600 prose-strong:text-gray-900 prose-code:text-purple-600">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+                      <ReactMarkdown 
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          a: ({ node, children, href, ...props }) => (
+                            <a 
+                              href={href} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-800 underline"
+                              {...props}
+                            >
+                              {children}
+                            </a>
+                          )
+                        }}
+                      >
+                        {message.content}
+                      </ReactMarkdown>
                     </div>
                   ) : (
                     <div className="whitespace-pre-wrap break-words text-sm leading-snug tracking-tight">{message.content}</div>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
+import { generateAgodaSearchLink, formatCityInfo } from '@/lib/agoda-link-generator'
 
 // OpenAI client - server-side only with fallback handling
 const openai = process.env.OPENAI_API_KEY ? new OpenAI({
@@ -16,6 +17,16 @@ SPECIALIZATION:
 
 Always suggest real destinations and give practical travel advice like transportation, estimated budget, places to eat, visa requirements, and local tips. Use a warm and informative tone, and format answers in a clear day-by-day breakdown when possible.
 
+CRITICAL RULE: NEVER INCLUDE ANY OF THE FOLLOWING IN YOUR RESPONSES:
+- Quick Booking Options
+- Find Hotels links
+- Discover Activities links
+- Booking links or URLs
+- Affiliate links
+- Any mention of Agoda, Klook, or booking platforms
+- Transportation booking links
+- Any HTML or markdown links
+
 IMPORTANT FORMATTING GUIDELINES:
 - Use markdown formatting with ** for bold text
 - Use emojis relevant to the content (🏝️ for islands, 🏔️ for mountains, 🕌 for cultural sites, etc.)
@@ -26,6 +37,7 @@ IMPORTANT FORMATTING GUIDELINES:
 - Include visa/entry requirements for international destinations
 - Keep responses engaging but informative
 - Always suggest real, specific places and businesses when possible
+- FOCUS ONLY ON TRAVEL ADVICE AND ITINERARIES
 
 RESPONSE STRUCTURE for itineraries:
 - Start with an emoji and destination title
@@ -48,55 +60,146 @@ FOR INTERNATIONAL DESTINATIONS:
 - Currency exchange information
 - Cultural etiquette and local customs
 - Language basics if applicable
-- Time zone differences
-- Emergency contact information
 
-Remember: You're helping people plan real trips worldwide, so accuracy and practical advice are crucial!`
+Remember: Your response should end with travel advice only. No booking links will be included by you - they are added automatically by the system.`
 
-// Enhanced fallback responses for global destinations
+// Helper function to extract city names from user messages
+const extractCityNames = (message: string): string[] => {
+  const cities = [
+    // Philippines
+    'manila', 'cebu', 'davao', 'boracay', 'palawan', 'baguio', 'tagaytay', 'iloilo', 'dumaguete', 'sagada',
+    'el nido', 'coron', 'puerto princesa', 'vigan', 'bohol', 'siquijor', 'siargao', 'camiguin', 'la union',
+    // International popular destinations
+    'tokyo', 'osaka', 'kyoto', 'bangkok', 'phuket', 'singapore', 'kuala lumpur', 'hong kong',
+    'seoul', 'busan', 'taipei', 'ho chi minh', 'hanoi', 'bali', 'jakarta', 'paris', 'london',
+    'new york', 'los angeles', 'barcelona', 'rome', 'amsterdam', 'dubai', 'istanbul'
+  ]
+  
+  const messageLower = message.toLowerCase()
+  return cities.filter(city => messageLower.includes(city))
+}
+
+// Helper function to add affiliate booking links to responses
+const addBookingLinks = (response: string, detectedCities: string[]): string => {
+  console.log('=== BOOKING LINKS DEBUG ===')
+  console.log('Response preview (first 200 chars):', response.substring(0, 200))
+  console.log('Response preview (last 200 chars):', response.substring(response.length - 200))
+  console.log('Detected cities:', detectedCities)
+  
+  // More comprehensive duplication check
+  const bookingKeywords = [
+    'Quick Booking Options',
+    'Find Hotels',
+    'Discover Activities', 
+    'agoda.com',
+    'klook.com',
+    'Transportation booking',
+    'Compare prices & book',
+    'book instantly via Agoda',
+    'via Klook',
+    'Affiliate partnerships',
+    'booking available'
+  ]
+  
+  const hasBookingContent = bookingKeywords.some(keyword => {
+    const found = response.toLowerCase().includes(keyword.toLowerCase())
+    if (found) {
+      console.log('Found booking keyword:', keyword)
+    }
+    return found
+  })
+  
+  console.log('Has booking content:', hasBookingContent)
+  console.log('========================')
+  
+  if (hasBookingContent) {
+    console.log('SKIPPING: Booking content detected - not adding links')
+    return response
+  }
+
+  console.log('ADDING: No booking content found, adding links...')
+
+  if (detectedCities.length === 0) {
+    console.log('No cities detected, using default Palawan')
+    // Use a safe default for Klook aff_sub to avoid spaces in URL
+    const defaultAffSub = 'general'
+    return response + `\n\n💡 **Quick Booking Options:**\n\n• 🏨 [Find Hotels in Palawan](https://www.agoda.com/fi-fi/search?cid=1947165&city=17193&utm_source=galagpt&utm_medium=ai_chat&utm_campaign=travel_planning) - Compare prices & book instantly via Agoda\n\n• 🎯 [Discover Activities](https://www.klook.com/en-PH/?aid=96417&aff_ext=travel_planning&aff_sub=${defaultAffSub}) - Tours, experiences & attractions via Klook\n\n• 🚛 Transportation booking available through our partners\n\n*Affiliate partnerships help keep GalaGPT.ph free for all travelers!*`
+  }
+
+  const primaryCity = detectedCities[0]
+  console.log('Primary city for links:', primaryCity)
+  
+  const linkResult = generateAgodaSearchLink(primaryCity)
+  const klookAffSub = encodeURIComponent(primaryCity)
+  console.log('Agoda link result:', linkResult)
+  
+  let bookingSection = `\n\n💡 **Quick Booking Options:**\n\n`
+  
+  if (linkResult.success && linkResult.url && linkResult.cityData) {
+    const cityDisplay = formatCityInfo(linkResult.cityData)
+    console.log('Using city display:', cityDisplay)
+    bookingSection += `• 🏨 [Find Hotels in ${cityDisplay}](${linkResult.url}) - Compare prices & book instantly via Agoda\n\n`
+  } else {
+    // Fallback to general search with proper city name formatting
+    const cityDisplayName = primaryCity.charAt(0).toUpperCase() + primaryCity.slice(1)
+    console.log('Using fallback city display:', cityDisplayName)
+    bookingSection += `• 🏨 [Find Hotels in ${cityDisplayName}](https://www.agoda.com/fi-fi/search?cid=1947165&utm_source=galagpt&utm_medium=ai_chat&utm_campaign=travel_planning) - Compare prices & book instantly via Agoda\n\n`
+  }
+  
+  bookingSection += `• 🎯 [Discover Activities](https://www.klook.com/en-PH/?aid=96417&aff_ext=travel_planning&aff_sub=${klookAffSub}) - Tours, experiences & attractions via Klook\n\n`
+  bookingSection += `• 🚛 Transportation booking available through our partners\n\n`
+  bookingSection += `*Affiliate partnerships help keep GalaGPT.ph free for all travelers!*`
+  
+  console.log('Final booking section preview:', bookingSection.substring(0, 100))
+  
+  return response + bookingSection
+}
+
+// Fallback responses for when API is unavailable
 const FALLBACK_RESPONSES = {
   palawan: `🏝️ **5-Day Palawan Island Paradise**
 
-**Day 1 – Puerto Princesa**
-- Morning: Arrive Puerto Princesa Airport
-- Afternoon: Underground River tour (₱1,500/person)
-- Evening: Dinner at Kalui Restaurant (₱800/person)
-- Stay: Flamenco Hotel (~₱2,200/night)
+**Kumusta!** Welcome to the Philippines' Last Frontier! Here's your perfect Palawan adventure:
 
-**Day 2 – Travel to El Nido**
-- Morning: Van transfer to El Nido (5-6 hours, ₱800)
-- Afternoon: Nacpan Beach relaxation
-- Evening: Sunset dinner at The Alternative (₱600/person)
-- Stay: Mad Monkey Hostel El Nido (~₱1,800/night)
+**Day 1-2 – Puerto Princesa**
+- Morning: Puerto Princesa Airport arrival
+- Underground River tour (₱2,500 per person)
+- Stay: Canvas Boutique Hotel (₱3,500/night)
+- Food: Ka Inato (₱400-600 per meal)
 
-**Day 3 – El Nido Island Hopping Tour A**
-- Morning: Big Lagoon and Small Lagoon visit
-- Lunch: Beach picnic included in tour (₱1,800/person)
-- Afternoon: Shimizu Island and Secret Lagoon
-- Evening: Night market food crawl (₱400/person)
+**Day 3-5 – El Nido**
+- Van transfer Puerto Princesa to El Nido (₱800, 5 hours)
+- Island hopping Tour A & C (₱1,800 each)
+- Big Lagoon, Small Lagoon, Secret Lagoon
+- Stay: Mad Monkey Hostel El Nido (₱2,200/night)
 
-**💰 Total Budget Estimate: ₱25,000-35,000 per person**
-**🚗 Transportation:** Mix of flights, vans, and island ferries
-**📅 Best Time:** November to April for perfect weather`,
+**💰 Total Budget: ₱25,000-35,000 per person**
+**📅 Best Time:** November to April (dry season)
+**💡 Local Tip:** Book island tours early and bring reef-safe sunscreen!`,
 
-  baguio: `🏔️ **Weekend Baguio Budget Guide**
+  baguio: `🏔️ **3-Day Baguio Summer Capital Escape**
 
-**Day 1 – Saturday**
-- Morning: Travel from Manila via bus (₱700, 6 hours)
-- Arrival: Check-in at Z Hostel Baguio (₱800/night)
-- Lunch: Good Taste Restaurant famous fried chicken (₱250/person)
-- Afternoon: Session Road shopping and people watching
-- Evening: Burnham Park boat rides and night market (₱200)
+**Kumusta!** Ready for cool mountain air and pine trees? Here's your Baguio itinerary:
 
-**Day 2 – Sunday**
-- Morning: Mines View Park and strawberry picking (₱150)
-- Breakfast: Café by the Ruins pancakes (₱300/person)
-- Late Morning: Tam-awan Village art gallery (₱30 entrance)
-- Lunch: Hill Station bagnet and pinikpikan (₱400/person)
-- Afternoon: Return bus to Manila (₱700)
+**Day 1 – Arrival & City Tour**
+- Morning: Arrive via bus from Manila (₱600, 6 hours)
+- Burnham Park boat ride (₱30 per person)
+- Stay: Hotel Supreme (₱2,800/night)
+- Food: Good Taste Cafe & Restaurant (₱300-500)
 
-**💰 Total Weekend Budget: ₱3,500-4,500 per person**
-**🧥 What to Bring:** Jacket (temp drops to 15°C), comfortable walking shoes`,
+**Day 2 – Tourist Spots**
+- Mines View Park & Baguio Cathedral
+- Wright Park horseback riding (₱100)
+- Session Road shopping
+- Strawberry Farm La Trinidad (₱200 entrance)
+
+**Day 3 – Local Culture**
+- BenCab Museum (₱120 entrance)
+- Tam-Awan Village (₱30 entrance)
+- Buy pasalubong at Baguio Market
+
+**💰 Total Budget: ₱8,000-12,000 per person**
+**🧥 What to Bring:** Jacket, it gets cold!`,
 
   japan: `🇯🇵 **7-Day Japan Golden Route Adventure**
 
@@ -148,31 +251,23 @@ I'd love to help you plan your perfect adventure anywhere in the world! Here are
 
 **🇵🇭 Philippines Expertise:**
 - Detailed local knowledge with insider tips
-- Real costs in Philippine Pesos
-- Cultural insights and hidden gems
+- Budget-friendly itineraries in Philippine Pesos
+- Transportation guides (jeepney, tricycle, bus routes)
+- Local food recommendations & hidden gems
 
-**🌏 Global Destinations:**
+**🌏 International Travel:**
 - Visa requirements for Filipino travelers
-- Currency and budget planning
-- Cultural etiquette and local customs
-- Real accommodation and restaurant recommendations
+- Currency exchange & budget planning
+- Cultural etiquette & language basics
+- Popular destinations across Asia, Europe, Americas
 
-**💡 Popular Global Destinations I Cover:**
-- 🇯🇵 Japan (Tokyo, Kyoto, Osaka)
-- 🇹🇭 Thailand (Bangkok, Phuket, Chiang Mai)  
-- 🇰🇷 South Korea (Seoul, Busan)
-- 🇸🇬 Singapore city breaks
-- 🇮🇩 Indonesia (Bali, Jakarta)
-- 🇻🇳 Vietnam (Ho Chi Minh, Hanoi)
-- 🇲🇾 Malaysia (Kuala Lumpur, Penang)
+**✨ Just tell me:**
+- Where you want to go
+- How many days you have
+- Your budget range
+- What type of experience you're looking for
 
-**🎯 Try asking me:**
-- "7-day Japan itinerary with visa requirements"
-- "Budget backpacking Thailand from Philippines"  
-- "Singapore weekend trip costs"
-- "Best time to visit South Korea"
-
-Where would you like to explore? �✨`
+Where would you like to explore? ✨`
 }
 
 // Helper function to detect destination type
@@ -209,12 +304,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Extract cities from user message
+    const detectedCities = extractCityNames(message)
+
     // Check if OpenAI API key is available
     if (!process.env.OPENAI_API_KEY) {
       console.log('OpenAI API key not found, using fallback responses')
       
       const destination = detectDestination(message)
-      return NextResponse.json({ response: FALLBACK_RESPONSES[destination as keyof typeof FALLBACK_RESPONSES] })
+      const fallbackResponse = FALLBACK_RESPONSES[destination as keyof typeof FALLBACK_RESPONSES]
+      const responseWithLinks = addBookingLinks(fallbackResponse, detectedCities)
+      
+      return NextResponse.json({ response: responseWithLinks })
     }
 
     // Call OpenAI GPT-4 Turbo API (only if API key is available)
@@ -244,17 +345,25 @@ export async function POST(request: NextRequest) {
       throw new Error('No response from OpenAI')
     }
 
-    return NextResponse.json({ response })
+    // Add booking links to the AI response
+    const responseWithLinks = addBookingLinks(response, detectedCities)
+
+    return NextResponse.json({ response: responseWithLinks })
 
   } catch (error) {
     console.error('API Error:', error)
     
     // Fallback to mock responses if API fails
-    const userMessage = (await request.json()).message?.toLowerCase() || ''
+    const { message } = await request.json()
+    const userMessage = message?.toLowerCase() || ''
     const destination = detectDestination(userMessage)
+    const detectedCities = extractCityNames(userMessage)
     
+    const fallbackResponse = FALLBACK_RESPONSES[destination as keyof typeof FALLBACK_RESPONSES] + '\n\n*Note: I\'m currently experiencing some technical difficulties, but I can still help you plan your adventure!*'
+    
+    // Don't add booking links in error case to prevent duplication
     return NextResponse.json({ 
-      response: FALLBACK_RESPONSES[destination as keyof typeof FALLBACK_RESPONSES] + '\n\n*Note: I\'m currently experiencing some technical difficulties, but I can still help you plan your adventure!*'
+      response: fallbackResponse
     })
   }
 }
