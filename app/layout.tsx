@@ -100,9 +100,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: '/favicon.svg',
-    shortcut: '/favicon.svg',
-    apple: '/favicon.svg',
+    icon: '/galagpt-favicon.svg',
+    shortcut: '/galagpt-favicon.svg',
+    apple: '/galagpt-favicon.svg',
   },
   manifest: '/site.webmanifest',
   other: {

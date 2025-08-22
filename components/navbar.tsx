@@ -21,10 +21,11 @@ export function Navbar() {
   return (
     <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-14 md:h-16">
+        <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
-            <GalaGPTLogoHorizontal size="sm" />
+            <GalaGPTLogoHorizontal size="lg" className="hidden md:block" />
+            <GalaGPTLogoHorizontal size="md" className="block md:hidden" />
           </Link>
 
           {/* Desktop Navigation */}
