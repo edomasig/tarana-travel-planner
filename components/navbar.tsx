@@ -24,8 +24,8 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
-            <GalaGPTLogoHorizontal size="lg" className="hidden md:block" />
-            <GalaGPTLogoHorizontal size="md" className="block md:hidden" />
+            <GalaGPTLogoHorizontal size="lg" className="hidden md:block" showTagline={true} />
+            <GalaGPTLogoHorizontal size="sm" className="block md:hidden" showTagline={false} />
           </Link>
 
           {/* Desktop Navigation */}
