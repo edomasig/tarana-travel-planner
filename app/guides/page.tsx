@@ -9,7 +9,7 @@ export default function TravelGuidesPage() {
     {
       title: "Complete Guide to Palawan",
       description: "Discover the pristine beaches, underground rivers, and hidden lagoons of the Philippines' last frontier.",
-      image: "/placeholder.jpg",
+      image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       readTime: "15 min read",
       category: "Islands",
       slug: "palawan-complete-guide"
@@ -17,7 +17,7 @@ export default function TravelGuidesPage() {
     {
       title: "Manila Travel Guide: Old Meets New",
       description: "Navigate the capital city's rich history, modern attractions, and vibrant food scene.",
-      image: "/manila.jpg",
+      image: "https://images.unsplash.com/photo-1555993539-1732b0258235?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       readTime: "12 min read",
       category: "Cities",
       slug: "manila-travel-guide"
@@ -25,7 +25,7 @@ export default function TravelGuidesPage() {
     {
       title: "Baguio: Summer Capital Adventure",
       description: "Escape the heat in the Philippines' summer capital with cool weather, pine trees, and mountain adventures.",
-      image: "/baguio.jpg",
+      image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       readTime: "10 min read",
       category: "Mountains",
       slug: "baguio-summer-capital"
@@ -33,7 +33,7 @@ export default function TravelGuidesPage() {
     {
       title: "Iloilo: The Heart of the Philippines",
       description: "Explore the cultural heart of the Philippines with its historic churches, festivals, and cuisine.",
-      image: "/iloilo.jpg",
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       readTime: "8 min read",
       category: "Culture",
       slug: "iloilo-heart-philippines"
@@ -41,7 +41,7 @@ export default function TravelGuidesPage() {
     {
       title: "Sagada: Mountain Province Magic",
       description: "Experience hanging coffins, rice terraces, and spelunking adventures in this mystical mountain town.",
-      image: "/sagada.jpg",
+      image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       readTime: "11 min read",
       category: "Adventure",
       slug: "sagada-mountain-magic"
@@ -49,7 +49,7 @@ export default function TravelGuidesPage() {
     {
       title: "Philippine Food Guide",
       description: "A comprehensive guide to Filipino cuisine, from street food to fine dining, across different regions.",
-      image: "/placeholder.jpg",
+      image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       readTime: "20 min read",
       category: "Food",
       slug: "philippine-food-guide"

@@ -18,7 +18,7 @@ export default function PalawanGuidePage() {
           <Card>
             <div className="relative h-64 md:h-80">
               <Image
-                src="/placeholder.jpg"
+                src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
                 alt="Palawan Beaches"
                 fill
                 className="object-cover rounded-t-lg"
@@ -96,6 +96,14 @@ export default function PalawanGuidePage() {
             <CardContent className="space-y-6">
               <div className="border-l-4 border-blue-500 pl-6">
                 <h3 className="text-xl font-bold mb-2">El Nido</h3>
+                <div className="relative h-48 mb-4 rounded-lg overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                    alt="El Nido limestone cliffs and lagoons"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
                 <p className="text-gray-600 mb-3">
                   Famous for its dramatic limestone cliffs, hidden lagoons, and pristine beaches. The Bacuit Archipelago 
                   offers some of the most photographed landscapes in the Philippines.
@@ -107,6 +115,14 @@ export default function PalawanGuidePage() {
 
               <div className="border-l-4 border-green-500 pl-6">
                 <h3 className="text-xl font-bold mb-2">Coron</h3>
+                <div className="relative h-48 mb-4 rounded-lg overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                    alt="Coron lakes and limestone formations"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
                 <p className="text-gray-600 mb-3">
                   A paradise for divers and adventure seekers, known for Japanese shipwrecks from WWII, 
                   crystal-clear freshwater lakes, and stunning limestone formations.
@@ -118,6 +134,14 @@ export default function PalawanGuidePage() {
 
               <div className="border-l-4 border-purple-500 pl-6">
                 <h3 className="text-xl font-bold mb-2">Puerto Princesa</h3>
+                <div className="relative h-48 mb-4 rounded-lg overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                    alt="Puerto Princesa Underground River"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
                 <p className="text-gray-600 mb-3">
                   The capital city and gateway to Palawan, home to the famous Underground River and 
                   serving as a base for exploring the southern part of the island.
@@ -129,6 +153,14 @@ export default function PalawanGuidePage() {
 
               <div className="border-l-4 border-orange-500 pl-6">
                 <h3 className="text-xl font-bold mb-2">San Vicente</h3>
+                <div className="relative h-48 mb-4 rounded-lg overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1464454709131-ffd692591ee5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                    alt="San Vicente Long Beach Palawan"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
                 <p className="text-gray-600 mb-3">
                   Home to Long Beach, the longest white sand beach in the Philippines, offering a more 
                   secluded and peaceful alternative to other tourist destinations.
