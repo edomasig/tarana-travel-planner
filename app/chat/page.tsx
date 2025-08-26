@@ -455,7 +455,7 @@ function ChatPageComponent() {
                 )}
                 <Card className={`max-w-2xl w-full p-3 sm:p-3 ${message.type === 'user' ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white ml-4 sm:ml-12' : 'bg-white'} overflow-hidden`}>
                   {message.type === 'assistant' ? (
-                    <div className="whitespace-pre-wrap break-words prose prose-tight prose-sm md:prose-base max-w-none tracking-tight prose-headings:mt-2 prose-headings:mb-1 prose-p:my-1 prose-li:my-[2px] prose-ul:my-1 prose-ol:my-1 prose-p:text-gray-700 prose-li:marker:text-blue-600 prose-strong:text-gray-900 prose-code:text-purple-600">
+                    <div className="break-words leading-tight prose prose-tight prose-sm md:prose-base max-w-none tracking-tight prose-headings:my-1 prose-p:my-0.5 prose-li:my-0.5 prose-ul:my-1 prose-ol:my-1 prose-hr:my-2 prose-blockquote:my-1 prose-pre:my-1 prose-p:text-gray-700 prose-li:marker:text-blue-600 prose-strong:text-gray-900 prose-code:text-purple-600">
                       <ReactMarkdown 
                         remarkPlugins={[remarkGfm]}
                         components={{
