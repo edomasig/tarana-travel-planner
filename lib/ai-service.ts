@@ -17,7 +17,11 @@ export function extractDestination(message: string): string {
 // Deprecated: booking links are injected by the server.
 export function addAffiliateRecommendations(response: string): string { return response }
 
-export async function generateTravelResponse(userMessage: string): Promise<string> {
+// Optionally include recent conversation history so the AI can keep context
+export async function generateTravelResponse(
+  userMessage: string,
+  history?: Array<{ role: 'user' | 'assistant'; content: string }>
+): Promise<string> {
   try {
     // Call our server-side API route instead of OpenAI directly
     const response = await fetch('/api/chat', {
@@ -25,7 +29,7 @@ export async function generateTravelResponse(userMessage: string): Promise<strin
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ message: userMessage }),
+      body: JSON.stringify({ message: userMessage, history }),
     })
 
     if (!response.ok) {

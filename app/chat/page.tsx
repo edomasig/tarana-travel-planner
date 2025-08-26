@@ -228,7 +228,13 @@ function ChatPageComponent() {
     setIsLoading(true)
     setMessageCount(prev => prev + 1)
     try {
-      const response = await generateTravelResponse(text)
+      // Build short history window (exclude the system greeting)
+      type MessageRole = 'user' | 'assistant'
+      const history = messages
+        .filter(m => m.type === 'user' || m.type === 'assistant')
+        .slice(-8) // last 8 messages should be enough for context
+        .map(m => ({ role: (m.type === 'user' ? 'user' : 'assistant') as MessageRole, content: m.content }))
+      const response = await generateTravelResponse(text, history)
       const cleaned = tightenMarkdown(response)
       const assistantMessage: Message = { id: (Date.now() + 1).toString(), type: 'assistant', content: cleaned, timestamp: new Date() }
       setMessages(prev => [...prev, assistantMessage])

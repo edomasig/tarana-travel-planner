@@ -295,7 +295,10 @@ function detectDestination(message: string): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const { message } = await request.json()
+    const { message, history } = await request.json() as {
+      message: string,
+      history?: Array<{ role: 'user' | 'assistant'; content: string }>
+    }
 
     if (!message) {
       return NextResponse.json(
@@ -304,14 +307,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Extract cities from user message
-    const detectedCities = extractCityNames(message)
+    // Build combined text from history + current message for better context
+    const safeHistory = Array.isArray(history)
+      ? history.filter(h => h && (h.role === 'user' || h.role === 'assistant') && typeof h.content === 'string')
+      : []
+    const combinedText = [
+      ...safeHistory.map(h => h.content),
+      message
+    ].join(' \n ')
+
+    // Extract cities from combined text
+    const detectedCities = extractCityNames(combinedText)
 
     // Check if OpenAI API key is available
     if (!process.env.OPENAI_API_KEY) {
       console.log('OpenAI API key not found, using fallback responses')
       
-      const destination = detectDestination(message)
+  const destination = detectDestination(combinedText)
       const fallbackResponse = FALLBACK_RESPONSES[destination as keyof typeof FALLBACK_RESPONSES]
       const responseWithLinks = addBookingLinks(fallbackResponse, detectedCities)
       
@@ -326,14 +338,10 @@ export async function POST(request: NextRequest) {
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        {
-          role: "system",
-          content: SYSTEM_PROMPT
-        },
-        {
-          role: "user",
-          content: message
-        }
+        { role: "system", content: SYSTEM_PROMPT },
+        // Interleave prior turns to retain context
+        ...safeHistory.map(h => ({ role: h.role, content: h.content } as const)),
+        { role: "user", content: message }
       ],
       max_tokens: 2000,
       temperature: 0.7,
@@ -354,16 +362,20 @@ export async function POST(request: NextRequest) {
     console.error('API Error:', error)
     
     // Fallback to mock responses if API fails
-    const { message } = await request.json()
-    const userMessage = message?.toLowerCase() || ''
-    const destination = detectDestination(userMessage)
-    const detectedCities = extractCityNames(userMessage)
+    let parsed: any = {}
+    try { parsed = await request.json() } catch {}
+    const userMessage = (parsed?.message || '').toLowerCase()
+    const history: Array<{ role: 'user' | 'assistant'; content: string }> = Array.isArray(parsed?.history) ? parsed.history : []
+    const combinedText = [
+      ...history.map(h => h.content?.toLowerCase?.() || ''),
+      userMessage
+    ].join(' ')
+    const destination = detectDestination(combinedText)
+    const detectedCities = extractCityNames(combinedText)
     
     const fallbackResponse = FALLBACK_RESPONSES[destination as keyof typeof FALLBACK_RESPONSES] + '\n\n*Note: I\'m currently experiencing some technical difficulties, but I can still help you plan your adventure!*'
     
     // Don't add booking links in error case to prevent duplication
-    return NextResponse.json({ 
-      response: fallbackResponse
-    })
+  return NextResponse.json({ response: fallbackResponse })
   }
 }
