@@ -4,27 +4,27 @@ import { AgodaBadge } from './affiliate/agoda-badge'
 
 export function Footer() {
   const footerLinks = {
-    product: [
-      { name: 'Features', href: '#features' },
-      { name: 'How it Works', href: '#how-it-works' },
-      { name: 'Pricing', href: '/pricing' },
-      { name: 'API', href: '#api' }
+    content: [
+      { name: 'Travel Guides', href: '/guides' },
+      { name: 'Travel Tips', href: '/travel-tips' },
+      { name: 'Blog', href: '/blog' },
+      { name: 'Seasonal Guides', href: '/seasonal' }
     ],
     destinations: [
-      { name: 'Luzon', href: '#luzon' },
-      { name: 'Visayas', href: '#visayas' },
-      { name: 'Mindanao', href: '#mindanao' },
-      { name: 'Popular Routes', href: '#routes' }
+      { name: 'Palawan Guide', href: '/guides/palawan-complete-guide' },
+      { name: 'Manila Travel', href: '/guides/manila-travel-guide' },
+      { name: 'Baguio Guide', href: '/guides/baguio-summer-capital' },
+      { name: 'All Destinations', href: '/guides' }
     ],
     support: [
       { name: 'Help Center', href: '#help' },
-      { name: 'Contact Us', href: 'mailto:admin@galagpt.ph' },
-      { name: 'Travel Tips', href: '#tips' },
-      { name: 'Community', href: '#community' }
+      { name: 'Contact Us', href: '/contact' },
+      { name: 'Travel Planning', href: '/chat' },
+      { name: 'Trip Planner', href: '/plan' }
     ],
     company: [
       { name: 'About Us', href: '/about' },
-      { name: 'Contact', href: 'mailto:admin@galagpt.ph' },
+      { name: 'Contact', href: '/contact' },
       { name: 'Privacy Policy', href: '/privacy' },
       { name: 'Terms of Service', href: '/terms' }
     ]
@@ -68,9 +68,9 @@ export function Footer() {
 
           {/* Links */}
           <div>
-            <h3 className="font-semibold mb-4">Product</h3>
+            <h3 className="font-semibold mb-4">Content</h3>
             <ul className="space-y-2">
-              {footerLinks.product.map((link) => (
+              {footerLinks.content.map((link) => (
                 <li key={link.name}>
                   <Link href={link.href} className="text-gray-400 hover:text-white transition-colors">
                     {link.name}

@@ -43,6 +43,11 @@ export default function AboutPage() {
                 We believe that exploring the Philippines should be an adventure that starts from the moment you begin planning, 
                 not a stressful task filled with endless research and uncertainty.
               </p>
+              <p className="text-lg leading-relaxed mt-4">
+                Founded by travel enthusiasts who have explored every corner of the Philippines, our platform combines 
+                advanced AI technology with deep local knowledge to provide travelers with authentic, practical, and 
+                personalized recommendations that go beyond typical tourist attractions.
+              </p>
             </CardContent>
           </Card>
 

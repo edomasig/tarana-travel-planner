@@ -11,11 +11,12 @@ export function Navbar() {
 
   const navigation = [
     { name: 'Chat', href: '/chat' },
+    { name: 'Guides', href: '/guides' },
+    { name: 'Travel Tips', href: '/travel-tips' },
+    { name: 'Blog', href: '/blog' },
+    { name: 'FAQ', href: '/faq' },
     { name: 'Seasonal', href: '/seasonal' },
-    { name: 'Plan Trip', href: '/plan' },
-    { name: 'Saved', href: '/saved' },
-    // { name: 'About', href: '/about' },
-    // { name: 'Pricing', href: '/pricing' } // Hidden for now
+    { name: 'About', href: '/about' }
   ]
 
   return (

@@ -18,19 +18,43 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/plan`,
+      url: `${baseUrl}/guides`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/saved`,
+      url: `${baseUrl}/travel-tips`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/faq`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/pricing`,
+      url: `${baseUrl}/plan`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/seasonal`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/saved`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
@@ -61,8 +85,38 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ]
 
-  // You can add dynamic pages here
-  // For example, destination pages, blog posts, etc.
+  // Travel guide pages
+  const guidePages = [
+    'palawan-complete-guide',
+    'manila-travel-guide',
+    'baguio-summer-capital',
+    'iloilo-heart-philippines',
+    'sagada-mountain-magic',
+    'philippine-food-guide'
+  ].map(guide => ({
+    url: `${baseUrl}/guides/${guide}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.8,
+  }))
+
+  // Blog posts
+  const blogPages = [
+    'hidden-gems-northern-philippines',
+    'filipino-street-food-guide',
+    'siargao-island-hopping',
+    'budget-travel-philippines',
+    'philippine-festivals-2025',
+    'sustainable-tourism-philippines',
+    'photography-guide-philippines'
+  ].map(post => ({
+    url: `${baseUrl}/blog/${post}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }))
+
+  // Destination pages
   const destinationPages = [
     'palawan',
     'boracay', 
@@ -73,7 +127,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'ilocos',
     'batanes',
     'siquijor',
-    'camiguin'
+    'camiguin',
+    'el-nido',
+    'coron',
+    'bohol',
+    'sagada'
   ].map(destination => ({
     url: `${baseUrl}/destinations/${destination}`,
     lastModified: new Date(),
@@ -81,5 +139,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }))
 
-  return [...staticPages, ...destinationPages]
+  return [...staticPages, ...guidePages, ...blogPages, ...destinationPages]
 }
