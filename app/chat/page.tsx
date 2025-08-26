@@ -143,6 +143,7 @@ function ChatPageComponent() {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [messageCount, setMessageCount] = useState(0)
+  const [initialPrompt, setInitialPrompt] = useState<string | null>(null)
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [showDebug, setShowDebug] = useState(false)
@@ -221,8 +222,10 @@ function ChatPageComponent() {
     // Track travel plan requests
     trackTravelPlanRequest(text, 'unknown', 'free_tier')
 
-    const userMessage: Message = { id: Date.now().toString(), type: 'user', content: text, timestamp: new Date() }
+  const userMessage: Message = { id: Date.now().toString(), type: 'user', content: text, timestamp: new Date() }
     setMessages(prev => [...prev, userMessage])
+  // Capture initial prompt (first user message of the session)
+  if (!initialPrompt) setInitialPrompt(text)
     if (!override) setInput('')
     else setInput('')
     setIsLoading(true)
@@ -234,7 +237,13 @@ function ChatPageComponent() {
         .filter(m => m.type === 'user' || m.type === 'assistant')
         .slice(-8) // last 8 messages should be enough for context
         .map(m => ({ role: (m.type === 'user' ? 'user' : 'assistant') as MessageRole, content: m.content }))
-      const response = await generateTravelResponse(text, history)
+      // Derive a simple primary city guess from the initial prompt (best effort)
+      const simplePrimaryCity = (() => {
+        const lower = (initialPrompt || text).toLowerCase()
+        const candidates = ['palawan','el nido','coron','puerto princesa','baguio','sagada','vigan','boracay','bohol','cebu','siquijor','siargao','manila','makati','bgc','quezon city','ilocos','bataan','laguna','tagaytay','davao','iloilo']
+        return candidates.find(c => lower.includes(c)) || undefined
+      })()
+      const response = await generateTravelResponse(text, history, { initialPrompt: initialPrompt || undefined, primaryCity: simplePrimaryCity })
       const cleaned = tightenMarkdown(response)
       const assistantMessage: Message = { id: (Date.now() + 1).toString(), type: 'assistant', content: cleaned, timestamp: new Date() }
       setMessages(prev => [...prev, assistantMessage])
