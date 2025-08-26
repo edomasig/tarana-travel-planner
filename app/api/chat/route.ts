@@ -67,7 +67,7 @@ Remember: Your response should end with travel advice only. No booking links wil
 const extractCityNames = (message: string): string[] => {
   const cities = [
     // Philippines
-    'manila', 'cebu', 'davao', 'boracay', 'palawan', 'baguio', 'tagaytay', 'iloilo', 'dumaguete', 'sagada',
+  'manila', 'cebu', 'davao', 'boracay', 'palawan', 'baguio', 'tagaytay', 'iloilo', 'dumaguete', 'sagada', 'batangas',
     'el nido', 'coron', 'puerto princesa', 'vigan', 'bohol', 'siquijor', 'siargao', 'camiguin', 'la union',
     // International popular destinations
     'tokyo', 'osaka', 'kyoto', 'bangkok', 'phuket', 'singapore', 'kuala lumpur', 'hong kong',
@@ -77,6 +77,35 @@ const extractCityNames = (message: string): string[] => {
   
   const messageLower = message.toLowerCase()
   return cities.filter(city => messageLower.includes(city))
+}
+
+// Map common aliases/landmarks to their canonical city for hotel search
+const applyCityAliases = (message: string, detected: string[]): string[] => {
+  const lower = message.toLowerCase()
+  const results = [...detected]
+  // Taal Lake / Taal Volcano are most commonly accessed from Tagaytay or Talisay.
+  if (lower.includes('taal lake') || lower.includes('taal volcano') || /\btaal\b/.test(lower)) {
+    if (!results.includes('tagaytay')) {
+      // Put Tagaytay first as primary when Taal is referenced
+      results.unshift('tagaytay')
+    } else {
+      // Ensure Tagaytay is first
+      const filtered = results.filter(c => c !== 'tagaytay')
+      results.length = 0
+      results.push('tagaytay', ...filtered)
+    }
+  }
+  // Map common Batangas-local names/municipalities to 'batangas' for hotel searches
+  if (/(batangas|nasugbu|nasugbo|calatagan|san juan|matabungkay|laiya|anilao)/.test(lower)) {
+    if (!results.includes('batangas')) {
+      results.unshift('batangas')
+    } else {
+      const filtered = results.filter(c => c !== 'batangas')
+      results.length = 0
+      results.push('batangas', ...filtered)
+    }
+  }
+  return results
 }
 
 // Helper function to add affiliate booking links to responses
@@ -120,11 +149,19 @@ const addBookingLinks = (response: string, detectedCities: string[]): string => 
   console.log('ADDING: No booking content found, adding links...')
 
   if (detectedCities.length === 0) {
-    console.log('No cities detected, using default Palawan')
-    // Use a safe default for Klook aff_sub to avoid spaces in URL
-    const defaultAffSub = 'general'
-    return response + `\n\n💡 **Quick Booking Options:**\n\n• 🏨 [Find Hotels in Palawan](https://www.agoda.com/fi-fi/search?cid=1947165&city=17193&utm_source=galagpt&utm_medium=ai_chat&utm_campaign=travel_planning) - Compare prices & book instantly via Agoda\n\n• 🎯 [Discover Activities](https://www.klook.com/en-PH/?aid=96417&aff_ext=travel_planning&aff_sub=${defaultAffSub}) - Tours, experiences & attractions via Klook\n\n• 🚛 Transportation booking available through our partners\n\n*Affiliate partnerships help keep GalaGPT.ph free for all travelers!*`
   }
+    console.log('No cities detected from user input — trying to extract from assistant response text')
+    // Try to pull city names from the assistant response itself as a fallback
+    const altFromResponse = applyCityAliases(response, extractCityNames(response))
+    if (altFromResponse.length > 0) {
+      console.log('Found cities in assistant response:', altFromResponse)
+      detectedCities = altFromResponse
+    } else {
+      console.log('Still no cities found — using default Palawan')
+      // Use a safe default for Klook aff_sub to avoid spaces in URL
+      const defaultAffSub = 'general'
+      return response + `\n\n💡 **Quick Booking Options:**\n\n• 🏨 [Find Hotels in Palawan](https://www.agoda.com/fi-fi/search?cid=1947165&city=17193&utm_source=galagpt&utm_medium=ai_chat&utm_campaign=travel_planning) - Compare prices & book instantly via Agoda\n\n• 🎯 [Discover Activities](https://www.klook.com/en-PH/?aid=96417&aff_ext=travel_planning&aff_sub=${defaultAffSub}) - Tours, experiences & attractions via Klook\n\n• 🚛 Transportation booking available through our partners\n\n*Affiliate partnerships help keep GalaGPT.ph free for all travelers!*`
+    }
 
   const primaryCity = detectedCities[0]
   console.log('Primary city for links:', primaryCity)
@@ -295,9 +332,10 @@ function detectDestination(message: string): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, history } = await request.json() as {
+    const { message, history, meta } = await request.json() as {
       message: string,
       history?: Array<{ role: 'user' | 'assistant'; content: string }>
+      meta?: { initialPrompt?: string; primaryCity?: string }
     }
 
     if (!message) {
@@ -307,7 +345,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Build combined text from history + current message for better context
+    // Build combined text from history + current message for broader context when needed
     const safeHistory = Array.isArray(history)
       ? history.filter(h => h && (h.role === 'user' || h.role === 'assistant') && typeof h.content === 'string')
       : []
@@ -316,8 +354,41 @@ export async function POST(request: NextRequest) {
       message
     ].join(' \n ')
 
-    // Extract cities from combined text
-    const detectedCities = extractCityNames(combinedText)
+  // Prefer cities mentioned in current user message; fall back to history/combined if none
+  let detectedCities = applyCityAliases(message, extractCityNames(message))
+    if (detectedCities.length === 0) {
+      // Try last user turn from history
+      const lastUser = [...safeHistory].reverse().find(h => h.role === 'user')
+      if (lastUser) {
+        detectedCities = applyCityAliases(lastUser.content, extractCityNames(lastUser.content))
+      }
+    }
+    if (detectedCities.length === 0) {
+      // Finally, try combined context
+      detectedCities = applyCityAliases(combinedText, extractCityNames(combinedText))
+    }
+
+    // Anchor to initial prompt or provided primaryCity if present and no explicit new city override
+    const initialText = meta?.initialPrompt || ''
+    const initialCities = initialText ? applyCityAliases(initialText, extractCityNames(initialText)) : []
+    // Change 'const' to 'let' for preferredPrimary to allow reassignment
+    let preferredPrimary = meta?.primaryCity || initialCities[0];
+    // Ensure Quick Booking Options link updates to the current detected city when explicitly changed
+    if (detectedCities.length > 0) {
+      const currentCity = detectedCities[0];
+      if (currentCity !== preferredPrimary) {
+        // Override primary city with current detected city
+        preferredPrimary = currentCity;
+      }
+    }
+    if (preferredPrimary) {
+      const messageHasNewCity = detectedCities.length > 0 && !detectedCities.includes(preferredPrimary)
+      // If the current message did not clearly specify a new destination, keep the initial primary on top
+      if (!messageHasNewCity) {
+        const filtered = detectedCities.filter(c => c !== preferredPrimary)
+        detectedCities = [preferredPrimary, ...filtered]
+      }
+    }
 
     // Check if OpenAI API key is available
     if (!process.env.OPENAI_API_KEY) {
@@ -366,12 +437,12 @@ export async function POST(request: NextRequest) {
     try { parsed = await request.json() } catch {}
     const userMessage = (parsed?.message || '').toLowerCase()
     const history: Array<{ role: 'user' | 'assistant'; content: string }> = Array.isArray(parsed?.history) ? parsed.history : []
-    const combinedText = [
+  const combinedText = [
       ...history.map(h => h.content?.toLowerCase?.() || ''),
       userMessage
     ].join(' ')
-    const destination = detectDestination(combinedText)
-    const detectedCities = extractCityNames(combinedText)
+  const destination = detectDestination(combinedText)
+  const detectedCities = applyCityAliases(combinedText, extractCityNames(combinedText))
     
     const fallbackResponse = FALLBACK_RESPONSES[destination as keyof typeof FALLBACK_RESPONSES] + '\n\n*Note: I\'m currently experiencing some technical difficulties, but I can still help you plan your adventure!*'
     

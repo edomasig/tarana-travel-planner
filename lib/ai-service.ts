@@ -20,7 +20,8 @@ export function addAffiliateRecommendations(response: string): string { return r
 // Optionally include recent conversation history so the AI can keep context
 export async function generateTravelResponse(
   userMessage: string,
-  history?: Array<{ role: 'user' | 'assistant'; content: string }>
+  history?: Array<{ role: 'user' | 'assistant'; content: string }>,
+  meta?: { initialPrompt?: string; primaryCity?: string }
 ): Promise<string> {
   try {
     // Call our server-side API route instead of OpenAI directly
@@ -29,7 +30,7 @@ export async function generateTravelResponse(
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ message: userMessage, history }),
+  body: JSON.stringify({ message: userMessage, history, meta }),
     })
 
     if (!response.ok) {
