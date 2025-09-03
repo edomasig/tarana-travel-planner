@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaraNa Travel Planner - Facebook Demo Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .demo-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .demo-card iframe {
+            width: 100%;
+            height: 300px;
+            border: none;
+        }
+        
+        .demo-info {
+            padding: 20px;
+        }
+        
+        .demo-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2563eb;
+        }
+        
+        .demo-description {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .demo-url {
+            font-family: 'Courier New', monospace;
+            background: #f3f4f6;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+        
+        .facebook-tips {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .facebook-tips h2 {
+            color: #1877f2;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .tip-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .tip-card {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #1877f2;
+        }
+        
+        .tip-card h3 {
+            color: #1877f2;
+            margin-bottom: 10px;
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin-top: 40px;
+            padding: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: #1877f2;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        .cta-button:hover {
+            background: #166fe5;
+        }
+        
+        .flag {
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><span class="flag">🇵🇭</span> TaraNa Travel Planner</h1>
+            <p>AI-Powered Travel Assistant for the Philippines</p>
+            <p><strong>Facebook Demo Preview</strong></p>
+        </header>
+
+        <div class="demo-grid">
+            <div class="demo-card">
+                <iframe src="https://galagpt.ph" title="Homepage"></iframe>
+                <div class="demo-info">
+                    <div class="demo-title">🏠 Homepage - Landing Page</div>
+                    <div class="demo-description">Main landing page showcasing the AI travel assistant brand and core features</div>
+                    <div class="demo-url">https://galagpt.ph/</div>
+                </div>
+            </div>
+
+            <div class="demo-card">
+                <iframe src="https://galagpt.ph/plan" title="Trip Planner"></iframe>
+                <div class="demo-info">
+                    <div class="demo-title">✈️ Trip Planner - Core Feature</div>
+                    <div class="demo-description">Interactive AI-powered trip planning interface - the main product functionality</div>
+                    <div class="demo-url">https://galagpt.ph/plan</div>
+                </div>
+            </div>
+
+            <div class="demo-card">
+                <iframe src="https://galagpt.ph/guides" title="Travel Guides"></iframe>
+                <div class="demo-info">
+                    <div class="demo-title">📚 Travel Guides - Expert Content</div>
+                    <div class="demo-description">Comprehensive travel guides showcasing local expertise and destination knowledge</div>
+                    <div class="demo-url">https://galagpt.ph/guides</div>
+                </div>
+            </div>
+
+            <div class="demo-card">
+                <iframe src="https://galagpt.ph/guides/baguio-summer-capital" title="Baguio Guide"></iframe>
+                <div class="demo-info">
+                    <div class="demo-title">🏔️ Baguio Guide - Sample Destination</div>
+                    <div class="demo-description">Detailed destination guide example showing content quality and local insights</div>
+                    <div class="demo-url">https://galagpt.ph/guides/baguio-summer-capital</div>
+                </div>
+            </div>
+
+            <div class="demo-card">
+                <iframe src="https://galagpt.ph/about" title="About Page"></iframe>
+                <div class="demo-info">
+                    <div class="demo-title">ℹ️ About Page - Brand Story</div>
+                    <div class="demo-description">Company information, mission, and team details for building trust and credibility</div>
+                    <div class="demo-url">https://galagpt.ph/about</div>
+                </div>
+            </div>
+
+            <div class="demo-card">
+                <iframe src="https://galagpt.ph/contact" title="Contact Page"></iframe>
+                <div class="demo-info">
+                    <div class="demo-title">📞 Contact Page - Get in Touch</div>
+                    <div class="demo-description">Contact information and support channels for customer engagement</div>
+                    <div class="demo-url">https://galagpt.ph/contact</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="facebook-tips">
+            <h2>📱 Facebook Marketing Tips</h2>
+            <p>Here's how to leverage these pages for your Facebook marketing campaign:</p>
+            
+            <div class="tip-grid">
+                <div class="tip-card">
+                    <h3>📸 Screenshot Strategy</h3>
+                    <p>Take full-page screenshots of each iframe above. Use F12 developer tools in Chrome for best quality captures.</p>
+                </div>
+                
+                <div class="tip-card">
+                    <h3>📝 Content Ideas</h3>
+                    <p>Create posts showing the planning process: from user input to AI-generated itinerary results.</p>
+                </div>
+                
+                <div class="tip-card">
+                    <h3>🎯 Target Audience</h3>
+                    <p>Focus on travel enthusiasts, Filipino diaspora, digital nomads, and families planning vacations.</p>
+                </div>
+                
+                <div class="tip-card">
+                    <h3>📊 Performance Tracking</h3>
+                    <p>Install Facebook Pixel to track conversions from trip planning completions and guide views.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2 style="color: white; margin-bottom: 20px;">🚀 Ready to Launch Your Facebook Campaign?</h2>
+            <p style="color: white; margin-bottom: 20px;">Use this preview to create compelling social media content</p>
+            <a href="https://galagpt.ph/" class="cta-button" target="_blank">🌐 Visit Live Website</a>
+            <a href="facebook-demo-manual-guide.md" class="cta-button">📋 Read Full Guide</a>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactivity
+        document.querySelectorAll('.demo-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const iframe = this.querySelector('iframe');
+                const url = iframe.src;
+                window.open(url, '_blank');
+            });
+        });
+
+        // Update iframe sources on load to ensure they work
+        window.addEventListener('load', function() {
+            console.log('Facebook Demo Preview Loaded Successfully! 🎉');
+            console.log('Website running at: https://galagpt.ph');
+        });
+    </script>
+</body>
+</html>
