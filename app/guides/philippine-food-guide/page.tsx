@@ -18,7 +18,7 @@ export default function PhilippineFoodGuidePage() {
           <Card>
             <div className="relative h-64 md:h-80">
               <Image
-                src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                src="/Guide_Food.jpeg"
                 alt="Filipino cuisine spread with various dishes"
                 fill
                 className="object-cover rounded-t-lg"

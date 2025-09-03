@@ -18,7 +18,7 @@ export default function IloiloGuidePage() {
           <Card>
             <div className="relative h-64 md:h-80">
               <Image
-                src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                src="/Guides_Iloilo.jpeg"
                 alt="Iloilo City skyline and Iloilo River"
                 fill
                 className="object-cover rounded-t-lg"

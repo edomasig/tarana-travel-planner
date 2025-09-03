@@ -18,7 +18,7 @@ export default function SagadaGuidePage() {
           <Card>
             <div className="relative h-64 md:h-80">
               <Image
-                src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                src="/Guide_Sagada.jpeg"
                 alt="Sagada hanging coffins and mountain landscape"
                 fill
                 className="object-cover rounded-t-lg"
