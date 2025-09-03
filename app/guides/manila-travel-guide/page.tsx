@@ -18,7 +18,7 @@ export default function ManilaGuidePage() {
           <Card>
             <div className="relative h-64 md:h-80">
               <Image
-                src="https://images.unsplash.com/photo-1555993539-1732b0258235?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                src="/Guides_Manila.jpeg"
                 alt="Manila skyline"
                 fill
                 className="object-cover rounded-t-lg"

@@ -18,7 +18,7 @@ export default function BaguioGuidePage() {
           <Card>
             <div className="relative h-64 md:h-80">
               <Image
-                src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                src="/Guides_Baguio.jpeg"
                 alt="Baguio City mountain scenery"
                 fill
                 className="object-cover rounded-t-lg"
