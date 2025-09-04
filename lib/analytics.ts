@@ -1,5 +1,5 @@
 // Google Analytics configuration
-export const GA_MEASUREMENT_ID = 'G-MW68X98010'
+export const GA_MEASUREMENT_ID = 'G-MK68X98010'
 
 // Analytics for ad performance tracking
 export const trackAdClick = (adType: string, position: string) => {
