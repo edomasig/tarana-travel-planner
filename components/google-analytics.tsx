@@ -8,7 +8,7 @@ export function GoogleAnalytics() {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('config', process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-MK68X98010', {
+      window.gtag('config', process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-MW68X98010', {
         page_path: pathname,
       })
     }
