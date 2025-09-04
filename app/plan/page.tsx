@@ -10,6 +10,7 @@ import { MapPin, Clock, DollarSign, Download, Save, Share2, Loader2 } from 'luci
 import { generateItinerary } from '@/lib/ai-service'
 import { ItineraryDisplay } from '@/components/itinerary-display'
 import { AdBanner } from '@/components/ads/ad-banner'
+import { TravelAnalytics } from '@/lib/analytics'
 
 
 export default function PlanPage() {
@@ -24,6 +25,13 @@ export default function PlanPage() {
     try {
       const result = await generateItinerary(prompt)
       setItinerary(result)
+      
+      // Track itinerary generation for analytics
+      TravelAnalytics.trackItineraryGenerated(
+        result.destination || 'Philippines',
+        result.duration || 'Unknown',
+        result.totalBudget || 'Not specified'
+      )
     } catch (error) {
       console.error('Error generating itinerary:', error)
     } finally {
