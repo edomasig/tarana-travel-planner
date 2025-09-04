@@ -2,6 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { Footer } from '@/components/footer'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy - GalaGPT.ph',
+  description: 'Learn about our privacy practices and how we protect your data at GalaGPT.ph.',
+}
 
 export default function PrivacyPolicyPage() {
   return (
