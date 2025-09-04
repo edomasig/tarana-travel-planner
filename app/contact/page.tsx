@@ -2,6 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeft, Mail, MessageSquare, Globe, Users } from 'lucide-react'
 import Link from 'next/link'
 import { Footer } from '@/components/footer'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Contact Us - GalaGPT.ph',
+  description: 'Get in touch with the GalaGPT.ph team for support, feedback, or partnership inquiries.',
+}
 
 export default function ContactPage() {
   return (
