@@ -213,7 +213,3 @@ export default function ContactPage() {
   )
 }
 
-export const metadata = {
-  title: 'Contact Us | GalaGPT.ph',
-  description: 'Get in touch with GalaGPT.ph team for support, partnerships, or feedback about our AI-powered Philippine travel planning service.',
-}

@@ -149,7 +149,3 @@ export default function PrivacyPolicyPage() {
   )
 }
 
-export const metadata = {
-  title: 'Privacy Policy | GalaGPT.ph',
-  description: 'Privacy policy for GalaGPT.ph - Learn how we collect, use, and protect your data while providing AI-powered Philippine travel planning services.',
-}
