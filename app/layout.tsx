@@ -4,6 +4,7 @@ import './globals.css'
 import Script from 'next/script'
 import { Navbar } from '@/components/navbar'
 import { ADSENSE_CONFIG } from '@/lib/adsense-config'
+import { GoogleAnalytics } from '@/components/google-analytics'
 
 // Modern font stack: Montserrat (primary), Poppins (secondary), Inter (fallback)
 const montserrat = Montserrat({ 
@@ -169,7 +170,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         
         {/* Google Analytics 4 (gtag.js) */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-ZMCYRYBMN6"
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}
           strategy="afterInteractive"
         />
         <Script
@@ -180,7 +181,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', 'G-ZMCYRYBMN6');
+              gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}');
             `
           }}
         />
@@ -250,6 +251,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         {/* Google Analytics scripts can be added here when needed */}
         
         <Navbar />
+        <GoogleAnalytics />
         {children}
       </body>
     </html>

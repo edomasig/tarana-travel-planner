@@ -1,3 +1,6 @@
+// Google Analytics configuration
+export const GA_MEASUREMENT_ID = 'G-MK68X98010'
+
 // Analytics for ad performance tracking
 export const trackAdClick = (adType: string, position: string) => {
   // Google Analytics event tracking
@@ -222,6 +225,91 @@ export const trackConversion = (conversionType: 'premium_signup' | 'ad_click_thr
     window.gtag('event', 'conversion', {
       event_category: 'monetization',
       event_label: conversionType
+    })
+  }
+}
+
+// Travel-specific tracking functions for TaraNa
+export const TravelAnalytics = {
+  // Track destination searches
+  trackDestinationSearch: (destination: string, category?: string) => {
+    trackEvent({
+      action: 'destination_search',
+      category: 'travel_planning',
+      label: destination,
+      custom_parameters: {
+        destination: destination,
+        category: category || 'general'
+      }
+    })
+  },
+
+  // Track itinerary generation
+  trackItineraryGenerated: (destination: string, duration: string, budget?: string) => {
+    trackEvent({
+      action: REVENUE_EVENTS.ITINERARY_GENERATED,
+      category: 'travel_planning',
+      label: destination,
+      custom_parameters: {
+        destination: destination,
+        duration: duration,
+        budget: budget
+      }
+    })
+  },
+
+  // Track guide page views
+  trackGuideView: (guideName: string, category: string) => {
+    trackEvent({
+      action: 'guide_view',
+      category: 'content_engagement',
+      label: guideName,
+      custom_parameters: {
+        guide_name: guideName,
+        guide_category: category
+      }
+    })
+  },
+
+  // Track affiliate link clicks (for Agoda, etc.)
+  trackAffiliateClick: (provider: string, linkType: string, destination?: string) => {
+    trackEvent({
+      action: REVENUE_EVENTS.AFFILIATE_CLICK,
+      category: 'monetization',
+      label: `${provider}_${linkType}`,
+      custom_parameters: {
+        affiliate_provider: provider,
+        link_type: linkType,
+        destination: destination
+      }
+    })
+  },
+
+  // Track booking funnel
+  trackBookingInitiated: (provider: string, bookingType: string, destination: string) => {
+    trackEvent({
+      action: REVENUE_EVENTS.BOOKING_INITIATED,
+      category: 'conversion',
+      label: `${provider}_${bookingType}`,
+      value: 1,
+      custom_parameters: {
+        booking_provider: provider,
+        booking_type: bookingType,
+        destination: destination
+      }
+    })
+  },
+
+  // Track chat interactions
+  trackChatMessage: (messageType: string, topic?: string) => {
+    trackEvent({
+      action: 'chat_message',
+      category: 'user_engagement',
+      label: messageType,
+      custom_parameters: {
+        message_type: messageType,
+        topic: topic
+      }
     })
   }
 }
