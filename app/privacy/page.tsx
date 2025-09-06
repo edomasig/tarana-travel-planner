@@ -5,8 +5,9 @@ import { Footer } from '@/components/footer'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy - GalaGPT.ph',
-  description: 'Learn about our privacy practices and how we protect your data at GalaGPT.ph.',
+  title: 'Privacy Policy - GalaGPT.ph Travel Planner | Data Protection & User Rights',
+  description: 'Learn about our privacy practices, data protection policies, and how we safeguard your personal information at GalaGPT.ph. GDPR compliant privacy policy for travelers.',
+  keywords: 'privacy policy, data protection, user privacy, GDPR compliance, personal information, travel data privacy',
 }
 
 export default function PrivacyPolicyPage() {

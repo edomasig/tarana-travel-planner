@@ -3,6 +3,7 @@ import { ArrowLeft, Clock, Calendar, User, Utensils, Star, AlertTriangle } from 
 import Link from 'next/link'
 import Image from 'next/image'
 import { Footer } from '@/components/footer'
+import { RelatedArticles } from '@/components/related-articles'
 
 export default function FilipinoStreetFoodGuidePage() {
   return (
@@ -307,6 +308,13 @@ export default function FilipinoStreetFoodGuidePage() {
             </CardContent>
           </Card>
         </article>
+        <RelatedArticles
+          items={[
+            { title: 'Ultimate Filipino Food Guide', href: '/blog/ultimate-filipino-food-guide', image: '/filipino-woman-smiling.png', category: 'Food & Culture' },
+            { title: 'Cultural Experiences in the Philippines', href: '/blog/cultural-experiences-philippines', image: '/Baguio_Session_Road_(Baguio_City;_12-04-2022).jpg', category: 'Culture' },
+            { title: 'Philippines Budget Travel Guide: Under ₱2,000/Day', href: '/blog/philippines-budget-travel-guide', image: '/manila.jpg', category: 'Budget Travel' },
+          ]}
+        />
       </div>
       <Footer />
     </div>

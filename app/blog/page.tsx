@@ -28,6 +28,46 @@ export default function BlogPage() {
       slug: "filipino-street-food-guide"
     },
     {
+      title: "Cebu–Bohol Ultimate Itinerary (5–7 Days)",
+      excerpt: "Day-by-day plan with ferry timings, island hopping to Balicasag, Chocolate Hills loop, food stops, and budgets.",
+      image: "/iloilo.jpg",
+      author: "GalaGPT Team",
+      date: "September 6, 2025",
+      readTime: "15 min read",
+      category: "Travel Guides",
+      slug: "cebu-bohol-ultimate-itinerary"
+    },
+    {
+      title: "Ultimate Filipino Food Guide: Regional Dishes, Where to Eat, and Budgets",
+      excerpt: "From Luzon to Mindanao, discover signature dishes, market hotspots, and sample foodie itineraries—plus smart budget tips.",
+      image: "/food-ad.png",
+      author: "GalaGPT Team",
+      date: "September 6, 2025",
+      readTime: "16 min read",
+      category: "Food & Culture",
+      slug: "ultimate-filipino-food-guide"
+    },
+    {
+      title: "Siargao Essentials: Surf, Lagoons, and Island Hopping (4–6 Days)",
+      excerpt: "Smart 4–6 day plan with 3-island hopping, Sugba Lagoon, Sohoton Cove day trip, surf seasons, and safety.",
+      image: "/sagada.jpg",
+      author: "GalaGPT Team",
+      date: "September 6, 2025",
+      readTime: "14 min read",
+      category: "Adventure",
+      slug: "siargao-essentials-complete-guide"
+    },
+    {
+      title: "Philippines Travel Seasons: A Regional, Month‑by‑Month Planner",
+      excerpt: "Pick the right islands for your dates. Luzon, Visayas, Mindanao timing with monthly weather and activity picks.",
+      image: "/manila.jpg",
+      author: "GalaGPT Team",
+      date: "September 6, 2025",
+      readTime: "14 min read",
+      category: "Travel Guides",
+      slug: "philippines-travel-seasons"
+    },
+    {
       title: "Island Hopping in Siargao: Surfer's Paradise and More",
       excerpt: "Beyond world-class surfing, Siargao offers incredible island hopping experiences. Discover lagoons, beaches, and marine sanctuaries.",
       image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
@@ -38,14 +78,34 @@ export default function BlogPage() {
       slug: "siargao-island-hopping"
     },
     {
-      title: "Budget Travel Philippines: How to Travel for Under ₱2,000/Day",
-      excerpt: "Practical tips and strategies for budget travelers. Learn how to explore the Philippines without breaking the bank.",
-      image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      author: "Lisa Chen",
-      date: "January 8, 2025",
-      readTime: "10 min read",
+      title: "Philippines Budget Travel Guide: Under ₱2,000/Day",
+      excerpt: "Concrete daily budgets, food and transport costs, and free activities—across Manila, El Nido, Cebu, and Baguio.",
+      image: "/manila.jpg",
+      author: "GalaGPT Team",
+      date: "September 4, 2025",
+      readTime: "15 min read",
       category: "Budget Travel",
-      slug: "budget-travel-philippines"
+      slug: "philippines-budget-travel-guide"
+    },
+    {
+      title: "Island Hopping Strategies: Routes, Costs, and Safety",
+      excerpt: "Choose smarter routes across Palawan, Cebu–Bohol, and Siargao. Boat types, pricing, weather windows, and sample 5–7 day plans.",
+      image: "/tour-ad.png",
+      author: "GalaGPT Team",
+      date: "September 6, 2025",
+      readTime: "15 min read",
+      category: "Adventure",
+      slug: "island-hopping-strategies-philippines"
+    },
+    {
+      title: "Cultural Experiences in the Philippines: Festivals, History, and Local Life",
+      excerpt: "Plan around iconic festivals, visit heritage towns, and connect with local life—respectfully and on budget.",
+      image: "/Baguio_Session_Road_(Baguio_City;_12-04-2022).jpg",
+      author: "GalaGPT Team",
+      date: "September 6, 2025",
+      readTime: "16 min read",
+      category: "Culture",
+      slug: "cultural-experiences-philippines"
     },
     {
       title: "Philippine Festivals 2025: When and Where to Experience Culture",
