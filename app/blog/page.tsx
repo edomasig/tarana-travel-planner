@@ -1,44 +1,89 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, Clock, Calendar, User, ArrowRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { ArrowLeft, Clock, Calendar, User, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Footer } from '@/components/footer'
-import { prisma } from '@/lib/prisma'
 
-async function getBlogPosts() {
-  try {
-    const posts = await prisma.blogPost.findMany({
-      where: {
-        published: true
-      },
-      include: {
-        tags: true
-      },
-      orderBy: [
-        { featured: 'desc' },  // Featured posts first
-        { publishedAt: 'desc' } // Then by publish date
-      ]
-    })
-    return posts
-  } catch (error) {
-    console.error('Error fetching blog posts:', error)
-    return []
-  }
+interface BlogPost {
+  id: string
+  title: string
+  slug: string
+  excerpt?: string
+  featuredImage?: string
+  author?: string
+  publishedAt?: string
+  featured: boolean
+  tags: Array<{ id: string; name: string }>
 }
 
-export default async function BlogPage() {
-  const blogPosts = await getBlogPosts()
-  
-  // Find the featured post specifically
-  const featuredPostData = blogPosts.find((post: any) => post.featured) || blogPosts[0]
-  
-  // If we have a featured post from database, use it
-  const featuredPost = featuredPostData ? {
-    title: featuredPostData.title,
-    excerpt: featuredPostData.excerpt || '',
-    image: featuredPostData.featuredImage || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    author: featuredPostData.author || "GalaGPT Team",
-    date: featuredPostData.publishedAt ? new Date(featuredPostData.publishedAt).toLocaleDateString('en-US', { 
+interface FormattedPost {
+  title: string
+  excerpt: string
+  image: string
+  author: string
+  date: string
+  readTime: string
+  category: string
+  slug: string
+}
+
+export default function BlogPage() {
+  const [blogData, setBlogData] = useState<{
+    posts: BlogPost[]
+    pagination: { page: number; pages: number; total: number; limit: number }
+  }>({
+    posts: [],
+    pagination: { page: 1, pages: 1, total: 0, limit: 6 }
+  })
+  const [currentPage, setCurrentPage] = useState(1)
+  const [sortBy, setSortBy] = useState('newest')
+  const [category, setCategory] = useState('all')
+  const [loading, setLoading] = useState(true)
+
+  const fetchPosts = async () => {
+    setLoading(true)
+    try {
+      const response = await fetch(`/api/blog/posts?page=${currentPage}&limit=6&sortBy=${sortBy}&category=${category}`, {
+        cache: 'no-store'
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        setBlogData(data)
+      } else {
+        console.error('Failed to fetch posts:', response.status)
+        // Fallback to empty data
+        setBlogData({
+          posts: [],
+          pagination: { page: 1, pages: 1, total: 0, limit: 6 }
+        })
+      }
+    } catch (error) {
+      console.error('Error fetching blog posts:', error)
+      // Fallback to empty data
+      setBlogData({
+        posts: [],
+        pagination: { page: 1, pages: 1, total: 0, limit: 6 }
+      })
+    }
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    fetchPosts()
+  }, [currentPage, sortBy, category])
+
+  const formatPost = (post: BlogPost): FormattedPost => ({
+    title: post.title,
+    excerpt: post.excerpt || '',
+    image: post.featuredImage || "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    author: post.author || "GalaGPT Team",
+    date: post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-US', { 
       year: 'numeric', 
       month: 'long', 
       day: 'numeric' 
@@ -48,164 +93,47 @@ export default async function BlogPage() {
       day: 'numeric' 
     }),
     readTime: "5 min read",
-    category: featuredPostData.tags.length > 0 ? featuredPostData.tags[0].name : "Travel",
-    slug: featuredPostData.slug
-  } : {
-    title: "Hidden Gems of Northern Philippines: Beyond Baguio and Sagada",
-    excerpt: "Discover lesser-known destinations in Luzon that offer incredible experiences without the crowds. From pristine beaches to mountain adventures, Northern Philippines has secrets waiting to be explored.",
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    author: "Maria Santos",
-    date: "January 15, 2025",
-    readTime: "8 min read",
-    category: "Travel Guides",
-    slug: "hidden-gems-northern-philippines"
+    category: post.tags.length > 0 ? post.tags[0].name : "Travel",
+    slug: post.slug
+  })
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  // Convert remaining database posts to the format expected by the UI, excluding the featured post
-  const regularPosts = blogPosts.length > 0 ? blogPosts
-    .filter((post: any) => !post.featured || !featuredPostData?.featured) // Exclude featured post, or include all if no featured post
-    .slice(0, featuredPostData?.featured ? undefined : 1) // If no featured post was found, skip the first regular post
-    .map((post: any) => ({
-      title: post.title,
-      excerpt: post.excerpt || '',
-      image: post.featuredImage || "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      author: post.author || "GalaGPT Team",
-      date: post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      }) : new Date().toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      }),
-      readTime: "5 min read",
-      category: post.tags.length > 0 ? post.tags[0].name : "Travel",
-      slug: post.slug
-    })) : [
-    {
-      title: "Best Filipino Street Food: A Culinary Adventure Guide",
-      excerpt: "Explore the vibrant world of Filipino street food, from savory BBQ to sweet delicacies. Learn where to find the best treats and how to eat safely.",
-      image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      author: "Chef Miguel Reyes",
-      date: "January 12, 2025",
-      readTime: "6 min read",
-      category: "Food & Culture",
-      slug: "filipino-street-food-guide"
-    },
-    {
-      title: "Cebu–Bohol Ultimate Itinerary (5–7 Days)",
-      excerpt: "Day-by-day plan with ferry timings, island hopping to Balicasag, Chocolate Hills loop, food stops, and budgets.",
-      image: "/iloilo.jpg",
-      author: "GalaGPT Team",
-      date: "September 6, 2025",
-      readTime: "15 min read",
-      category: "Travel Guides",
-      slug: "cebu-bohol-ultimate-itinerary"
-    },
-    {
-      title: "Ultimate Filipino Food Guide: Regional Dishes, Where to Eat, and Budgets",
-      excerpt: "From Luzon to Mindanao, discover signature dishes, market hotspots, and sample foodie itineraries—plus smart budget tips.",
-      image: "/food-ad.png",
-      author: "GalaGPT Team",
-      date: "September 6, 2025",
-      readTime: "16 min read",
-      category: "Food & Culture",
-      slug: "ultimate-filipino-food-guide"
-    },
-    {
-      title: "Siargao Essentials: Surf, Lagoons, and Island Hopping (4–6 Days)",
-      excerpt: "Smart 4–6 day plan with 3-island hopping, Sugba Lagoon, Sohoton Cove day trip, surf seasons, and safety.",
-      image: "/sagada.jpg",
-      author: "GalaGPT Team",
-      date: "September 6, 2025",
-      readTime: "14 min read",
-      category: "Adventure",
-      slug: "siargao-essentials-complete-guide"
-    },
-    {
-      title: "Philippines Travel Seasons: A Regional, Month‑by‑Month Planner",
-      excerpt: "Pick the right islands for your dates. Luzon, Visayas, Mindanao timing with monthly weather and activity picks.",
-      image: "/manila.jpg",
-      author: "GalaGPT Team",
-      date: "September 6, 2025",
-      readTime: "14 min read",
-      category: "Travel Guides",
-      slug: "philippines-travel-seasons"
-    },
-    {
-      title: "Island Hopping in Siargao: Surfer's Paradise and More",
-      excerpt: "Beyond world-class surfing, Siargao offers incredible island hopping experiences. Discover lagoons, beaches, and marine sanctuaries.",
-      image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      author: "Jake Morrison",
-      date: "January 10, 2025",
-      readTime: "7 min read",
-      category: "Adventure",
-      slug: "siargao-island-hopping"
-    },
-    {
-      title: "Philippines Budget Travel Guide: Under ₱2,000/Day",
-      excerpt: "Concrete daily budgets, food and transport costs, and free activities—across Manila, El Nido, Cebu, and Baguio.",
-      image: "/manila.jpg",
-      author: "GalaGPT Team",
-      date: "September 4, 2025",
-      readTime: "15 min read",
-      category: "Budget Travel",
-      slug: "philippines-budget-travel-guide"
-    },
-    {
-      title: "Island Hopping Strategies: Routes, Costs, and Safety",
-      excerpt: "Choose smarter routes across Palawan, Cebu–Bohol, and Siargao. Boat types, pricing, weather windows, and sample 5–7 day plans.",
-      image: "/tour-ad.png",
-      author: "GalaGPT Team",
-      date: "September 6, 2025",
-      readTime: "15 min read",
-      category: "Adventure",
-      slug: "island-hopping-strategies-philippines"
-    },
-    {
-      title: "Cultural Experiences in the Philippines: Festivals, History, and Local Life",
-      excerpt: "Plan around iconic festivals, visit heritage towns, and connect with local life—respectfully and on budget.",
-      image: "/Baguio_Session_Road_(Baguio_City;_12-04-2022).jpg",
-      author: "GalaGPT Team",
-      date: "September 6, 2025",
-      readTime: "16 min read",
-      category: "Culture",
-      slug: "cultural-experiences-philippines"
-    },
-    {
-      title: "Philippine Festivals 2025: When and Where to Experience Culture",
-      excerpt: "A comprehensive calendar of the Philippines' most vibrant festivals. Plan your trip around these colorful celebrations.",
-      image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      author: "Carlos Mendoza",
-      date: "January 5, 2025",
-      readTime: "12 min read",
-      category: "Culture",
-      slug: "philippine-festivals-2025"
-    },
-    {
-      title: "Sustainable Tourism in the Philippines: Travel Responsibly",
-      excerpt: "Learn how to minimize your environmental impact while exploring Philippine destinations. Support local communities and protect natural wonders.",
-      image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      author: "Dr. Ana Reyes",
-      date: "January 3, 2025",
-      readTime: "9 min read",
-      category: "Sustainable Travel",
-      slug: "sustainable-tourism-philippines"
-    },
-    {
-      title: "Photography Guide: Capturing the Beauty of Philippine Landscapes",
-      excerpt: "Tips and techniques for photographing the Philippines' stunning landscapes, from golden sunrises to dramatic seascapes.",
-      image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      author: "Mark Thompson",
-      date: "December 30, 2024",
-      readTime: "11 min read",
-      category: "Photography",
-      slug: "photography-guide-philippines"
-    }
-  ]
+  const handleSortChange = (newSort: string) => {
+    setSortBy(newSort)
+    setCurrentPage(1)
+  }
 
-  const categories = ["All", "Travel Guides", "Food & Culture", "Adventure", "Budget Travel", "Culture", "Sustainable Travel", "Photography"]
+  const handleCategoryChange = (newCategory: string) => {
+    setCategory(newCategory)
+    setCurrentPage(1)
+  }
+
+  const featuredPost = blogData.posts.find(post => post.featured)
+  const regularPosts = blogData.posts.filter(post => !post.featured)
+  const formattedFeaturedPost = featuredPost ? formatPost(featuredPost) : null
+  const formattedRegularPosts = regularPosts.map(formatPost)
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto max-w-6xl px-4">
+          <div className="animate-pulse space-y-8">
+            <div className="h-8 bg-gray-200 rounded w-32"></div>
+            <div className="h-64 bg-gray-200 rounded"></div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="h-80 bg-gray-200 rounded"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -226,136 +154,188 @@ export default async function BlogPage() {
             </CardHeader>
           </Card>
 
-          {/* Featured Post */}
-          <Card className="overflow-hidden">
-            <div className="md:flex">
-              <div className="md:w-1/2 relative h-64 md:h-auto">
-                <Image
-                  src={featuredPost.image}
-                  alt={featuredPost.title}
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute top-4 left-4">
-                  <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                    Featured
-                  </span>
+          {/* Featured Post - Only show if we have one */}
+          {formattedFeaturedPost && (
+            <Card className="overflow-hidden">
+              <div className="md:flex">
+                <div className="md:w-1/2 relative h-64 md:h-auto">
+                  <Image
+                    src={formattedFeaturedPost.image}
+                    alt={formattedFeaturedPost.title}
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                      Featured
+                    </span>
+                  </div>
+                </div>
+                <div className="md:w-1/2 p-8">
+                  <div className="mb-3">
+                    <span className="text-blue-600 text-sm font-medium">{formattedFeaturedPost.category}</span>
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-bold mb-4">{formattedFeaturedPost.title}</h2>
+                  <p className="text-gray-600 mb-6 leading-relaxed">{formattedFeaturedPost.excerpt}</p>
+                  <div className="flex items-center gap-6 text-sm text-gray-500 mb-6">
+                    <div className="flex items-center gap-1">
+                      <User className="h-4 w-4" />
+                      {formattedFeaturedPost.author}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4" />
+                      {formattedFeaturedPost.date}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-4 w-4" />
+                      {formattedFeaturedPost.readTime}
+                    </div>
+                  </div>
+                  <Link href={`/blog/${formattedFeaturedPost.slug}`}>
+                    <Button className="group">
+                      Read Full Story
+                      <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </Link>
                 </div>
               </div>
-              <div className="md:w-1/2 p-8">
-                <div className="mb-3">
-                  <span className="text-blue-600 text-sm font-medium">{featuredPost.category}</span>
-                </div>
-                <h2 className="text-2xl md:text-3xl font-bold mb-4">{featuredPost.title}</h2>
-                <p className="text-gray-600 mb-6 leading-relaxed">{featuredPost.excerpt}</p>
-                <div className="flex items-center gap-4 text-sm text-gray-500 mb-6">
-                  <div className="flex items-center gap-1">
-                    <User className="h-4 w-4" />
-                    {featuredPost.author}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    {featuredPost.date}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    {featuredPost.readTime}
-                  </div>
-                </div>
-                <Link 
-                  href={`/blog/${featuredPost.slug}`}
-                  className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Read Full Article
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
+            </Card>
+          )}
+
+          {/* Controls */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-700 font-medium">Category:</span>
+                <Select value={category} onValueChange={handleCategoryChange}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    <SelectItem value="Travel Guides">Travel Guides</SelectItem>
+                    <SelectItem value="Food & Culture">Food & Culture</SelectItem>
+                    <SelectItem value="Adventure">Adventure</SelectItem>
+                    <SelectItem value="Budget Travel">Budget Travel</SelectItem>
+                    <SelectItem value="Hidden Gems">Hidden Gems</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <span className="text-gray-700 font-medium">Sort by:</span>
+                <Select value={sortBy} onValueChange={handleSortChange}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="newest">Newest First</SelectItem>
+                    <SelectItem value="oldest">Oldest First</SelectItem>
+                    <SelectItem value="title">Title (A-Z)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
-          </Card>
-
-          {/* Category Filter */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex flex-wrap gap-2 justify-center">
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    className="px-4 py-2 rounded-full border border-gray-300 hover:border-blue-500 hover:text-blue-600 transition-colors text-sm"
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Recent Posts */}
-          <div>
-            <h3 className="text-2xl font-bold mb-6">Recent Articles</h3>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {regularPosts.map((post: any, index: number) => (
-                <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="relative h-48">
-                    <Image
-                      src={post.image}
-                      alt={post.title}
-                      fill
-                      className="object-cover"
-                    />
-                    <div className="absolute top-3 left-3">
-                      <span className="bg-white text-gray-800 px-2 py-1 rounded-full text-xs font-semibold">
-                        {post.category}
-                      </span>
-                    </div>
-                  </div>
-                  <CardContent className="p-6">
-                    <h4 className="text-lg font-bold mb-2 line-clamp-2">{post.title}</h4>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">{post.excerpt}</p>
-                    <div className="flex items-center gap-3 text-xs text-gray-500 mb-4">
-                      <div className="flex items-center gap-1">
-                        <User className="h-3 w-3" />
-                        {post.author}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {post.date}
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-xs text-gray-500">
-                        <Clock className="h-3 w-3" />
-                        {post.readTime}
-                      </div>
-                      <Link 
-                        href={`/blog/${post.slug}`}
-                        className="text-blue-600 hover:text-blue-700 font-semibold text-sm"
-                      >
-                        Read More →
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+            
+            <div className="text-sm text-gray-600">
+              Showing {((currentPage - 1) * blogData.pagination.limit) + 1}-{Math.min(currentPage * blogData.pagination.limit, blogData.pagination.total)} of {blogData.pagination.total} posts
             </div>
           </div>
 
-          {/* Call to Action */}
-          <Card className="bg-blue-50 border-blue-200">
-            <CardContent className="p-8 text-center">
-              <h3 className="text-2xl font-bold mb-4">Ready to Start Your Adventure?</h3>
-              <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                Get inspired by our travel stories and let our AI planner create your perfect Philippine itinerary 
-                based on your interests and budget.
-              </p>
-              <Link 
-                href="/chat"
-                className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+          {/* Blog Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {formattedRegularPosts.map((post, index) => (
+              <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow group">
+                <div className="aspect-video relative overflow-hidden">
+                  <Image
+                    src={post.image}
+                    alt={post.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute top-3 left-3">
+                    <span className="bg-white/90 backdrop-blur-sm text-gray-900 px-2 py-1 rounded text-xs font-medium">
+                      {post.category}
+                    </span>
+                  </div>
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-bold mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                    {post.title}
+                  </h3>
+                  <p className="text-gray-600 mb-4 line-clamp-3 leading-relaxed">
+                    {post.excerpt}
+                  </p>
+                  <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                    <div className="flex items-center gap-1">
+                      <User className="h-4 w-4" />
+                      {post.author}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-4 w-4" />
+                      {post.readTime}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">{post.date}</span>
+                    <Link href={`/blog/${post.slug}`}>
+                      <Button variant="ghost" size="sm" className="group/btn">
+                        Read More
+                        <ArrowRight className="h-4 w-4 ml-1 group-hover/btn:translate-x-1 transition-transform" />
+                      </Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* No posts message */}
+          {formattedRegularPosts.length === 0 && !formattedFeaturedPost && (
+            <Card className="p-8 text-center">
+              <h3 className="text-xl font-semibold mb-2">No posts found</h3>
+              <p className="text-gray-600">Check back later for new travel stories and guides!</p>
+            </Card>
+          )}
+
+          {/* Pagination */}
+          {blogData.pagination.pages > 1 && (
+            <div className="flex items-center justify-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
               >
-                Plan My Trip
-                <ArrowRight className="h-5 w-5" />
-              </Link>
-            </CardContent>
-          </Card>
+                <ChevronLeft className="h-4 w-4 mr-1" />
+                Previous
+              </Button>
+              
+              <div className="flex items-center gap-1">
+                {Array.from({ length: blogData.pagination.pages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={page === currentPage ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handlePageChange(page)}
+                    className="w-10"
+                  >
+                    {page}
+                  </Button>
+                ))}
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === blogData.pagination.pages}
+              >
+                Next
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+          )}
         </div>
       </div>
       <Footer />
