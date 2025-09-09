@@ -30,6 +30,8 @@ model BlogPost {
   updatedAt   DateTime @updatedAt
   tags        Tag[]    @relation("BlogPostTags")
   author      String?
+  facebookPostId String?
+  facebookPostUrl String?
   
   @@map("blog_posts")
 }
