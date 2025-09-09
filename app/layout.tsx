@@ -5,6 +5,7 @@ import Script from 'next/script'
 import { Navbar } from '@/components/navbar'
 import { ADSENSE_CONFIG } from '@/lib/adsense-config'
 import { GoogleAnalytics } from '@/components/google-analytics'
+import AuthProvider from '@/components/auth-provider'
 
 // Modern font stack: Montserrat (primary), Poppins (secondary), Inter (fallback)
 const montserrat = Montserrat({ 
@@ -250,9 +251,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         
         {/* Google Analytics scripts can be added here when needed */}
         
-        <Navbar />
-        <GoogleAnalytics />
-        {children}
+        <AuthProvider>
+          <Navbar />
+          <GoogleAnalytics />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   )
