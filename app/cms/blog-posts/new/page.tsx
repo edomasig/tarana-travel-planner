@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
+import { ImageUpload } from '@/components/ui/image-upload'
 import { ArrowLeft, Save, Eye } from 'lucide-react'
 import Link from 'next/link'
 
@@ -249,28 +250,11 @@ export default function NewBlogPostPage() {
               <CardTitle>Featured Image</CardTitle>
             </CardHeader>
             <CardContent>
-              <div>
-                <Label htmlFor="featuredImage">Image URL</Label>
-                <Input
-                  id="featuredImage"
-                  value={form.featuredImage}
-                  onChange={(e) => setForm(prev => ({ ...prev, featuredImage: e.target.value }))}
-                  placeholder="https://example.com/image.jpg"
-                  className="mt-1"
-                />
-              </div>
-              {form.featuredImage && (
-                <div className="mt-3">
-                  <img 
-                    src={form.featuredImage} 
-                    alt="Preview" 
-                    className="w-full h-32 object-cover rounded"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none'
-                    }}
-                  />
-                </div>
-              )}
+              <ImageUpload
+                value={form.featuredImage}
+                onChange={(url) => setForm(prev => ({ ...prev, featuredImage: url }))}
+                disabled={saving}
+              />
             </CardContent>
           </Card>
 
