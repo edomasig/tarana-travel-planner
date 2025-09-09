@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useSession, signOut } from 'next-auth/react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,7 +14,9 @@ import {
   Settings,
   Menu,
   X,
-  Home
+  Home,
+  LogOut,
+  User
 } from 'lucide-react'
 
 const navigation = [
@@ -31,6 +34,34 @@ export default function CMSLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
+  const { data: session, status } = useSession()
+
+  // Show loading while checking authentication
+  if (status === 'loading') {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Redirect to login if not authenticated (except for login page)
+  if (!session && pathname !== '/cms/login') {
+    window.location.href = '/cms/login'
+    return null
+  }
+
+  // Don't show layout for login page
+  if (pathname === '/cms/login') {
+    return <>{children}</>
+  }
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/cms/login' })
+  }
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -101,13 +132,21 @@ export default function CMSLayout({
               )
             })}
           </nav>
-          <div className="p-4 border-t">
+          <div className="p-4 border-t space-y-2">
             <Link href="/" target="_blank">
               <Button variant="outline" className="w-full">
                 <Home className="mr-2 h-4 w-4" />
                 View Live Site
               </Button>
             </Link>
+            <Button
+              variant="outline"
+              className="w-full text-red-600 hover:text-red-700 hover:bg-red-50"
+              onClick={handleSignOut}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign Out
+            </Button>
           </div>
         </div>
       </div>
@@ -124,10 +163,22 @@ export default function CMSLayout({
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <div className="ml-auto">
-            <div className="text-sm text-gray-600">
-              Welcome back, Admin
+          <div className="ml-auto flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <User className="h-4 w-4 text-gray-500" />
+              <div className="text-sm text-gray-600">
+                {session?.user?.email || 'Admin'}
+              </div>
             </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSignOut}
+              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <LogOut className="h-4 w-4 mr-1" />
+              Sign Out
+            </Button>
           </div>
         </div>
 
