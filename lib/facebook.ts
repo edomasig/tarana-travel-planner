@@ -14,6 +14,14 @@ export async function uploadPhotoAndCreatePost({
   link?: string
 }) {
   if (!pageId || !pageAccessToken) throw new Error('pageId and pageAccessToken are required')
+  
+  console.log('Facebook posting debug:', {
+    pageId,
+    imageUrl,
+    messageLength: message.length,
+    link
+  })
+
   // 1) Upload photo (unpublished)
   const uploadUrl = `https://graph.facebook.com/${pageId}/photos`
   const uploadParams = new URLSearchParams()
@@ -21,12 +29,21 @@ export async function uploadPhotoAndCreatePost({
   uploadParams.append('published', 'false')
   uploadParams.append('access_token', pageAccessToken)
 
+  console.log('Uploading photo to Facebook:', { uploadUrl, imageUrl })
+
   const uploadRes = await fetch(uploadUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: uploadParams,
   })
   const uploadJson = await uploadRes.json()
+  
+  console.log('Facebook photo upload response:', {
+    status: uploadRes.status,
+    ok: uploadRes.ok,
+    response: uploadJson
+  })
+  
   if (!uploadRes.ok) {
     throw new Error(`Photo upload failed: ${JSON.stringify(uploadJson)}`)
   }
@@ -40,12 +57,26 @@ export async function uploadPhotoAndCreatePost({
   feedParams.append('attached_media', JSON.stringify([{ media_fbid: photoId }]))
   feedParams.append('access_token', pageAccessToken)
 
+  console.log('Creating Facebook feed post:', {
+    feedUrl,
+    photoId,
+    hasLink: !!link,
+    messagePreview: message.substring(0, 100) + '...'
+  })
+
   const feedRes = await fetch(feedUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: feedParams,
   })
   const feedJson = await feedRes.json()
+  
+  console.log('Facebook feed post response:', {
+    status: feedRes.status,
+    ok: feedRes.ok,
+    response: feedJson
+  })
+  
   if (!feedRes.ok) {
     throw new Error(`Post creation failed: ${JSON.stringify(feedJson)}`)
   }

@@ -12,7 +12,8 @@ import {
   Eye,
   Calendar,
   Search,
-  FileText
+  FileText,
+  Facebook
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
@@ -28,6 +29,8 @@ interface BlogPost {
   createdAt: string
   updatedAt: string
   tags: Array<{ id: string; name: string; color?: string }>
+  facebookPostId?: string
+  facebookPostUrl?: string
 }
 
 export default function BlogPostsPage() {
@@ -62,6 +65,32 @@ export default function BlogPostsPage() {
       fetchPosts() // Refresh list
     } catch (error) {
       console.error('Error deleting post:', error)
+    }
+  }
+
+  const handleFacebookAction = async (postId: string, action: 'publish' | 'repost' | 'delete') => {
+    try {
+      const response = await fetch('/api/cms/webhook/facebook-new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          postId,
+          action
+        })
+      })
+
+      const result = await response.json()
+      
+      if (result.success) {
+        alert(`✅ ${action.toUpperCase()} completed successfully!\n\n${result.message}`)
+        fetchPosts() // Refresh the list to show updated status
+      } else {
+        alert(`❌ ${action.toUpperCase()} failed!\n\nError: ${result.error || 'Unknown error'}`)
+      }
+    } catch (error) {
+      alert(`❌ Network error: ${error}`)
     }
   }
 
@@ -175,6 +204,16 @@ export default function BlogPostsPage() {
                           </Badge>
                         )}
                         {getStatusBadge(post.status, post.published)}
+                        {post.facebookPostId && (
+                          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                            <Facebook className="h-3 w-3 mr-1" />
+                            Facebook
+                          </Badge>
+                        )}
+                        {/* Debug info - remove in production */}
+                        <span className="text-xs text-gray-400 ml-2">
+                          FB ID: {post.facebookPostId ? `✓ ${post.facebookPostId.slice(0, 10)}...` : '✗ None'}
+                        </span>
                       </div>
                     </div>
                     
@@ -208,6 +247,53 @@ export default function BlogPostsPage() {
                   </div>
                   
                   <div className="flex gap-2 ml-4">
+                    {/* Facebook Actions */}
+                    <div className="flex gap-1 mr-2 border-l pl-2">
+                      {!post.facebookPostId ? (
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            console.log('Publishing post to Facebook:', post.id, post.title)
+                            handleFacebookAction(post.id, 'publish')
+                          }}
+                          className="text-blue-600 hover:text-blue-800 border-blue-200 bg-blue-50"
+                        >
+                          <Facebook className="h-4 w-4 mr-1" />
+                          Post to FB
+                        </Button>
+                      ) : (
+                        <div className="flex gap-1">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              console.log('Reposting to Facebook:', post.id, post.facebookPostId)
+                              handleFacebookAction(post.id, 'repost')
+                            }}
+                            className="text-orange-600 hover:text-orange-800 border-orange-200 bg-orange-50"
+                            title="Create new Facebook post with updated content"
+                          >
+                            <Facebook className="h-4 w-4 mr-1" />
+                            Repost
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              console.log('Deleting Facebook post:', post.id, post.facebookPostId)
+                              handleFacebookAction(post.id, 'delete')
+                            }}
+                            className="text-red-600 hover:text-red-800 border-red-200 bg-red-50"
+                            title="Delete Facebook post"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Regular Actions */}
                     <Link href={`/blog/${post.slug}`} target="_blank">
                       <Button variant="ghost" size="sm">
                         <Eye className="h-4 w-4" />

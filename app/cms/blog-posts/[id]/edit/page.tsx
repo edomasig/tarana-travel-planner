@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
 import { ImageUpload } from '@/components/ui/image-upload'
 import { SimpleRichTextEditor } from '@/components/ui/simple-rich-text-editor'
-import { ArrowLeft, Save, Eye } from 'lucide-react'
+import { ArrowLeft, Save, Eye, Facebook } from 'lucide-react'
 import Link from 'next/link'
 
 interface BlogPost {
@@ -28,6 +28,8 @@ interface BlogPost {
   createdAt: string
   updatedAt: string
   tags: { id: string; name: string; color?: string }[]
+  facebookPostId?: string
+  facebookPostUrl?: string
 }
 
 interface BlogPostForm {
@@ -71,6 +73,7 @@ export default function EditBlogPostPage() {
   const [tags, setTags] = useState<Tag[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [facebookPosting, setFacebookPosting] = useState(false)
   const [blogPost, setBlogPost] = useState<BlogPost | null>(null)
 
   useEffect(() => {
@@ -138,12 +141,21 @@ export default function EditBlogPostPage() {
       })
 
       if (response.ok) {
-        router.push('/cms/blog-posts')
+        const updatedPost = await response.json()
+        setBlogPost(updatedPost)
+        setForm(prev => ({
+          ...prev,
+          status,
+          published: status === 'PUBLISHED'
+        }))
+        alert('Blog post updated successfully!')
       } else {
         console.error('Error updating blog post')
+        alert('Error updating blog post')
       }
     } catch (error) {
       console.error('Error updating blog post:', error)
+      alert('Error updating blog post')
     } finally {
       setSaving(false)
     }
@@ -162,6 +174,44 @@ export default function EditBlogPostPage() {
       title,
       metaTitle: prev.metaTitle || title
     }))
+  }
+
+  const handleFacebookPost = async () => {
+    if (!blogPost) return
+
+    setFacebookPosting(true)
+    try {
+      const response = await fetch('/api/cms/webhook/facebook-new', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          postId: blogPost.id,
+          action: 'publish'
+        })
+      })
+
+      const result = await response.json()
+      
+      if (result.success) {
+        // Update the local blog post state with Facebook post details
+        setBlogPost(prev => prev ? {
+          ...prev,
+          facebookPostId: result.facebookPostId,
+          facebookPostUrl: result.facebookPostUrl
+        } : null)
+        
+        alert(`Successfully ${result.action} on Facebook!`)
+      } else {
+        alert(`Failed to post to Facebook: ${result.error || 'Unknown error'}`)
+      }
+    } catch (error) {
+      console.error('Facebook posting error:', error)
+      alert('Failed to post to Facebook. Please try again.')
+    } finally {
+      setFacebookPosting(false)
+    }
   }
 
   if (loading) {
@@ -187,16 +237,59 @@ export default function EditBlogPostPage() {
   return (
     <div className="p-6 max-w-4xl mx-auto">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <Link href="/cms/blog-posts">
-          <Button variant="ghost" size="sm">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Posts
-          </Button>
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Edit Blog Post</h1>
-          <p className="text-gray-600">Update your travel content</p>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <Link href="/cms/blog-posts">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Posts
+            </Button>
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Edit Blog Post</h1>
+            <p className="text-gray-600">Update your travel content</p>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center gap-3">
+          {/* Facebook Status */}
+          {blogPost.facebookPostId && (
+            <div className="flex items-center gap-2 text-sm text-green-600">
+              <Facebook className="h-4 w-4" />
+              <span>Posted to Facebook</span>
+              {blogPost.facebookPostUrl && (
+                <a
+                  href={blogPost.facebookPostUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline"
+                >
+                  View Post
+                </a>
+              )}
+            </div>
+          )}
+          
+          {/* Facebook Post Button */}
+          {blogPost.published && !blogPost.facebookPostId && (
+            <Button
+              onClick={handleFacebookPost}
+              disabled={facebookPosting}
+              variant="outline"
+              size="sm"
+            >
+              <Facebook className="h-4 w-4 mr-2" />
+              {facebookPosting ? 'Posting...' : 'Publish to Facebook'}
+            </Button>
+          )}
+          
+          {/* Draft notice */}
+          {!blogPost.published && (
+            <div className="text-sm text-gray-500">
+              Publish the post first to share on Facebook
+            </div>
+          )}
         </div>
       </div>
 
@@ -369,6 +462,54 @@ export default function EditBlogPostPage() {
                 onChange={(url) => setForm(prev => ({ ...prev, featuredImage: url }))}
                 disabled={saving}
               />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Social Media</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label>Facebook Status</Label>
+                {blogPost.facebookPostId ? (
+                  <div className="mt-2">
+                    <div className="flex items-center gap-2 text-green-600 mb-2">
+                      <Facebook className="h-4 w-4" />
+                      <span className="text-sm">Posted to Facebook</span>
+                    </div>
+                    {blogPost.facebookPostUrl && (
+                      <a
+                        href={blogPost.facebookPostUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline text-sm"
+                      >
+                        View Facebook Post →
+                      </a>
+                    )}
+                  </div>
+                ) : (
+                  <div className="mt-2">
+                    {blogPost.published ? (
+                      <Button
+                        onClick={handleFacebookPost}
+                        disabled={facebookPosting}
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                      >
+                        <Facebook className="h-4 w-4 mr-2" />
+                        {facebookPosting ? 'Posting...' : 'Publish to Facebook'}
+                      </Button>
+                    ) : (
+                      <div className="text-sm text-gray-500 bg-gray-50 p-2 rounded">
+                        Publish the post first to share on Facebook
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
 
