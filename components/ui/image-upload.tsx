@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,6 +15,7 @@ interface ImageUploadProps {
 export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false)
   const [dragOver, setDragOver] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleUpload = useCallback(async (file: File) => {
     setUploading(true)
@@ -72,6 +73,10 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
     setDragOver(false)
   }, [])
 
+  const handleClick = () => {
+    fileInputRef.current?.click()
+  }
+
   const removeImage = () => {
     onChange('')
   }
@@ -103,7 +108,7 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
         </div>
       ) : (
         <div
-          className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+          className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer ${
             dragOver 
               ? 'border-blue-500 bg-blue-50' 
               : 'border-gray-300 hover:border-gray-400'
@@ -111,6 +116,7 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
+          onClick={handleClick}
         >
           {uploading ? (
             <div className="flex flex-col items-center">
@@ -123,7 +129,7 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
               <p className="text-sm text-gray-600 mb-2">
                 Drag and drop an image here, or click to select
               </p>
-              <Button type="button" variant="outline" disabled={disabled}>
+              <Button type="button" variant="outline" disabled={disabled} onClick={(e) => e.stopPropagation()}>
                 <Upload className="h-4 w-4 mr-2" />
                 Choose Image
               </Button>
@@ -131,10 +137,11 @@ export function ImageUpload({ value, onChange, disabled }: ImageUploadProps) {
           )}
           
           <input
+            ref={fileInputRef}
             type="file"
             accept="image/*"
             onChange={handleFileChange}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            className="hidden"
             disabled={disabled || uploading}
           />
         </div>

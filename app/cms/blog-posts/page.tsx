@@ -23,6 +23,7 @@ interface BlogPost {
   excerpt?: string
   status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED'
   published: boolean
+  featured: boolean
   publishedAt?: string
   createdAt: string
   updatedAt: string
@@ -167,7 +168,14 @@ export default function BlogPostsPage() {
                       <h3 className="text-lg font-semibold text-gray-900">
                         {post.title}
                       </h3>
-                      {getStatusBadge(post.status, post.published)}
+                      <div className="flex items-center gap-2">
+                        {post.featured && (
+                          <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                            ⭐ Featured
+                          </Badge>
+                        )}
+                        {getStatusBadge(post.status, post.published)}
+                      </div>
                     </div>
                     
                     {post.excerpt && (

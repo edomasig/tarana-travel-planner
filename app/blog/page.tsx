@@ -3,9 +3,54 @@ import { ArrowLeft, Clock, Calendar, User, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Footer } from '@/components/footer'
+import { prisma } from '@/lib/prisma'
 
-export default function BlogPage() {
-  const featuredPost = {
+async function getBlogPosts() {
+  try {
+    const posts = await prisma.blogPost.findMany({
+      where: {
+        published: true
+      },
+      include: {
+        tags: true
+      },
+      orderBy: [
+        { featured: 'desc' },  // Featured posts first
+        { publishedAt: 'desc' } // Then by publish date
+      ]
+    })
+    return posts
+  } catch (error) {
+    console.error('Error fetching blog posts:', error)
+    return []
+  }
+}
+
+export default async function BlogPage() {
+  const blogPosts = await getBlogPosts()
+  
+  // Find the featured post specifically
+  const featuredPostData = blogPosts.find((post: any) => post.featured) || blogPosts[0]
+  
+  // If we have a featured post from database, use it
+  const featuredPost = featuredPostData ? {
+    title: featuredPostData.title,
+    excerpt: featuredPostData.excerpt || '',
+    image: featuredPostData.featuredImage || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    author: featuredPostData.author || "GalaGPT Team",
+    date: featuredPostData.publishedAt ? new Date(featuredPostData.publishedAt).toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    }) : new Date().toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    }),
+    readTime: "5 min read",
+    category: featuredPostData.tags.length > 0 ? featuredPostData.tags[0].name : "Travel",
+    slug: featuredPostData.slug
+  } : {
     title: "Hidden Gems of Northern Philippines: Beyond Baguio and Sagada",
     excerpt: "Discover lesser-known destinations in Luzon that offer incredible experiences without the crowds. From pristine beaches to mountain adventures, Northern Philippines has secrets waiting to be explored.",
     image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
@@ -16,7 +61,28 @@ export default function BlogPage() {
     slug: "hidden-gems-northern-philippines"
   }
 
-  const blogPosts = [
+  // Convert remaining database posts to the format expected by the UI, excluding the featured post
+  const regularPosts = blogPosts.length > 0 ? blogPosts
+    .filter((post: any) => !post.featured || !featuredPostData?.featured) // Exclude featured post, or include all if no featured post
+    .slice(0, featuredPostData?.featured ? undefined : 1) // If no featured post was found, skip the first regular post
+    .map((post: any) => ({
+      title: post.title,
+      excerpt: post.excerpt || '',
+      image: post.featuredImage || "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      author: post.author || "GalaGPT Team",
+      date: post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      }) : new Date().toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      }),
+      readTime: "5 min read",
+      category: post.tags.length > 0 ? post.tags[0].name : "Travel",
+      slug: post.slug
+    })) : [
     {
       title: "Best Filipino Street Food: A Culinary Adventure Guide",
       excerpt: "Explore the vibrant world of Filipino street food, from savory BBQ to sweet delicacies. Learn where to find the best treats and how to eat safely.",
@@ -227,7 +293,7 @@ export default function BlogPage() {
           <div>
             <h3 className="text-2xl font-bold mb-6">Recent Articles</h3>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {blogPosts.map((post, index) => (
+              {regularPosts.map((post: any, index: number) => (
                 <Card key={index} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="relative h-48">
                     <Image

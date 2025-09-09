@@ -58,6 +58,14 @@ export async function POST(request: NextRequest) {
         .replace(/(^-|-$)/g, '')
     }
 
+    // If this post is being marked as featured, unfeature all other posts first
+    if (data.featured) {
+      await prisma.blogPost.updateMany({
+        where: { featured: true },
+        data: { featured: false }
+      })
+    }
+
     const post = await prisma.blogPost.create({
       data: {
         title: data.title,
@@ -69,6 +77,8 @@ export async function POST(request: NextRequest) {
         metaDescription: data.metaDescription,
         status: data.status || 'DRAFT',
         published: data.published || false,
+        featured: data.featured || false,
+        author: data.author || 'GalaGPT Team',
         publishedAt: data.published ? new Date() : null,
         tags: data.tagIds ? {
           connect: data.tagIds.map((id: string) => ({ id }))
