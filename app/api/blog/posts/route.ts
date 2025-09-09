@@ -1,8 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 
 export async function GET(request: NextRequest) {
   try {
+    // Dynamic import with error handling for Prisma client
+    let prisma: any = null
+    
+    try {
+      const { prisma: importedPrisma } = await import('@/lib/prisma')
+      prisma = importedPrisma
+    } catch (prismaError) {
+      console.warn('Prisma client not available:', prismaError)
+      // Return fallback data when Prisma client is not available
+      return NextResponse.json({
+        posts: [],
+        pagination: {
+          page: 1,
+          limit: 6,
+          total: 0,
+          pages: 0
+        }
+      })
+    }
+
     // Check if we're in a build environment without database access
     if (!process.env.DATABASE_URL && process.env.NODE_ENV === 'production') {
       return NextResponse.json({
