@@ -4,11 +4,12 @@ import { prisma } from '@/lib/prisma'
 // GET - Fetch single blog post
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const post = await prisma.blogPost.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         tags: true
       }
@@ -34,13 +35,25 @@ export async function GET(
 // PUT - Update blog post
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const data = await request.json()
 
+    // If this post is being marked as featured, unfeature all other posts first
+    if (data.featured) {
+      await prisma.blogPost.updateMany({
+        where: { 
+          featured: true,
+          id: { not: id } // Don't update the current post
+        },
+        data: { featured: false }
+      })
+    }
+
     const post = await prisma.blogPost.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title: data.title,
         slug: data.slug,
@@ -51,6 +64,8 @@ export async function PUT(
         metaDescription: data.metaDescription,
         status: data.status,
         published: data.published,
+        featured: data.featured || false,
+        author: data.author || 'GalaGPT Team',
         publishedAt: data.published && !data.publishedAt ? new Date() : data.publishedAt,
         tags: data.tagIds ? {
           set: data.tagIds.map((id: string) => ({ id }))
@@ -74,11 +89,12 @@ export async function PUT(
 // DELETE - Delete blog post
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     await prisma.blogPost.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     return NextResponse.json({ message: 'Blog post deleted successfully' })

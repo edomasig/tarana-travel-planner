@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -11,6 +11,24 @@ import { ImageUpload } from '@/components/ui/image-upload'
 import { SimpleRichTextEditor } from '@/components/ui/simple-rich-text-editor'
 import { ArrowLeft, Save, Eye } from 'lucide-react'
 import Link from 'next/link'
+
+interface BlogPost {
+  id: string
+  title: string
+  slug: string
+  content: string
+  excerpt: string
+  featuredImage: string
+  metaTitle: string
+  metaDescription: string
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED'
+  published: boolean
+  featured: boolean
+  author: string
+  createdAt: string
+  updatedAt: string
+  tags: { id: string; name: string; color?: string }[]
+}
 
 interface BlogPostForm {
   title: string
@@ -33,8 +51,9 @@ interface Tag {
   color?: string
 }
 
-export default function NewBlogPostPage() {
+export default function EditBlogPostPage() {
   const router = useRouter()
+  const params = useParams()
   const [form, setForm] = useState<BlogPostForm>({
     title: '',
     slug: '',
@@ -50,12 +69,48 @@ export default function NewBlogPostPage() {
     tagIds: []
   })
   const [tags, setTags] = useState<Tag[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [blogPost, setBlogPost] = useState<BlogPost | null>(null)
 
   useEffect(() => {
-    fetchTags()
-  }, [])
+    if (params.id) {
+      fetchBlogPost()
+      fetchTags()
+    }
+  }, [params.id])
+
+  const fetchBlogPost = async () => {
+    try {
+      const response = await fetch(`/api/cms/blog-posts/${params.id}`)
+      if (response.ok) {
+        const data = await response.json()
+        setBlogPost(data)
+        setForm({
+          title: data.title,
+          slug: data.slug,
+          content: data.content,
+          excerpt: data.excerpt || '',
+          featuredImage: data.featuredImage || '',
+          metaTitle: data.metaTitle || '',
+          metaDescription: data.metaDescription || '',
+          status: data.status,
+          published: data.published,
+          featured: data.featured || false,
+          author: data.author || 'GalaGPT Team',
+          tagIds: data.tags?.map((tag: any) => tag.id) || []
+        })
+      } else {
+        console.error('Error fetching blog post')
+        router.push('/cms/blog-posts')
+      }
+    } catch (error) {
+      console.error('Error fetching blog post:', error)
+      router.push('/cms/blog-posts')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const fetchTags = async () => {
     try {
@@ -70,8 +125,8 @@ export default function NewBlogPostPage() {
   const handleSubmit = async (status: 'DRAFT' | 'PUBLISHED') => {
     setSaving(true)
     try {
-      const response = await fetch('/api/cms/blog-posts', {
-        method: 'POST',
+      const response = await fetch(`/api/cms/blog-posts/${params.id}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -85,10 +140,10 @@ export default function NewBlogPostPage() {
       if (response.ok) {
         router.push('/cms/blog-posts')
       } else {
-        console.error('Error creating blog post')
+        console.error('Error updating blog post')
       }
     } catch (error) {
-      console.error('Error creating blog post:', error)
+      console.error('Error updating blog post:', error)
     } finally {
       setSaving(false)
     }
@@ -105,9 +160,28 @@ export default function NewBlogPostPage() {
     setForm(prev => ({
       ...prev,
       title,
-      slug: prev.slug || generateSlug(title),
       metaTitle: prev.metaTitle || title
     }))
+  }
+
+  if (loading) {
+    return (
+      <div className="p-6 max-w-4xl mx-auto">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-lg">Loading...</div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!blogPost) {
+    return (
+      <div className="p-6 max-w-4xl mx-auto">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-lg">Blog post not found</div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -121,8 +195,8 @@ export default function NewBlogPostPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Create New Blog Post</h1>
-          <p className="text-gray-600">Write and publish your travel content</p>
+          <h1 className="text-2xl font-bold text-gray-900">Edit Blog Post</h1>
+          <p className="text-gray-600">Update your travel content</p>
         </div>
       </div>
 
@@ -264,7 +338,7 @@ export default function NewBlogPostPage() {
                   disabled={saving || !form.title || !form.content}
                   className="flex-1"
                 >
-                  Publish
+                  {form.published ? 'Update' : 'Publish'}
                 </Button>
               </div>
               
@@ -276,6 +350,12 @@ export default function NewBlogPostPage() {
                   </div>
                 </div>
               )}
+
+              <div className="text-sm text-gray-600">
+                <div>Status: <span className="font-medium">{form.status}</span></div>
+                <div>Created: {new Date(blogPost.createdAt).toLocaleDateString()}</div>
+                <div>Updated: {new Date(blogPost.updatedAt).toLocaleDateString()}</div>
+              </div>
             </CardContent>
           </Card>
 
