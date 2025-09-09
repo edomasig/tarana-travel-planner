@@ -42,41 +42,28 @@ export default function BlogPage() {
   })
   const [currentPage, setCurrentPage] = useState(1)
   const [sortBy, setSortBy] = useState('newest')
-  const [category, setCategory] = useState('all')
   const [loading, setLoading] = useState(true)
 
   const fetchPosts = async () => {
     setLoading(true)
     try {
-      const response = await fetch(`/api/blog/posts?page=${currentPage}&limit=6&sortBy=${sortBy}&category=${category}`, {
+      const response = await fetch(`/api/blog/posts?page=${currentPage}&limit=6&sortBy=${sortBy}`, {
         cache: 'no-store'
       })
       
       if (response.ok) {
         const data = await response.json()
         setBlogData(data)
-      } else {
-        console.error('Failed to fetch posts:', response.status)
-        // Fallback to empty data
-        setBlogData({
-          posts: [],
-          pagination: { page: 1, pages: 1, total: 0, limit: 6 }
-        })
       }
     } catch (error) {
       console.error('Error fetching blog posts:', error)
-      // Fallback to empty data
-      setBlogData({
-        posts: [],
-        pagination: { page: 1, pages: 1, total: 0, limit: 6 }
-      })
     }
     setLoading(false)
   }
 
   useEffect(() => {
     fetchPosts()
-  }, [currentPage, sortBy, category])
+  }, [currentPage, sortBy])
 
   const formatPost = (post: BlogPost): FormattedPost => ({
     title: post.title,
@@ -104,11 +91,6 @@ export default function BlogPage() {
 
   const handleSortChange = (newSort: string) => {
     setSortBy(newSort)
-    setCurrentPage(1)
-  }
-
-  const handleCategoryChange = (newCategory: string) => {
-    setCategory(newCategory)
     setCurrentPage(1)
   }
 
@@ -204,37 +186,18 @@ export default function BlogPage() {
 
           {/* Controls */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-gray-700 font-medium">Category:</span>
-                <Select value={category} onValueChange={handleCategoryChange}>
-                  <SelectTrigger className="w-48">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    <SelectItem value="Travel Guides">Travel Guides</SelectItem>
-                    <SelectItem value="Food & Culture">Food & Culture</SelectItem>
-                    <SelectItem value="Adventure">Adventure</SelectItem>
-                    <SelectItem value="Budget Travel">Budget Travel</SelectItem>
-                    <SelectItem value="Hidden Gems">Hidden Gems</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <span className="text-gray-700 font-medium">Sort by:</span>
-                <Select value={sortBy} onValueChange={handleSortChange}>
-                  <SelectTrigger className="w-48">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="newest">Newest First</SelectItem>
-                    <SelectItem value="oldest">Oldest First</SelectItem>
-                    <SelectItem value="title">Title (A-Z)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="flex items-center gap-4">
+              <span className="text-gray-700 font-medium">Sort by:</span>
+              <Select value={sortBy} onValueChange={handleSortChange}>
+                <SelectTrigger className="w-48">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="newest">Newest First</SelectItem>
+                  <SelectItem value="oldest">Oldest First</SelectItem>
+                  <SelectItem value="title">Title (A-Z)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             
             <div className="text-sm text-gray-600">
@@ -300,26 +263,25 @@ export default function BlogPage() {
 
           {/* Pagination */}
           {blogData.pagination.pages > 1 && (
-            <div className="flex items-center justify-center gap-3 py-8">
+            <div className="flex items-center justify-center gap-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="px-4 py-2"
               >
                 <ChevronLeft className="h-4 w-4 mr-1" />
                 Previous
               </Button>
               
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 {Array.from({ length: blogData.pagination.pages }, (_, i) => i + 1).map((page) => (
                   <Button
                     key={page}
                     variant={page === currentPage ? "default" : "outline"}
                     size="sm"
                     onClick={() => handlePageChange(page)}
-                    className="w-10 h-10"
+                    className="w-10"
                   >
                     {page}
                   </Button>
@@ -331,7 +293,6 @@ export default function BlogPage() {
                 size="sm"
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === blogData.pagination.pages}
-                className="px-4 py-2"
               >
                 Next
                 <ChevronRight className="h-4 w-4 ml-1" />
@@ -340,11 +301,7 @@ export default function BlogPage() {
           )}
         </div>
       </div>
-      
-      {/* Footer with proper spacing */}
-      <div className="mt-16">
-        <Footer />
-      </div>
+      <Footer />
     </div>
   )
 }
