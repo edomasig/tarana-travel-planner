@@ -764,6 +764,7 @@ async function importBlogPosts() {
           featuredImage: postData.featuredImage,
           metaTitle: postData.metaTitle,
           metaDescription: postData.metaDescription,
+          status: postData.published ? 'PUBLISHED' : 'DRAFT',
           published: postData.published,
           featured: postData.featured,
           author: postData.author,
