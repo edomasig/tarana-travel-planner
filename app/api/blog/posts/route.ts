@@ -3,6 +3,19 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(request: NextRequest) {
   try {
+    // Check if we're in a build environment without database access
+    if (!process.env.DATABASE_URL && process.env.NODE_ENV === 'production') {
+      return NextResponse.json({
+        posts: [],
+        pagination: {
+          page: 1,
+          limit: 6,
+          total: 0,
+          pages: 0
+        }
+      })
+    }
+
     const { searchParams } = new URL(request.url)
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '6')
