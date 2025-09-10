@@ -1,3 +1,5 @@
+'use client'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -6,6 +8,7 @@ import { MapPin, Clock, DollarSign, Download, Save, Share2, Camera, Utensils, Be
 import { AdBanner } from '@/components/ads/ad-banner'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { useToast } from '@/hooks/use-toast'
 
 interface ItineraryProps {
   itinerary: {
@@ -39,6 +42,24 @@ const tightenMarkdown = (md: string) => md
   .trim()
 
 export function ItineraryDisplay({ itinerary }: ItineraryProps) {
+  const { toast } = useToast()
+  
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text)
+    toast({
+      title: "Copied!",
+      description: "Itinerary copied to clipboard!",
+    })
+  }
+
+  const shareItinerary = (text: string) => {
+    if (navigator.share) {
+      navigator.share({ title: itinerary.title, text })
+    } else {
+      copyToClipboard(text)
+    }
+  }
+
   // If it's a simple text response, show it as formatted text
   if (itinerary.content && !itinerary.days) {
     const cleaned = tightenMarkdown(itinerary.content)
@@ -54,10 +75,10 @@ export function ItineraryDisplay({ itinerary }: ItineraryProps) {
                 )}
               </div>
               <div className="flex gap-1.5 flex-shrink-0">
-                <Button variant="outline" size="sm" onClick={() => { navigator.clipboard.writeText(cleaned); alert('Itinerary copied to clipboard!') }} className="h-8 text-xs px-2">
+                <Button variant="outline" size="sm" onClick={() => copyToClipboard(cleaned)} className="h-8 text-xs px-2">
                   <Save className="h-3.5 w-3.5 mr-1" />Save
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => { if (navigator.share) { navigator.share({ title: itinerary.title, text: cleaned }) } else { navigator.clipboard.writeText(cleaned); alert('Itinerary copied to clipboard!') } }} className="h-8 text-xs px-2">
+                <Button variant="outline" size="sm" onClick={() => shareItinerary(cleaned)} className="h-8 text-xs px-2">
                   <Share2 className="h-3.5 w-3.5 mr-1" />Share
                 </Button>
               </div>
