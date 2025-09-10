@@ -13,7 +13,9 @@ import {
   Link as LinkIcon,
   Image as ImageIcon,
   Undo,
-  Redo
+  Redo,
+  Code,
+  Eye
 } from 'lucide-react'
 
 interface SimpleRichTextEditorProps {
@@ -30,21 +32,49 @@ export function SimpleRichTextEditor({ content, onChange, placeholder = "Start w
   const [linkUrl, setLinkUrl] = useState('')
   const [imageUrl, setImageUrl] = useState('')
   const [uploading, setUploading] = useState(false)
+  const [isRawMode, setIsRawMode] = useState(false)
+  const [rawContent, setRawContent] = useState('')
   const editorRef = useRef<HTMLDivElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     setIsMounted(true)
+    setRawContent(content)
   }, [])
 
   useEffect(() => {
-    if (isMounted && editorRef.current && content !== editorRef.current.innerHTML) {
+    if (isMounted && !isRawMode && editorRef.current && content !== editorRef.current.innerHTML) {
       editorRef.current.innerHTML = content
     }
-  }, [content, isMounted])
+    if (isMounted && isRawMode) {
+      setRawContent(content)
+    }
+  }, [content, isMounted, isRawMode])
 
   const handleInput = () => {
     if (editorRef.current) {
       onChange(editorRef.current.innerHTML)
+    }
+  }
+
+  const handleRawContentChange = (value: string) => {
+    setRawContent(value)
+    onChange(value)
+  }
+
+  const toggleRawMode = () => {
+    if (isRawMode) {
+      // Switching from raw to visual
+      setIsRawMode(false)
+      onChange(rawContent)
+    } else {
+      // Switching from visual to raw
+      if (editorRef.current) {
+        const currentContent = editorRef.current.innerHTML
+        setRawContent(currentContent)
+        onChange(currentContent)
+      }
+      setIsRawMode(true)
     }
   }
 
@@ -262,7 +292,7 @@ export function SimpleRichTextEditor({ content, onChange, placeholder = "Start w
         </div>
 
         {/* Undo/Redo */}
-        <div className="flex gap-1">
+        <div className="flex gap-1 border-r pr-2 mr-2">
           <Button
             type="button"
             variant="ghost"
@@ -280,6 +310,23 @@ export function SimpleRichTextEditor({ content, onChange, placeholder = "Start w
             disabled={disabled}
           >
             <Redo className="h-4 w-4" />
+          </Button>
+        </div>
+
+        {/* HTML Toggle */}
+        <div className="flex gap-1">
+          <Button
+            type="button"
+            variant={isRawMode ? "default" : "ghost"}
+            size="sm"
+            onClick={toggleRawMode}
+            disabled={disabled}
+            title={isRawMode ? "Switch to Visual Editor" : "Switch to HTML Editor"}
+          >
+            {isRawMode ? <Eye className="h-4 w-4" /> : <Code className="h-4 w-4" />}
+            <span className="ml-1 hidden sm:inline">
+              {isRawMode ? "Visual" : "HTML"}
+            </span>
           </Button>
         </div>
       </div>
@@ -349,14 +396,25 @@ export function SimpleRichTextEditor({ content, onChange, placeholder = "Start w
       )}
 
       {/* Editor Content */}
-      <div
-        ref={editorRef}
-        contentEditable={!disabled}
-        className="prose prose-lg max-w-none focus:outline-none min-h-[200px] p-4"
-        onInput={handleInput}
-        style={{ whiteSpace: 'pre-wrap' }}
-        suppressContentEditableWarning={true}
-      />
+      {isRawMode ? (
+        <textarea
+          value={rawContent}
+          onChange={(e) => handleRawContentChange(e.target.value)}
+          className="w-full min-h-[200px] p-4 border-0 bg-gray-50 font-mono text-sm resize-none focus:outline-none"
+          placeholder="Enter HTML content..."
+          disabled={disabled}
+          style={{ whiteSpace: 'pre-wrap' }}
+        />
+      ) : (
+        <div
+          ref={editorRef}
+          contentEditable={!disabled}
+          className="prose prose-lg max-w-none focus:outline-none min-h-[200px] p-4"
+          onInput={handleInput}
+          style={{ whiteSpace: 'pre-wrap' }}
+          suppressContentEditableWarning={true}
+        />
+      )}
     </div>
   )
 }
