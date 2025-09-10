@@ -6,6 +6,7 @@ import { Navbar } from '@/components/navbar'
 import { ADSENSE_CONFIG } from '@/lib/adsense-config'
 import { GoogleAnalytics } from '@/components/google-analytics'
 import AuthProvider from '@/components/auth-provider'
+import { Toaster } from '@/components/ui/toaster'
 
 // Modern font stack: Montserrat (primary), Poppins (secondary), Inter (fallback)
 const montserrat = Montserrat({ 
@@ -255,6 +256,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <Navbar />
           <GoogleAnalytics />
           {children}
+          <Toaster />
         </AuthProvider>
       </body>
     </html>

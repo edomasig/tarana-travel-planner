@@ -9,8 +9,19 @@ import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
 import { ImageUpload } from '@/components/ui/image-upload'
 import { SimpleRichTextEditor } from '@/components/ui/simple-rich-text-editor'
-import { ArrowLeft, Save, Eye, Facebook } from 'lucide-react'
+import { ArrowLeft, Save, Eye, Facebook, RefreshCw, Trash2 } from 'lucide-react'
 import Link from 'next/link'
+import { useToast } from '@/hooks/use-toast'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 
 interface BlogPost {
   id: string
@@ -56,6 +67,7 @@ interface Tag {
 export default function EditBlogPostPage() {
   const router = useRouter()
   const params = useParams()
+  const { toast } = useToast()
   const [form, setForm] = useState<BlogPostForm>({
     title: '',
     slug: '',
@@ -75,6 +87,8 @@ export default function EditBlogPostPage() {
   const [saving, setSaving] = useState(false)
   const [facebookPosting, setFacebookPosting] = useState(false)
   const [blogPost, setBlogPost] = useState<BlogPost | null>(null)
+  const [showFacebookConfirm, setShowFacebookConfirm] = useState(false)
+  const [facebookAction, setFacebookAction] = useState<'publish' | 'repost' | 'delete'>('publish')
 
   useEffect(() => {
     if (params.id) {
@@ -148,14 +162,25 @@ export default function EditBlogPostPage() {
           status,
           published: status === 'PUBLISHED'
         }))
-        alert('Blog post updated successfully!')
+        toast({
+          title: "Success!",
+          description: "Blog post updated successfully!",
+        })
       } else {
         console.error('Error updating blog post')
-        alert('Error updating blog post')
+        toast({
+          title: "Error",
+          description: "Error updating blog post",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error('Error updating blog post:', error)
-      alert('Error updating blog post')
+      toast({
+        title: "Error",
+        description: "Error updating blog post",
+        variant: "destructive",
+      })
     } finally {
       setSaving(false)
     }
@@ -177,8 +202,24 @@ export default function EditBlogPostPage() {
   }
 
   const handleFacebookPost = async () => {
+    setFacebookAction('publish')
+    setShowFacebookConfirm(true)
+  }
+
+  const handleFacebookRepost = async () => {
+    setFacebookAction('repost')
+    setShowFacebookConfirm(true)
+  }
+
+  const handleFacebookDelete = async () => {
+    setFacebookAction('delete')
+    setShowFacebookConfirm(true)
+  }
+
+  const confirmFacebookAction = async () => {
     if (!blogPost) return
 
+    setShowFacebookConfirm(false)
     setFacebookPosting(true)
     try {
       const response = await fetch('/api/cms/webhook/facebook-new', {
@@ -188,27 +229,49 @@ export default function EditBlogPostPage() {
         },
         body: JSON.stringify({
           postId: blogPost.id,
-          action: 'publish'
+          action: facebookAction
         })
       })
 
       const result = await response.json()
       
       if (result.success) {
-        // Update the local blog post state with Facebook post details
-        setBlogPost(prev => prev ? {
-          ...prev,
-          facebookPostId: result.facebookPostId,
-          facebookPostUrl: result.facebookPostUrl
-        } : null)
+        // Update the local blog post state based on action
+        if (facebookAction === 'delete') {
+          setBlogPost(prev => prev ? {
+            ...prev,
+            facebookPostId: undefined,
+            facebookPostUrl: undefined
+          } : null)
+        } else {
+          setBlogPost(prev => prev ? {
+            ...prev,
+            facebookPostId: result.facebookPostId,
+            facebookPostUrl: result.facebookPostUrl
+          } : null)
+        }
         
-        alert(`Successfully ${result.action} on Facebook!`)
+        const actionText = facebookAction === 'delete' ? 'deleted from' : 
+                          facebookAction === 'repost' ? 'reposted to' : 'published to'
+        
+        toast({
+          title: "Facebook Success!",
+          description: `Successfully ${actionText} Facebook!`,
+        })
       } else {
-        alert(`Failed to post to Facebook: ${result.error || 'Unknown error'}`)
+        toast({
+          title: "Facebook Error",
+          description: `Failed to ${facebookAction} on Facebook: ${result.error || 'Unknown error'}`,
+          variant: "destructive",
+        })
       }
     } catch (error) {
-      console.error('Facebook posting error:', error)
-      alert('Failed to post to Facebook. Please try again.')
+      console.error('Facebook action error:', error)
+      toast({
+        title: "Network Error",
+        description: `Failed to ${facebookAction} on Facebook. Please try again.`,
+        variant: "destructive",
+      })
     } finally {
       setFacebookPosting(false)
     }
@@ -226,7 +289,7 @@ export default function EditBlogPostPage() {
 
   if (!blogPost) {
     return (
-      <div className="p-6 max-w-4xl mx-auto">
+      <div className="p-6 max-w-7xl mx-auto">
         <div className="flex items-center justify-center h-64">
           <div className="text-lg">Blog post not found</div>
         </div>
@@ -235,7 +298,7 @@ export default function EditBlogPostPage() {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
@@ -473,8 +536,8 @@ export default function EditBlogPostPage() {
               <div>
                 <Label>Facebook Status</Label>
                 {blogPost.facebookPostId ? (
-                  <div className="mt-2">
-                    <div className="flex items-center gap-2 text-green-600 mb-2">
+                  <div className="mt-2 space-y-3">
+                    <div className="flex items-center gap-2 text-green-600">
                       <Facebook className="h-4 w-4" />
                       <span className="text-sm">Posted to Facebook</span>
                     </div>
@@ -483,11 +546,35 @@ export default function EditBlogPostPage() {
                         href={blogPost.facebookPostUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline text-sm"
+                        className="text-blue-600 hover:underline text-sm block"
                       >
                         View Facebook Post →
                       </a>
                     )}
+                    
+                    {/* Facebook Action Buttons */}
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={handleFacebookRepost}
+                        disabled={facebookPosting}
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                      >
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        {facebookPosting && facebookAction === 'repost' ? 'Reposting...' : 'Repost'}
+                      </Button>
+                      <Button
+                        onClick={handleFacebookDelete}
+                        disabled={facebookPosting}
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        {facebookPosting && facebookAction === 'delete' ? 'Deleting...' : 'Delete'}
+                      </Button>
+                    </div>
                   </div>
                 ) : (
                   <div className="mt-2">
@@ -500,7 +587,7 @@ export default function EditBlogPostPage() {
                         className="w-full"
                       >
                         <Facebook className="h-4 w-4 mr-2" />
-                        {facebookPosting ? 'Posting...' : 'Publish to Facebook'}
+                        {facebookPosting && facebookAction === 'publish' ? 'Publishing...' : 'Publish to Facebook'}
                       </Button>
                     ) : (
                       <div className="text-sm text-gray-500 bg-gray-50 p-2 rounded">
@@ -551,6 +638,59 @@ export default function EditBlogPostPage() {
           </Card>
         </div>
       </div>
+
+      {/* Facebook Action Confirmation Dialog */}
+      <AlertDialog open={showFacebookConfirm} onOpenChange={setShowFacebookConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {facebookAction === 'publish' && 'Publish to Facebook?'}
+              {facebookAction === 'repost' && 'Repost to Facebook?'}
+              {facebookAction === 'delete' && 'Delete Facebook Post?'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {facebookAction === 'publish' && (
+                <>This will publish "{blogPost?.title}" to your Facebook page. 
+                Make sure the content and featured image are ready for public viewing.</>
+              )}
+              {facebookAction === 'repost' && (
+                <>This will delete the current Facebook post and create a new one with updated content 
+                for "{blogPost?.title}". This is useful when you've made changes to the blog post.</>
+              )}
+              {facebookAction === 'delete' && (
+                <>This will permanently delete the Facebook post for "{blogPost?.title}". 
+                You can republish it later if needed. This action cannot be undone.</>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmFacebookAction}
+              className={facebookAction === 'delete' ? 'bg-red-600 hover:bg-red-700' : ''}
+            >
+              {facebookAction === 'publish' && (
+                <>
+                  <Facebook className="h-4 w-4 mr-2" />
+                  Publish to Facebook
+                </>
+              )}
+              {facebookAction === 'repost' && (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Repost to Facebook
+                </>
+              )}
+              {facebookAction === 'delete' && (
+                <>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete Post
+                </>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

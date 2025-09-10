@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Upload, X, Image as ImageIcon, Loader2, Plus } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
 
 interface MultiImageUploadProps {
   value: string[]
@@ -18,6 +19,7 @@ export function MultiImageUpload({
   disabled, 
   maxImages = 10 
 }: MultiImageUploadProps) {
+  const { toast } = useToast()
   const [uploading, setUploading] = useState(false)
   const [dragOver, setDragOver] = useState(false)
 
@@ -47,7 +49,11 @@ export function MultiImageUpload({
       onChange(updatedUrls)
     } catch (error) {
       console.error('Upload error:', error)
-      alert(error instanceof Error ? error.message : 'Failed to upload images')
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : 'Failed to upload images',
+        variant: "destructive",
+      })
     } finally {
       setUploading(false)
     }

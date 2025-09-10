@@ -111,7 +111,7 @@ export default function NewBlogPostPage() {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <Link href="/cms/blog-posts">
