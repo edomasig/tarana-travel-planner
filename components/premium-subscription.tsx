@@ -1,8 +1,11 @@
+'use client'
+
 import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Check, Crown, Star, Zap } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
 
 interface PremiumFeature {
   title: string
@@ -18,9 +21,10 @@ interface PlanProps {
   features: PremiumFeature[]
   popular?: boolean
   ctaText: string
+  onSubscribe?: (name: string) => void
 }
 
-const PremiumPlan = ({ name, price, period, description, features, popular, ctaText }: PlanProps) => {
+const PremiumPlan = ({ name, price, period, description, features, popular, ctaText, onSubscribe }: PlanProps) => {
   return (
     <Card className={`relative ${popular ? 'border-2 border-blue-500 shadow-lg' : ''}`}>
       {popular && (
@@ -70,7 +74,7 @@ const PremiumPlan = ({ name, price, period, description, features, popular, ctaT
               })
             }
             // In production: redirect to payment processor
-            alert(`${name} subscription coming soon! Join our waitlist for early access.`)
+            onSubscribe?.(name)
           }}
         >
           {ctaText}
@@ -81,7 +85,15 @@ const PremiumPlan = ({ name, price, period, description, features, popular, ctaT
 }
 
 export function PremiumSubscription() {
+  const { toast } = useToast()
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly')
+
+  const handleSubscribe = (planName: string) => {
+    toast({
+      title: "Coming Soon!",
+      description: `${planName} subscription coming soon! Join our waitlist for early access.`,
+    })
+  }
 
   const plans: PlanProps[] = [
     {
@@ -181,7 +193,7 @@ export function PremiumSubscription() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {plans.map((plan, index) => (
-            <PremiumPlan key={index} {...plan} />
+            <PremiumPlan key={index} {...plan} onSubscribe={handleSubscribe} />
           ))}
         </div>
 

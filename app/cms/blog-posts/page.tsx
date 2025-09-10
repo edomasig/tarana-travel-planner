@@ -5,6 +5,18 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { useToast } from '@/hooks/use-toast'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { 
   Plus, 
   Edit, 
@@ -38,6 +50,9 @@ export default function BlogPostsPage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [postToDelete, setPostToDelete] = useState<string | null>(null)
+  const { toast } = useToast()
 
   useEffect(() => {
     fetchPosts()
@@ -56,15 +71,41 @@ export default function BlogPostsPage() {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this blog post?')) return
+    setPostToDelete(id)
+    setDeleteDialogOpen(true)
+  }
+
+  const confirmDelete = async () => {
+    if (!postToDelete) return
 
     try {
-      await fetch(`/api/cms/blog-posts/${id}`, {
+      const response = await fetch(`/api/cms/blog-posts/${postToDelete}`, {
         method: 'DELETE'
       })
-      fetchPosts() // Refresh list
+
+      if (response.ok) {
+        toast({
+          title: "Success!",
+          description: "Blog post deleted successfully",
+        })
+        fetchPosts() // Refresh list
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to delete blog post",
+          variant: "destructive",
+        })
+      }
     } catch (error) {
       console.error('Error deleting post:', error)
+      toast({
+        title: "Error",
+        description: "Network error while deleting post",
+        variant: "destructive",
+      })
+    } finally {
+      setDeleteDialogOpen(false)
+      setPostToDelete(null)
     }
   }
 
@@ -84,13 +125,24 @@ export default function BlogPostsPage() {
       const result = await response.json()
       
       if (result.success) {
-        alert(`✅ ${action.toUpperCase()} completed successfully!\n\n${result.message}`)
+        toast({
+          title: "Success!",
+          description: `${action.toUpperCase()} completed successfully! ${result.message}`,
+        })
         fetchPosts() // Refresh the list to show updated status
       } else {
-        alert(`❌ ${action.toUpperCase()} failed!\n\nError: ${result.error || 'Unknown error'}`)
+        toast({
+          title: "Error",
+          description: `${action.toUpperCase()} failed: ${result.error || 'Unknown error'}`,
+          variant: "destructive",
+        })
       }
     } catch (error) {
-      alert(`❌ Network error: ${error}`)
+      toast({
+        title: "Network Error",
+        description: `Network error: ${error}`,
+        variant: "destructive",
+      })
     }
   }
 
@@ -319,6 +371,33 @@ export default function BlogPostsPage() {
           ))
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the blog post
+              and remove all associated data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setDeleteDialogOpen(false)
+              setPostToDelete(null)
+            }}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete Post
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

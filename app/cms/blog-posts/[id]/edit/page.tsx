@@ -11,6 +11,7 @@ import { ImageUpload } from '@/components/ui/image-upload'
 import { SimpleRichTextEditor } from '@/components/ui/simple-rich-text-editor'
 import { ArrowLeft, Save, Eye, Facebook } from 'lucide-react'
 import Link from 'next/link'
+import { useToast } from '@/hooks/use-toast'
 
 interface BlogPost {
   id: string
@@ -56,6 +57,7 @@ interface Tag {
 export default function EditBlogPostPage() {
   const router = useRouter()
   const params = useParams()
+  const { toast } = useToast()
   const [form, setForm] = useState<BlogPostForm>({
     title: '',
     slug: '',
@@ -148,14 +150,25 @@ export default function EditBlogPostPage() {
           status,
           published: status === 'PUBLISHED'
         }))
-        alert('Blog post updated successfully!')
+        toast({
+          title: "Success!",
+          description: "Blog post updated successfully!",
+        })
       } else {
         console.error('Error updating blog post')
-        alert('Error updating blog post')
+        toast({
+          title: "Error",
+          description: "Error updating blog post",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error('Error updating blog post:', error)
-      alert('Error updating blog post')
+      toast({
+        title: "Error",
+        description: "Error updating blog post",
+        variant: "destructive",
+      })
     } finally {
       setSaving(false)
     }
@@ -202,13 +215,24 @@ export default function EditBlogPostPage() {
           facebookPostUrl: result.facebookPostUrl
         } : null)
         
-        alert(`Successfully ${result.action} on Facebook!`)
+        toast({
+          title: "Facebook Success!",
+          description: `Successfully ${result.action} on Facebook!`,
+        })
       } else {
-        alert(`Failed to post to Facebook: ${result.error || 'Unknown error'}`)
+        toast({
+          title: "Facebook Error",
+          description: `Failed to post to Facebook: ${result.error || 'Unknown error'}`,
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error('Facebook posting error:', error)
-      alert('Failed to post to Facebook. Please try again.')
+      toast({
+        title: "Network Error",
+        description: "Failed to post to Facebook. Please try again.",
+        variant: "destructive",
+      })
     } finally {
       setFacebookPosting(false)
     }
@@ -226,7 +250,7 @@ export default function EditBlogPostPage() {
 
   if (!blogPost) {
     return (
-      <div className="p-6 max-w-4xl mx-auto">
+      <div className="p-6 max-w-7xl mx-auto">
         <div className="flex items-center justify-center h-64">
           <div className="text-lg">Blog post not found</div>
         </div>
@@ -235,7 +259,7 @@ export default function EditBlogPostPage() {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
