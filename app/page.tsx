@@ -2,6 +2,7 @@
 
 import { HeroSection } from '@/components/hero-section'
 import { FeaturesSection } from '@/components/features-section'
+import { FeaturedBlogsSection } from '@/components/featured-blogs-section'
 import { HowItWorksSection } from '@/components/how-it-works-section'
 import { TestimonialsSection } from '@/components/testimonials-section'
 import { CTASection } from '@/components/cta-section'
@@ -19,6 +20,10 @@ export default function MarketingHomePage() {
         <AdBanner position="top" className="mx-4" />
       </div>
       <FeaturesSection />
+      
+      {/* Featured Blog Posts */}
+      <FeaturedBlogsSection />
+      
       {/* Agoda hotel booking banner - using fallback for better design */}
       <div className="my-8 flex justify-center">
         <FallbackAgodaBanner variant="manila" />
