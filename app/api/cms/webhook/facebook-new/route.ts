@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { uploadPhotoAndCreatePost } from '@/lib/facebook'
 import { createFacebookPostWithImage } from '@/lib/facebook-enhanced'
 import { postToFacebookSimple } from '@/lib/facebook-simple'
+import { getCategorySpecificMessage, getRandomPromotionalMessage } from '@/lib/facebook-promotional-messages'
 
 interface FacebookPostData {
   id: string
@@ -108,14 +109,19 @@ export async function POST(request: NextRequest) {
     const host = process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_HOST || 'http://localhost:3001'
     const blogUrl = `${host}/blog/${blogPost.slug}`
     
-    // Create Facebook post message
+    // Create Facebook post message with dynamic promotional content
+    const tagNames = blogPost.tags.map((tag: any) => tag.name)
+    const promotionalMessage = getCategorySpecificMessage(tagNames)
+    
     const message = `✈️ ${blogPost.title}
 
 ${blogPost.excerpt || ''}
 
 🔗 Read the full guide: ${blogUrl}
 
-#TravelPhilippines #GalaGPT #TravelGuide ${blogPost.tags.map((tag: any) => `#${tag.name.replace(/\s+/g, '')}`).join(' ')}`
+${promotionalMessage}
+
+#TravelPhilippines #GalaGPT #TravelGuide #PhilippinesItinerary #TravelPlanning #AITravelAssistant #VisitPhilippines #TravelTips #Wanderlust ${blogPost.tags.map((tag: any) => `#${tag.name.replace(/\s+/g, '')}`).join(' ')}`
 
     let result
     let operationType = 'created'
