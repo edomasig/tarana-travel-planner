@@ -26,7 +26,8 @@ import {
   Search,
   FileText,
   Facebook,
-  RefreshCw
+  RefreshCw,
+  Send
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
@@ -59,6 +60,10 @@ export default function BlogPostsPage() {
     action: 'publish' | 'repost' | 'delete'
     postTitle: string
   } | null>(null)
+  const [publishDialogOpen, setPublishDialogOpen] = useState(false)
+  const [postToPublish, setPostToPublish] = useState<string | null>(null)
+  const [unpublishDialogOpen, setUnpublishDialogOpen] = useState(false)
+  const [postToUnpublish, setPostToUnpublish] = useState<string | null>(null)
   const { toast } = useToast()
 
   useEffect(() => {
@@ -113,6 +118,123 @@ export default function BlogPostsPage() {
     } finally {
       setDeleteDialogOpen(false)
       setPostToDelete(null)
+    }
+  }
+
+  const handlePublish = async (id: string) => {
+    setPostToPublish(id)
+    setPublishDialogOpen(true)
+  }
+
+  const handleUnpublish = async (id: string) => {
+    setPostToUnpublish(id)
+    setUnpublishDialogOpen(true)
+  }
+
+  const confirmUnpublish = async () => {
+    if (!postToUnpublish) return
+
+    try {
+      // First get the current post data
+      const getResponse = await fetch(`/api/cms/blog-posts/${postToUnpublish}`)
+      if (!getResponse.ok) {
+        throw new Error('Failed to fetch post data')
+      }
+      
+      const currentPost = await getResponse.json()
+      
+      // Update with unpublish data
+      const response = await fetch(`/api/cms/blog-posts/${postToUnpublish}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...currentPost,
+          status: 'DRAFT',
+          published: false,
+          tagIds: currentPost.tags?.map((tag: any) => tag.id) || []
+        })
+      })
+
+      if (response.ok) {
+        toast({
+          title: "Success!",
+          description: "Blog post unpublished successfully",
+        })
+        fetchPosts() // Refresh list
+      } else {
+        const errorData = await response.json()
+        toast({
+          title: "Error",
+          description: errorData.error || "Failed to unpublish blog post",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error('Error unpublishing post:', error)
+      toast({
+        title: "Error",
+        description: "Network error while unpublishing post",
+        variant: "destructive",
+      })
+    } finally {
+      setUnpublishDialogOpen(false)
+      setPostToUnpublish(null)
+    }
+  }
+
+  const confirmPublish = async () => {
+    if (!postToPublish) return
+
+    try {
+      // First get the current post data
+      const getResponse = await fetch(`/api/cms/blog-posts/${postToPublish}`)
+      if (!getResponse.ok) {
+        throw new Error('Failed to fetch post data')
+      }
+      
+      const currentPost = await getResponse.json()
+      
+      // Update with publish data
+      const response = await fetch(`/api/cms/blog-posts/${postToPublish}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...currentPost,
+          status: 'PUBLISHED',
+          published: true,
+          publishedAt: new Date().toISOString(),
+          tagIds: currentPost.tags?.map((tag: any) => tag.id) || []
+        })
+      })
+
+      if (response.ok) {
+        toast({
+          title: "Success!",
+          description: "Blog post published successfully",
+        })
+        fetchPosts() // Refresh list
+      } else {
+        const errorData = await response.json()
+        toast({
+          title: "Error",
+          description: errorData.error || "Failed to publish blog post",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error('Error publishing post:', error)
+      toast({
+        title: "Error",
+        description: "Network error while publishing post",
+        variant: "destructive",
+      })
+    } finally {
+      setPublishDialogOpen(false)
+      setPostToPublish(null)
     }
   }
 
@@ -286,6 +408,12 @@ export default function BlogPostsPage() {
                             Facebook
                           </Badge>
                         )}
+                        {!post.published && (
+                          <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                            <Eye className="h-3 w-3 mr-1" />
+                            Preview Available
+                          </Badge>
+                        )}
                         {/* Debug info - remove in production */}
                         <span className="text-xs text-gray-400 ml-2">
                           FB ID: {post.facebookPostId ? `✓ ${post.facebookPostId.slice(0, 10)}...` : '✗ None'}
@@ -370,13 +498,50 @@ export default function BlogPostsPage() {
                     </div>
                     
                     {/* Regular Actions */}
-                    <Link href={`/blog/${post.slug}`} target="_blank">
-                      <Button variant="ghost" size="sm">
-                        <Eye className="h-4 w-4" />
+                    <Link href={`/cms/blog-posts/${post.id}/preview`}>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        title="Preview post"
+                        className="text-purple-600 hover:text-purple-800 border-purple-200 bg-purple-50"
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        Preview
                       </Button>
                     </Link>
+                    {post.published && (
+                      <Link href={`/blog/${post.slug}`} target="_blank">
+                        <Button variant="ghost" size="sm" title="View live post">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                    )}
+                    {!post.published && post.status === 'DRAFT' && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handlePublish(post.id)}
+                        className="text-green-600 hover:text-green-800 border-green-200 bg-green-50"
+                        title="Publish post"
+                      >
+                        <Send className="h-4 w-4 mr-1" />
+                        Publish
+                      </Button>
+                    )}
+                    {post.published && post.status === 'PUBLISHED' && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleUnpublish(post.id)}
+                        className="text-orange-600 hover:text-orange-800 border-orange-200 bg-orange-50"
+                        title="Unpublish post"
+                      >
+                        <Send className="h-4 w-4 mr-1 rotate-180" />
+                        Unpublish
+                      </Button>
+                    )}
                     <Link href={`/cms/blog-posts/${post.id}/edit`}>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" title="Edit post">
                         <Edit className="h-4 w-4" />
                       </Button>
                     </Link>
@@ -385,6 +550,7 @@ export default function BlogPostsPage() {
                       size="sm"
                       onClick={() => handleDelete(post.id)}
                       className="text-red-600 hover:text-red-800"
+                      title="Delete post"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -418,6 +584,62 @@ export default function BlogPostsPage() {
               className="bg-red-600 hover:bg-red-700"
             >
               Delete Post
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Publish Confirmation Dialog */}
+      <AlertDialog open={publishDialogOpen} onOpenChange={setPublishDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Publish Blog Post?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will publish the blog post and make it visible to all visitors on your website. 
+              The post will be marked as published with the current date and time.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setPublishDialogOpen(false)
+              setPostToPublish(null)
+            }}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmPublish}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              <Send className="h-4 w-4 mr-2" />
+              Publish Post
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Unpublish Confirmation Dialog */}
+      <AlertDialog open={unpublishDialogOpen} onOpenChange={setUnpublishDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Unpublish Blog Post?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will unpublish the blog post and make it no longer visible to visitors on your website. 
+              The post will be moved back to draft status and can be republished later.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setUnpublishDialogOpen(false)
+              setPostToUnpublish(null)
+            }}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmUnpublish}
+              className="bg-orange-600 hover:bg-orange-700"
+            >
+              <Send className="h-4 w-4 mr-2 rotate-180" />
+              Unpublish Post
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
