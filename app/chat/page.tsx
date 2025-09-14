@@ -74,18 +74,18 @@ function ChatPageComponent() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const missingAPIs = []
-      
+
       // Check for essential APIs
       if (!window.fetch) missingAPIs.push('fetch')
       if (!window.Promise) missingAPIs.push('Promise')
       if (!window.console) missingAPIs.push('console')
       if (!document.querySelector) missingAPIs.push('querySelector')
       if (!document.addEventListener) missingAPIs.push('addEventListener')
-      
+
       if (missingAPIs.length > 0) {
         console.warn('Missing browser APIs:', missingAPIs)
       }
-      
+
       // Log browser information for debugging
       const browserInfo = {
         userAgent: navigator.userAgent,
@@ -97,7 +97,7 @@ function ChatPageComponent() {
         maxTouchPoints: navigator.maxTouchPoints,
         hardwareConcurrency: navigator.hardwareConcurrency
       }
-      
+
       console.log('Browser info:', browserInfo)
       setDebugInfo((prev: any) => ({ ...prev, browser: browserInfo }))
     }
@@ -115,14 +115,14 @@ function ChatPageComponent() {
         error: event.error
       })
     }
-    
+
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
       console.error('Unhandled promise rejection:', event.reason)
     }
-    
+
     window.addEventListener('error', handleGlobalError)
     window.addEventListener('unhandledrejection', handleUnhandledRejection)
-    
+
     return () => {
       window.removeEventListener('error', handleGlobalError)
       window.removeEventListener('unhandledrejection', handleUnhandledRejection)
@@ -152,10 +152,10 @@ function ChatPageComponent() {
   const autoSavedRef = useRef(false)
   const autoPromptRef = useRef(false)
 
-  useEffect(() => { 
+  useEffect(() => {
     try {
-      setMounted(true) 
-      
+      setMounted(true)
+
       // Enhanced iOS detection and debugging
       if (typeof window !== 'undefined') {
         // Log device information for debugging
@@ -169,13 +169,13 @@ function ChatPageComponent() {
           innerHeight: window.innerHeight
         }
         console.log('Device info:', deviceInfo)
-        
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
-                     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-        
+
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+
         if (isIOS) {
           console.log('iOS device detected, applying fixes')
-          
+
           const setVh = () => {
             try {
               const vh = window.innerHeight * 0.01
@@ -185,15 +185,15 @@ function ChatPageComponent() {
               console.warn('VH calculation failed:', e)
             }
           }
-          
+
           setVh()
-          
+
           // Use passive listeners for better performance
           window.addEventListener('resize', setVh, { passive: true })
           window.addEventListener('orientationchange', () => {
             setTimeout(setVh, 100) // Delay for orientation change
           }, { passive: true })
-          
+
           return () => {
             window.removeEventListener('resize', setVh)
             window.removeEventListener('orientationchange', setVh)
@@ -222,10 +222,10 @@ function ChatPageComponent() {
     // Track travel plan requests
     trackTravelPlanRequest(text, 'unknown', 'free_tier')
 
-  const userMessage: Message = { id: Date.now().toString(), type: 'user', content: text, timestamp: new Date() }
+    const userMessage: Message = { id: Date.now().toString(), type: 'user', content: text, timestamp: new Date() }
     setMessages(prev => [...prev, userMessage])
-  // Capture initial prompt (first user message of the session)
-  if (!initialPrompt) setInitialPrompt(text)
+    // Capture initial prompt (first user message of the session)
+    if (!initialPrompt) setInitialPrompt(text)
     if (!override) setInput('')
     else setInput('')
     setIsLoading(true)
@@ -240,7 +240,7 @@ function ChatPageComponent() {
       // Derive a simple primary city guess from the initial prompt (best effort)
       const simplePrimaryCity = (() => {
         const lower = (initialPrompt || text).toLowerCase()
-        const candidates = ['palawan','el nido','coron','puerto princesa','baguio','sagada','vigan','boracay','bohol','cebu','siquijor','siargao','manila','makati','bgc','quezon city','ilocos','bataan','laguna','tagaytay','davao','iloilo']
+        const candidates = ['palawan', 'el nido', 'coron', 'puerto princesa', 'baguio', 'sagada', 'vigan', 'boracay', 'bohol', 'cebu', 'siquijor', 'siargao', 'manila', 'makati', 'bgc', 'quezon city', 'ilocos', 'bataan', 'laguna', 'tagaytay', 'davao', 'iloilo']
         return candidates.find(c => lower.includes(c)) || undefined
       })()
       const response = await generateTravelResponse(text, history, { initialPrompt: initialPrompt || undefined, primaryCity: simplePrimaryCity })
@@ -261,7 +261,7 @@ function ChatPageComponent() {
     try {
       const text = content.replace(/\*\*/g, '').replace(/🏝️|🏔️|🏙️|🏄|💰/g, '')
       const itineraryText = `GalaGPT.ph Travel Itinerary\n\n${text}\n\nGenerated by GalaGPT.ph - Your AI Travel Assistant for the Philippines`
-      
+
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(itineraryText).then(() => {
           alert('Itinerary copied to clipboard!')
@@ -308,14 +308,14 @@ function ChatPageComponent() {
       savedConversations[0] = conversation
     } else { savedConversations.unshift(conversation) }
     const success = saveConversationsToCookies(savedConversations)
-    
+
     // Track conversation save
     if (success) {
       trackConversationSave(conversation.messageCount, conversation.id)
     }
-    
+
     if (success) {
-      try { if (typeof window !== 'undefined') localStorage.setItem('savedConversations', JSON.stringify(savedConversations)) } catch {}
+      try { if (typeof window !== 'undefined') localStorage.setItem('savedConversations', JSON.stringify(savedConversations)) } catch { }
       if (!silent) alert('Conversation saved!')
     } else if (!silent) { alert('Error saving conversation.') }
   }
@@ -370,19 +370,19 @@ function ChatPageComponent() {
 
   return (
     <div className="flex min-h-screen md:h-screen bg-gray-50 overflow-hidden w-full max-w-full">
-      <div className="hidden xl:block w-80 bg-white border-r border-gray-200 flex-shrink-0 max-w-80">
+      <div className="hidden xl:block w-[420px] bg-white border-r border-gray-200 flex-shrink-0 max-w-[420px]">
         <div className="sticky top-0 p-4 space-y-5 overflow-y-auto overflow-x-hidden max-h-screen scrollbar-thin w-full">
           {/* Hotel Search Section */}
           <div className="w-full max-w-full">
             <h3 className="font-semibold text-gray-900 mb-3">🏨 Find Hotels</h3>
             <div className="w-full max-w-full overflow-hidden">
-              <AgodaResponsiveSearchBox 
-                cityCode="18218" 
+              <AgodaResponsiveSearchBox
+                cityCode="18218"
                 destinationName="Tagaytay, Philippines"
               />
             </div>
           </div>
-          
+
           {/* Travel Activities Section */}
           <div className="w-full max-w-full">
             <h3 className="font-semibold text-gray-900 mb-3">🎯 Activities</h3>
@@ -390,7 +390,7 @@ function ChatPageComponent() {
               <KlookWidget />
             </div>
           </div>
-          
+
           {/* Restaurant Recommendations */}
           <div className="text-center w-full max-w-full">
             <h3 className="font-semibold text-gray-900 mb-3 text-sm">🍽️ Dining</h3>
@@ -398,7 +398,7 @@ function ChatPageComponent() {
               <NativeAd type="restaurant" />
             </div>
           </div>
-          
+
           {/* Partner Badge */}
           <div className="text-center w-full max-w-full pt-2">
             <AgodaBadge size="small" className="opacity-80" />
@@ -418,7 +418,7 @@ function ChatPageComponent() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-           
+
             {messages.length > 1 && (
               <Button size="sm" variant="outline" onClick={() => saveConversation()} className="text-xs flex">
                 <Download className="h-3 w-3 mr-1" />
@@ -465,13 +465,13 @@ function ChatPageComponent() {
                 <Card className={`max-w-2xl w-full p-3 sm:p-3 ${message.type === 'user' ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white ml-4 sm:ml-12' : 'bg-white'} overflow-hidden`}>
                   {message.type === 'assistant' ? (
                     <div className="break-words leading-tight prose prose-tight prose-sm md:prose-base max-w-none tracking-tight prose-headings:my-1 prose-p:my-0.5 prose-li:my-0.5 prose-ul:my-1 prose-ol:my-1 prose-hr:my-2 prose-blockquote:my-1 prose-pre:my-1 prose-p:text-gray-700 prose-li:marker:text-blue-600 prose-strong:text-gray-900 prose-code:text-purple-600">
-                      <ReactMarkdown 
+                      <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{
                           a: ({ node, children, href, ...props }) => (
-                            <a 
-                              href={href} 
-                              target="_blank" 
+                            <a
+                              href={href}
+                              target="_blank"
                               rel="noopener noreferrer"
                               className="text-blue-600 hover:text-blue-800 underline"
                               {...props}
@@ -494,17 +494,17 @@ function ChatPageComponent() {
                         <Button size="sm" variant="outline" onClick={() => saveItinerary(message.content)} className="text-[10px] h-6 px-2">
                           <Download className="h-3 w-3 mr-1" />Save
                         </Button>
-                        <Button size="sm" variant="outline" onClick={async () => { 
+                        <Button size="sm" variant="outline" onClick={async () => {
                           try {
-                            if (navigator.share && typeof navigator.share === 'function') { 
-                              await navigator.share({ 
-                                title: 'My Philippines Travel Itinerary', 
-                                text: message.content.replace(/\*\*/g, ''), 
-                                url: window.location.href 
+                            if (navigator.share && typeof navigator.share === 'function') {
+                              await navigator.share({
+                                title: 'My Philippines Travel Itinerary',
+                                text: message.content.replace(/\*\*/g, ''),
+                                url: window.location.href
                               })
-                            } else { 
-                              saveItinerary(message.content) 
-                            } 
+                            } else {
+                              saveItinerary(message.content)
+                            }
                           } catch (error) {
                             console.log('Share failed, falling back to copy:', error)
                             saveItinerary(message.content)
@@ -593,7 +593,7 @@ function ChatPageComponent() {
           </div>
         </div>
       </div>
-      
+
       {/* Floating Agoda Search Box - Mobile Only (since desktop has sidebar) */}
       <div className="xl:hidden">
         <FloatingTagaytaySearch position="bottom-left" />
