@@ -48,7 +48,15 @@ const HOTEL_PATTERNS = [
   // Format: "Microtel by Wyndham Location" - chain hotel pattern
   /\b(Microtel\s+by\s+Wyndham\s+[A-Z][a-zA-Z\s&'-]+)\b/gi,
   // Format: "City Name + Hotel Type" - like "Baguio Country Club"
-  /\b([A-Z][a-zA-Z\s&'-]+\s+(?:Holiday|Country|City|Grand|Royal|Imperial)\s+(?:Hotel|Resort|Inn|Lodge|Hostel|Suites|Plaza|Boutique|Palace|Manor|Villa|Pension|Guesthouse|Spa|Club|Retreat|Villas))\b/gi
+  /\b([A-Z][a-zA-Z\s&'-]+\s+(?:Holiday|Country|City|Grand|Royal|Imperial)\s+(?:Hotel|Resort|Inn|Lodge|Hostel|Suites|Plaza|Boutique|Palace|Manor|Villa|Pension|Guesthouse|Spa|Club|Retreat|Villas))\b/gi,
+  // Format: "Hotel Name City" - like "Hotel Elizabeth Baguio"
+  /\b(Hotel\s+[A-Z][a-zA-Z\s&'-]+\s+(?:Baguio|Manila|Cebu|Tagaytay|Davao|Boracay|Palawan|Iloilo))\b/gi,
+  // Format: "Hotel Name" followed by city context - more general
+  /\b(Hotel\s+[A-Z][a-zA-Z\s&'-]+)\b(?=\s*\n|\s*Price:|\s*•|\s*-)/gi,
+  // Format: "Resort/Inn/Lodge Name City" - like "Pine Lodge Baguio"
+  /\b((?:Pine|Mountain|Forest|Garden|Royal|Grand|Imperial|Crown|Golden)\s+(?:Lodge|Resort|Inn|Hotel|Manor|Villa)\s+(?:Baguio|Manila|Cebu|Tagaytay|Davao|Boracay|Palawan|Iloilo))\b/gi,
+  // Format: "Name + Hotel/Resort/Inn" - like "Elizabeth Hotel", "Burnham Hotel"
+  /\b([A-Z][a-zA-Z\s&'-]+\s+(?:Hotel|Resort|Inn|Lodge|Hostel|Suites|Plaza|Boutique|Palace|Manor|Villa|Pension|Guesthouse|Spa|Club|Retreat))\b(?=\s*\n|\s*Price:|\s*•|\s*-)/gi
 ]
 
 // Extract city context from surrounding text with improved detection
@@ -152,9 +160,13 @@ function generateHotelSearchLink(hotelName: string, city: string): string {
   const specificHotelIds: { [key: string]: string } = {
     'taal vista hotel': '4120',
     'days hotel by wyndham tagaytay': '4121',
-    'the manor at camp john hay': 'baguio-manor', // Will use search instead of direct ID
+    'the manor at camp john hay': 'baguio-manor',
     'baguio holiday villas': 'baguio-holiday-villas',
-    'microtel by wyndham baguio': 'microtel-baguio'
+    'microtel by wyndham baguio': 'microtel-baguio',
+    'hotel elizabeth baguio': 'hotel-elizabeth-baguio',
+    'baguio country club': 'baguio-country-club',
+    'hotel supreme baguio': 'hotel-supreme-baguio',
+    'azalea residences baguio': 'azalea-residences-baguio'
   }
   
   const hotelKey = hotelName.toLowerCase()

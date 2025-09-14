@@ -9,19 +9,19 @@ export async function GET(request: NextRequest) {
 
 **Visa Requirements:** No visa is required for Filipino citizens traveling within the Philippines.
 
-**Suggested Hotels for Accommodation:**
+**Accommodation Suggestions:**
 
 1. **The Manor at Camp John Hay**
-   • Price: ₱6,000 - ₱9,000/night
-   • A beautiful hotel set in a pine forest, offering luxurious rooms and excellent amenities.
+   • Price Range: ₱6,000 - ₱9,000/night
+   • A beautiful hotel with a rustic charm, located within the Camp John Hay area.
 
-2. **Baguio Holiday Villas**
-   • Price: ₱3,500 - ₱5,000/night
-   • A family-friendly hotel with spacious accommodations, located near the city center.
+2. **Baguio Country Club**
+   • Price Range: ₱5,000 - ₱8,000/night
+   • Offers stunning views and a range of amenities.
 
-3. **Microtel by Wyndham Baguio**
-   • Price: ₱3,000 - ₱4,500/night
-   • A modern hotel offering comfortable rooms and a great location.
+3. **Hotel Elizabeth Baguio**
+   • Price Range: ₱3,500 - ₱5,000/night
+   • A family-friendly hotel with comfortable accommodations and great service.
 
 **Day 1: Arrival and City Exploration**`
 
