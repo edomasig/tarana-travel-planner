@@ -10,11 +10,29 @@ import { Footer } from '@/components/footer'
 import { AdBanner } from '@/components/ads/ad-banner'
 import { FallbackAgodaBanner } from '@/components/affiliate/fallback-agoda-banner'
 import { FloatingTagaytaySearch } from '@/components/affiliate/floating-agoda-search'
+import { MonetagLink } from '@/components/monetag-link' // Add this import
+import { FloatingMonetagButton } from '@/components/floating-monetag'
 
 export default function MarketingHomePage() {
   return (
     <main className="min-h-screen relative">
       <HeroSection />
+      
+      {/* Monetag promotional section */}
+      <div className="my-8 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            🌟 Exclusive Travel Deals & Premium Content
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Unlock exclusive travel offers and premium destination guides
+          </p>
+          <MonetagLink variant="button" className="mx-auto">
+            🎯 Discover Premium Travel Content
+          </MonetagLink>
+        </div>
+      </div>
+
       {/* Primary Ad just under hero */}
       <div className="my-6">
         <AdBanner position="top" className="mx-4" />
@@ -28,16 +46,24 @@ export default function MarketingHomePage() {
       <div className="my-8 flex justify-center">
         <FallbackAgodaBanner variant="manila" />
       </div>
-      {/* <HowItWorksSection /> */}
-      {/* <TestimonialsSection /> */}
-      {/* <CTASection /> */}
-       <div className="my-6">
+      
+      {/* Another Monetag placement */}
+      <div className="my-8 px-4">
+        <MonetagLink variant="banner" className="max-w-2xl mx-auto">
+          💎 Get VIP Access to Exclusive Travel Resources
+        </MonetagLink>
+      </div>
+
+      <div className="my-6">
         <AdBanner position="bottom" className="mx-4" />
       </div>
       <Footer />
       
       {/* Floating Agoda Search Box */}
       <FloatingTagaytaySearch position="bottom-right" />
+
+      {/* Floating Monetag Button */}
+      <FloatingMonetagButton />
     </main>
   )
 }
