@@ -370,7 +370,7 @@ function ChatPageComponent() {
 
   return (
     <div className="flex min-h-screen md:h-screen bg-gray-50 overflow-hidden w-full max-w-full">
-      <div className="hidden xl:block w-[420px] bg-white border-r border-gray-200 flex-shrink-0 max-w-[420px]">
+      <div className="hidden xl:block w-[380px] bg-white border-r border-gray-200 flex-shrink-0 max-w-[380px]">
         <div className="sticky top-0 p-4 space-y-5 overflow-y-auto overflow-x-hidden max-h-screen scrollbar-thin w-full">
           {/* Hotel Search Section */}
           <div className="w-full max-w-full">
