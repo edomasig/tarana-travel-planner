@@ -144,6 +144,21 @@ export default function RootLayout({
         {/* Agoda partner manual verification */}
         <meta name="agd-partner-manual-verification" />
         
+        {/* TravelPayouts Script */}
+        <script 
+          data-noptimize="1" 
+          data-cfasync="false" 
+          data-wpfc-render="false"
+          dangerouslySetInnerHTML={{
+            __html: `(function () {
+              var script = document.createElement("script");
+              script.async = 1;
+              script.src = 'https://emrldtp.com/NDU5MDEx.js?t=459011';
+              document.head.appendChild(script);
+            })();`
+          }}
+        />
+        
         {/* Preconnect to external domains for performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
