@@ -37,8 +37,18 @@ const HOTEL_PATTERNS = [
   /\*\*(The\s+Lake\s+Hotel\s+Tagaytay)\*\*\s*\([₱$€£¥]\d+[,\d]*[-–][₱$€£¥]?\d+[,\d]*\/night\)/g,
   // Format: "The Hotel Name" - handles "The" prefix with price ranges
   /\*\*(The\s+[A-Z][a-zA-Z\s&'-]*(?:Hotel|Resort|Inn|Lodge|Hostel|Suites|Plaza|Grand|Boutique|Palace|Manor|Villa|Pension|Guesthouse|Spa|Club|Retreat))\*\*\s*\([₱$€£¥]\d+[,\d]*[-–][₱$€£¥]?\d+[,\d]*\/night\)/g,
+  // Format: "The Manor at Camp John Hay" - specific Baguio hotel
+  /\b(The\s+Manor\s+at\s+Camp\s+John\s+Hay)\b/gi,
   // Format: "The Hotel Name" - handles "The" prefix (plain text)
-  /\b(The\s+[A-Z][a-zA-Z\s&'-]*(?:Hotel|Resort|Inn|Lodge|Hostel|Suites|Plaza|Grand|Boutique|Palace|Manor|Villa|Pension|Guesthouse|Spa|Club|Retreat))\b(?=\s*\([₱$€£¥]|\s*\(\d)/g
+  /\b(The\s+[A-Z][a-zA-Z\s&'-]*(?:Hotel|Resort|Inn|Lodge|Hostel|Suites|Plaza|Grand|Boutique|Palace|Manor|Villa|Pension|Guesthouse|Spa|Club|Retreat))\b(?=\s*\([₱$€£¥]|\s*\(\d)/g,
+  // Format: "Hotel Name at Location" - handles hotels with "at" in name
+  /\b([A-Z][a-zA-Z\s&'-]+\s+at\s+[A-Z][a-zA-Z\s&'-]+)\b(?=\s*\n|\s*Price:|\s*•)/gi,
+  // Format: "Baguio Holiday Villas" - specific pattern for this hotel
+  /\b(Baguio\s+Holiday\s+Villas)\b/gi,
+  // Format: "Microtel by Wyndham Location" - chain hotel pattern
+  /\b(Microtel\s+by\s+Wyndham\s+[A-Z][a-zA-Z\s&'-]+)\b/gi,
+  // Format: "City Name + Hotel Type" - like "Baguio Country Club"
+  /\b([A-Z][a-zA-Z\s&'-]+\s+(?:Holiday|Country|City|Grand|Royal|Imperial)\s+(?:Hotel|Resort|Inn|Lodge|Hostel|Suites|Plaza|Boutique|Palace|Manor|Villa|Pension|Guesthouse|Spa|Club|Retreat|Villas))\b/gi
 ]
 
 // Extract city context from surrounding text with improved detection
@@ -141,7 +151,10 @@ function generateHotelSearchLink(hotelName: string, city: string): string {
   // Check for specific hotel IDs for popular hotels
   const specificHotelIds: { [key: string]: string } = {
     'taal vista hotel': '4120',
-    'days hotel by wyndham tagaytay': '4121'
+    'days hotel by wyndham tagaytay': '4121',
+    'the manor at camp john hay': 'baguio-manor', // Will use search instead of direct ID
+    'baguio holiday villas': 'baguio-holiday-villas',
+    'microtel by wyndham baguio': 'microtel-baguio'
   }
   
   const hotelKey = hotelName.toLowerCase()

@@ -2,34 +2,28 @@ import { NextRequest, NextResponse } from 'next/server'
 import { enhanceResponseWithHotelLinks, testHotelDetection } from '@/lib/hotel-link-enhancer'
 
 export async function GET(request: NextRequest) {
-  // Sample AI response matching the actual format from the chat
-  const sampleResponse = `🏔️ **3-Day Tagaytay Itinerary (September 28-30)**
+  // Sample AI response matching Baguio format from the screenshot
+  const sampleResponse = `🏔️ **Baguio Trip Itinerary for December**
 
-**Kumusta!** Welcome to Tagaytay, the perfect cool-weather escape from Manila! Here's your detailed 3-day itinerary:
+**Overview:** Baguio, known as the "Summer Capital of the Philippines," offers a refreshing climate, stunning mountain views, and vibrant local culture. December is a wonderful time to visit as the weather is cool, perfect for outdoor activities and exploring the city's attractions.
 
-**Day 1: Arrival and Scenic Views**
+**Visa Requirements:** No visa is required for Filipino citizens traveling within the Philippines.
 
-**Morning:**
-- **Travel to Tagaytay**: From Manila, you can take a bus (e.g., Bus Terminal at Cubao or Pasay) to Tagaytay. Travel time is about 1.5 to 2 hours.
-- **Cost**: ₱100-₱150 ($2-$3) one way.
+**Suggested Hotels for Accommodation:**
 
-**Afternoon:**
-- **Check in at**: **Taal Vista Hotel** (₱4,500-₱6,500/night) for stunning views.
-- **Lunch at**: **Balay ni Mayang** for local cuisine (average meal: ₱200-₱400).
+1. **The Manor at Camp John Hay**
+   • Price: ₱6,000 - ₱9,000/night
+   • A beautiful hotel set in a pine forest, offering luxurious rooms and excellent amenities.
 
-**Evening:**
-- **Visit**: **People's Park in the Sky** for sunset views. Entrance fee: ₱30.
-- **Dinner at**: **Josephine Restaurant** (average meal: ₱400-₱600).
+2. **Baguio Holiday Villas**
+   • Price: ₱3,500 - ₱5,000/night
+   • A family-friendly hotel with spacious accommodations, located near the city center.
 
-**Day 2: Nature and Culture**
+3. **Microtel by Wyndham Baguio**
+   • Price: ₱3,000 - ₱4,500/night
+   • A modern hotel offering comfortable rooms and a great location.
 
-**Morning:**
-- **Breakfast at the hotel**.
-- **Visit**: **Picnic Grove** (₱30 entrance fee) for zip-lining and horseback riding.
-
-**Afternoon:**
-- **Stay**: **The Lake Hotel Tagaytay** (₱3,500-₱5,000/night) for a cozy experience with lake views.
-- **Dinner at**: **Mushroom Burger** (₱150-₱300 per person; enjoy unique mushroom burgers).`
+**Day 1: Arrival and City Exploration**`
 
   const detectedHotels = testHotelDetection(sampleResponse)
   const enhancedResponse = enhanceResponseWithHotelLinks(sampleResponse)
