@@ -369,13 +369,15 @@ function ChatPageComponent() {
   }
 
   return (
-    <div className="flex min-h-screen md:h-screen bg-gray-50 overflow-hidden w-full max-w-full">
-      <div className="hidden xl:block w-[380px] bg-white border-r border-gray-200 flex-shrink-0 max-w-[380px]">
-        <div className="sticky top-0 p-4 space-y-5 overflow-y-auto overflow-x-hidden max-h-screen scrollbar-thin w-full">
+    <div className="flex min-h-screen md:h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 overflow-hidden w-full max-w-full">
+      <div className="hidden xl:block w-[420px] bg-white/80 backdrop-blur-sm border-r border-blue-200/50 flex-shrink-0 max-w-[420px] shadow-lg">
+        <div className="sticky top-0 p-3 space-y-5 overflow-y-auto overflow-x-visible max-h-screen scrollbar-thin w-full">
           {/* Hotel Search Section */}
-          <div className="w-full max-w-full">
-            <h3 className="font-semibold text-gray-900 mb-3">🏨 Find Hotels</h3>
-            <div className="w-full max-w-full overflow-hidden">
+          <div className="w-full bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-3 border border-blue-200/30 hover:shadow-md transition-all duration-300">
+            <h3 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
+              🏨 <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Find Hotels</span>
+            </h3>
+            <div className="w-full overflow-visible">
               <AgodaResponsiveSearchBox
                 cityCode="18218"
                 destinationName="Tagaytay, Philippines"
@@ -384,37 +386,45 @@ function ChatPageComponent() {
           </div>
 
           {/* Travel Activities Section */}
-          <div className="w-full max-w-full">
-            <h3 className="font-semibold text-gray-900 mb-3">🎯 Activities</h3>
-            <div className="min-h-[200px] w-full max-w-full overflow-hidden">
+          <div className="w-full bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-3 border border-emerald-200/30 hover:shadow-md transition-all duration-300">
+            <h3 className="font-bold text-emerald-900 mb-3 flex items-center gap-2">
+              🎯 <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Activities</span>
+            </h3>
+            <div className="min-h-[200px] w-full overflow-visible">
               <KlookWidget />
             </div>
           </div>
 
           {/* Restaurant Recommendations */}
-          <div className="text-center w-full max-w-full">
-            <h3 className="font-semibold text-gray-900 mb-3 text-sm">🍽️ Dining</h3>
-            <div className="w-full max-w-full overflow-hidden">
+          <div className="text-center w-full bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-3 border border-orange-200/30 hover:shadow-md transition-all duration-300">
+            <h3 className="font-bold text-orange-900 mb-3 flex items-center justify-center gap-2">
+              🍽️ <span className="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">Dining</span>
+            </h3>
+            <div className="w-full overflow-visible">
               <NativeAd type="restaurant" />
             </div>
           </div>
 
           {/* Partner Badge */}
           <div className="text-center w-full max-w-full pt-2">
-            <AgodaBadge size="small" className="opacity-80" />
+            <AgodaBadge size="small" className="opacity-90 hover:opacity-100 transition-opacity duration-300" />
           </div>
         </div>
       </div>
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <div className="bg-white border-b border-gray-200 px-3 md:px-4 py-2 md:py-3 flex items-center justify-between flex-shrink-0">
+        <div className="bg-gradient-to-r from-white via-blue-50 to-cyan-50 border-b border-blue-200/50 px-3 md:px-4 py-3 md:py-4 flex items-center justify-between flex-shrink-0 shadow-sm">
           <div className="flex items-center gap-2 md:gap-3 min-w-0">
-            <div className="w-6 h-6 md:w-8 md:h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
-              <MapPin className="h-3 w-3 md:h-5 md:w-5 text-white" />
+            <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <MapPin className="h-4 w-4 md:h-6 md:w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-sm md:text-base font-semibold text-gray-900">GalaGPT.ph</h1>
-              <p className="text-xs md:text-sm text-gray-600 hidden sm:block">AI Travel Assistant for the Philippines</p>
+              <h1 className="text-base md:text-lg font-bold bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 bg-clip-text text-transparent">
+                GalaGPT.ph
+              </h1>
+              <p className="text-xs md:text-sm text-blue-700/80 hidden sm:block font-medium">
+                🌴 AI Travel Assistant for the Philippines
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -425,9 +435,9 @@ function ChatPageComponent() {
                 Save Chat
               </Button>
             )}
-            <div className="bg-purple-50 border border-purple-200 rounded-lg px-2 md:px-3 py-1 md:py-2 flex-shrink-0">
-              <div className="text-xs md:text-sm text-purple-700 font-medium">{messageCount}/10 messages used</div>
-              <div className="text-xs text-purple-600">Free tier</div>
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200/50 rounded-xl px-3 md:px-4 py-2 md:py-3 flex-shrink-0 shadow-sm hover:shadow-md transition-all duration-300">
+              <div className="text-xs md:text-sm text-purple-700 font-bold">{messageCount}/10 messages used</div>
+              <div className="text-xs text-purple-600 font-medium">✨ Free tier</div>
             </div>
           </div>
         </div>
@@ -458,11 +468,11 @@ function ChatPageComponent() {
             <div key={message.id}>
               <div className={`flex gap-3 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                 {message.type === 'assistant' && (
-                  <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Bot className="h-4 w-4 text-white" />
+                  <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                    <Bot className="h-5 w-5 text-white" />
                   </div>
                 )}
-                <Card className={`max-w-2xl w-full p-3 sm:p-3 ${message.type === 'user' ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white ml-4 sm:ml-12' : 'bg-white'} overflow-hidden`}>
+                <Card className={`max-w-2xl w-full p-4 sm:p-4 ${message.type === 'user' ? 'bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 text-white ml-4 sm:ml-12 shadow-lg hover:shadow-xl transition-all duration-300' : 'bg-white/90 backdrop-blur-sm border border-blue-100/50 shadow-md hover:shadow-lg transition-all duration-300'} overflow-hidden rounded-2xl`}>
                   {message.type === 'assistant' ? (
                     <div className="break-words leading-tight prose prose-tight prose-sm md:prose-base max-w-none tracking-tight prose-headings:my-1 prose-p:my-0.5 prose-li:my-0.5 prose-ul:my-1 prose-ol:my-1 prose-hr:my-2 prose-blockquote:my-1 prose-pre:my-1 prose-p:text-gray-700 prose-li:marker:text-blue-600 prose-strong:text-gray-900 prose-code:text-purple-600">
                       <ReactMarkdown
@@ -490,8 +500,8 @@ function ChatPageComponent() {
                   <div className="flex items-center justify-between mt-2">
                     <div className={`text-[10px] md:text-xs ${message.type === 'user' ? 'text-purple-100' : 'text-gray-500'}`} suppressHydrationWarning>{formatTime(message.timestamp)}</div>
                     {message.type === 'assistant' && isItinerary(message.content) && (
-                      <div className="flex gap-1.5">
-                        <Button size="sm" variant="outline" onClick={() => saveItinerary(message.content)} className="text-[10px] h-6 px-2">
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" onClick={() => saveItinerary(message.content)} className="text-xs h-7 px-3 bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200 text-emerald-700 hover:from-emerald-100 hover:to-teal-100 hover:border-emerald-300 transition-all duration-300 rounded-xl">
                           <Download className="h-3 w-3 mr-1" />Save
                         </Button>
                         <Button size="sm" variant="outline" onClick={async () => {
@@ -509,7 +519,7 @@ function ChatPageComponent() {
                             console.log('Share failed, falling back to copy:', error)
                             saveItinerary(message.content)
                           }
-                        }} className="text-[10px] h-6 px-2">
+                        }} className="text-xs h-7 px-3 bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200 text-blue-700 hover:from-blue-100 hover:to-cyan-100 hover:border-blue-300 transition-all duration-300 rounded-xl">
                           <Share className="h-3 w-3 mr-1" />Share
                         </Button>
                       </div>
@@ -517,8 +527,8 @@ function ChatPageComponent() {
                   </div>
                 </Card>
                 {message.type === 'user' && (
-                  <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
-                    <User className="h-4 w-4 text-white" />
+                  <div className="w-10 h-10 bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                    <User className="h-5 w-5 text-white" />
                   </div>
                 )}
               </div>
@@ -536,9 +546,14 @@ function ChatPageComponent() {
           ))}
           {isLoading && (
             <div className="flex gap-3 justify-start">
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0"><Bot className="h-4 w-4 text-white" /></div>
-              <Card className="max-w-2xl w-full p-3 sm:p-4 bg-white">
-                <div className="flex items-center gap-2 text-gray-600"><Loader2 className="h-4 w-4 animate-spin" /><span className="text-sm">Thinking...</span></div>
+              <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg animate-pulse">
+                <Bot className="h-5 w-5 text-white" />
+              </div>
+              <Card className="max-w-2xl w-full p-4 sm:p-4 bg-white/90 backdrop-blur-sm border border-blue-100/50 shadow-md rounded-2xl">
+                <div className="flex items-center gap-3 text-blue-700">
+                  <Loader2 className="h-5 w-5 animate-spin text-cyan-500" />
+                  <span className="text-sm font-medium">🌴 Planning your perfect Philippines adventure...</span>
+                </div>
               </Card>
             </div>
           )}
@@ -546,13 +561,21 @@ function ChatPageComponent() {
         </div>
 
         {showUpgradePrompt && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <Card className="max-w-md w-full p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Daily Limit Reached</h3>
-              <p className="text-gray-600 mb-4">You've used all 10 free messages for today. Upgrade to Premium for unlimited conversations!</p>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <Card className="max-w-md w-full p-8 bg-gradient-to-br from-white via-blue-50 to-cyan-50 border border-blue-200/50 shadow-2xl rounded-3xl">
+              <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent mb-3">
+                ✨ Daily Limit Reached
+              </h3>
+              <p className="text-blue-700/80 mb-6 leading-relaxed">
+                You've used all 10 free messages for today. Upgrade to Premium for unlimited conversations and unlock more amazing features! 🚀
+              </p>
               <div className="flex gap-3">
-                <Button className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700" onClick={() => window.location.href = '/pricing'}>Upgrade to Premium</Button>
-                <Button variant="outline" onClick={() => setShowUpgradePrompt(false)}>Maybe Later</Button>
+                <Button className="flex-1 bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 hover:from-blue-600 hover:via-cyan-600 hover:to-teal-600 shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl" onClick={() => window.location.href = '/pricing'}>
+                  Upgrade to Premium
+                </Button>
+                <Button variant="outline" onClick={() => setShowUpgradePrompt(false)} className="border-blue-200 text-blue-700 hover:bg-blue-50 rounded-xl">
+                  Maybe Later
+                </Button>
               </div>
             </Card>
           </div>
@@ -579,13 +602,24 @@ function ChatPageComponent() {
         {/* End suggested questions */}
 
         <div className="fixed inset-x-0 bottom-0 z-40 pointer-events-none">
-          <div className="pointer-events-none absolute inset-x-0 bottom-full h-10 bg-gradient-to-t from-gray-50 to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-full h-12 bg-gradient-to-t from-blue-50/80 via-cyan-50/40 to-transparent" />
           <div className="mx-auto max-w-3xl w-full px-3 pb-3 md:pb-6">
-            <div className="rounded-2xl border border-gray-200 bg-gray-50 shadow-md p-2 md:p-3 pointer-events-auto">
-              <div className="flex gap-2 md:gap-3 items-center">
-                <Input value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage() } }} placeholder={messageCount >= 10 ? 'Upgrade to Premium for unlimited messages...' : 'Ask me anything about traveling in the Philippines...'} className="flex-1 text-sm md:text-base" disabled={isLoading || messageCount >= 10} />
-                <Button onClick={() => handleSendMessage()} disabled={!input.trim() || isLoading || messageCount >= 10} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 flex-shrink-0 px-3 md:px-4">
-                  <Send className="h-3 w-3 md:h-4 md:w-4" />
+            <div className="rounded-3xl border border-blue-200/50 bg-gradient-to-r from-white via-blue-50/50 to-cyan-50/50 backdrop-blur-sm shadow-xl p-3 md:p-4 pointer-events-auto hover:shadow-2xl transition-all duration-300">
+              <div className="flex gap-3 md:gap-4 items-center">
+                <Input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyPress={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage() } }}
+                  placeholder={messageCount >= 10 ? '✨ Upgrade to Premium for unlimited messages...' : '🌴 Ask me anything about traveling in the Philippines...'}
+                  className="flex-1 text-sm md:text-base border-blue-200/50 bg-white/80 backdrop-blur-sm rounded-2xl focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-400 transition-all duration-300"
+                  disabled={isLoading || messageCount >= 10}
+                />
+                <Button
+                  onClick={() => handleSendMessage()}
+                  disabled={!input.trim() || isLoading || messageCount >= 10}
+                  className="bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 hover:from-blue-600 hover:via-cyan-600 hover:to-teal-600 flex-shrink-0 px-4 md:px-5 py-2 md:py-3 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                >
+                  <Send className="h-4 w-4 md:h-5 md:w-5" />
                 </Button>
               </div>
               <p className="text-[10px] md:text-xs text-gray-500 text-center mt-1 md:mt-2">GalaGPT.ph can make mistakes. Consider checking important information.</p>
