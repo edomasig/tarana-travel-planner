@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { generateAgodaSearchLink, formatCityInfo } from '@/lib/agoda-link-generator'
+import { enhanceResponseWithHotelLinks } from '@/lib/hotel-link-enhancer'
 
 // OpenAI client - server-side only with fallback handling
 const openai = process.env.OPENAI_API_KEY ? new OpenAI({
@@ -17,15 +18,15 @@ SPECIALIZATION:
 
 Always suggest real destinations and give practical travel advice like transportation, estimated budget, places to eat, visa requirements, and local tips. Use a warm and informative tone, and format answers in a clear day-by-day breakdown when possible.
 
-CRITICAL RULE: NEVER INCLUDE ANY OF THE FOLLOWING IN YOUR RESPONSES:
-- Quick Booking Options
-- Find Hotels links
-- Discover Activities links
-- Booking links or URLs
-- Affiliate links
-- Any mention of Agoda, Klook, or booking platforms
-- Transportation booking links
-- Any HTML or markdown links
+// CRITICAL RULE: NEVER INCLUDE ANY OF THE FOLLOWING IN YOUR RESPONSES:
+// - Quick Booking Options
+// - Find Hotels links
+// - Discover Activities links
+// - Booking links or URLs
+// - Affiliate links
+// - Any mention of Agoda, Klook, or booking platforms
+// - Transportation booking links
+// - Any HTML or markdown links
 
 IMPORTANT FORMATTING GUIDELINES:
 - Use markdown formatting with ** for bold text
@@ -41,12 +42,14 @@ IMPORTANT FORMATTING GUIDELINES:
 
 RESPONSE STRUCTURE for itineraries:
 - Start with an emoji and destination title
+- Include the weather status if there's a date included in the chat. 
 - Brief destination overview
 - Visa/entry requirements (for international destinations)
 - Day-by-day breakdown with Morning/Afternoon/Evening activities
 - Include specific costs in local currency + USD equivalent
 - Transportation details between locations
-- Accommodation suggestions with price ranges
+- Accommodation suggestions with specific hotel names and price ranges (e.g., "Stay: Taal Vista Hotel (₱3,000-4,000/night)")
+- Always suggest real, specific hotel names when possible rather than generic descriptions 
 - Food recommendations with real restaurant names
 - Local tips, cultural insights, and etiquette
 - Total budget estimate
@@ -67,14 +70,14 @@ Remember: Your response should end with travel advice only. No booking links wil
 const extractCityNames = (message: string): string[] => {
   const cities = [
     // Philippines
-  'manila', 'cebu', 'davao', 'boracay', 'palawan', 'baguio', 'tagaytay', 'iloilo', 'dumaguete', 'sagada', 'batangas',
+    'manila', 'cebu', 'davao', 'boracay', 'palawan', 'baguio', 'tagaytay', 'iloilo', 'dumaguete', 'sagada', 'batangas',
     'el nido', 'coron', 'puerto princesa', 'vigan', 'bohol', 'siquijor', 'siargao', 'camiguin', 'la union',
     // International popular destinations
     'tokyo', 'osaka', 'kyoto', 'bangkok', 'phuket', 'singapore', 'kuala lumpur', 'hong kong',
     'seoul', 'busan', 'taipei', 'ho chi minh', 'hanoi', 'bali', 'jakarta', 'paris', 'london',
     'new york', 'los angeles', 'barcelona', 'rome', 'amsterdam', 'dubai', 'istanbul'
   ]
-  
+
   const messageLower = message.toLowerCase()
   return cities.filter(city => messageLower.includes(city))
 }
@@ -110,18 +113,12 @@ const applyCityAliases = (message: string, detected: string[]): string[] => {
 
 // Helper function to add affiliate booking links to responses
 const addBookingLinks = (response: string, detectedCities: string[]): string => {
-  console.log('=== BOOKING LINKS DEBUG ===')
-  console.log('Response preview (first 200 chars):', response.substring(0, 200))
-  console.log('Response preview (last 200 chars):', response.substring(response.length - 200))
-  console.log('Detected cities:', detectedCities)
-  
-  // More comprehensive duplication check
+
+  // Check for existing booking sections (but not individual hotel links)
   const bookingKeywords = [
     'Quick Booking Options',
-    'Find Hotels',
-    'Discover Activities', 
-    'agoda.com',
-    'klook.com',
+    'Find Hotels in',
+    'Discover Activities',
     'Transportation booking',
     'Compare prices & book',
     'book instantly via Agoda',
@@ -129,66 +126,46 @@ const addBookingLinks = (response: string, detectedCities: string[]): string => 
     'Affiliate partnerships',
     'booking available'
   ]
-  
+
   const hasBookingContent = bookingKeywords.some(keyword => {
-    const found = response.toLowerCase().includes(keyword.toLowerCase())
-    if (found) {
-      console.log('Found booking keyword:', keyword)
-    }
-    return found
+    return response.toLowerCase().includes(keyword.toLowerCase())
   })
-  
-  console.log('Has booking content:', hasBookingContent)
-  console.log('========================')
-  
+
   if (hasBookingContent) {
-    console.log('SKIPPING: Booking content detected - not adding links')
     return response
   }
 
-  console.log('ADDING: No booking content found, adding links...')
-
   if (detectedCities.length === 0) {
-  }
-    console.log('No cities detected from user input — trying to extract from assistant response text')
     // Try to pull city names from the assistant response itself as a fallback
     const altFromResponse = applyCityAliases(response, extractCityNames(response))
     if (altFromResponse.length > 0) {
-      console.log('Found cities in assistant response:', altFromResponse)
       detectedCities = altFromResponse
     } else {
-      console.log('Still no cities found — using default Palawan')
       // Use a safe default for Klook aff_sub to avoid spaces in URL
       const defaultAffSub = 'general'
       return response + `\n\n💡 **Quick Booking Options:**\n\n• 🏨 [Find Hotels in Palawan](https://www.agoda.com/fi-fi/search?cid=1947165&city=17193&utm_source=galagpt&utm_medium=ai_chat&utm_campaign=travel_planning) - Compare prices & book instantly via Agoda\n\n• 🎯 [Discover Activities](https://www.klook.com/en-PH/?aid=96417&aff_ext=travel_planning&aff_sub=${defaultAffSub}) - Tours, experiences & attractions via Klook\n\n• 🚛 Transportation booking available through our partners\n\n*Affiliate partnerships help keep GalaGPT.ph free for all travelers!*`
     }
+  }
 
   const primaryCity = detectedCities[0]
-  console.log('Primary city for links:', primaryCity)
-  
   const linkResult = generateAgodaSearchLink(primaryCity)
   const klookAffSub = encodeURIComponent(primaryCity)
-  console.log('Agoda link result:', linkResult)
-  
+
   let bookingSection = `\n\n💡 **Quick Booking Options:**\n\n`
-  
+
   if (linkResult.success && linkResult.url && linkResult.cityData) {
     const cityDisplay = formatCityInfo(linkResult.cityData)
-    console.log('Using city display:', cityDisplay)
     bookingSection += `• 🏨 [Find Hotels in ${cityDisplay}](${linkResult.url}) - Compare prices & book instantly via Agoda\n\n`
   } else {
     // Fallback to general search with proper city name formatting
     const cityDisplayName = primaryCity.charAt(0).toUpperCase() + primaryCity.slice(1)
-    console.log('Using fallback city display:', cityDisplayName)
     bookingSection += `• 🏨 [Find Hotels in ${cityDisplayName}](https://www.agoda.com/fi-fi/search?cid=1947165&utm_source=galagpt&utm_medium=ai_chat&utm_campaign=travel_planning) - Compare prices & book instantly via Agoda\n\n`
   }
-  
+
   bookingSection += `• 🎯 [Discover Activities](https://www.klook.com/en-PH/?aid=96417&aff_ext=travel_planning&aff_sub=${klookAffSub}) - Tours, experiences & attractions via Klook\n\n`
   bookingSection += `• 🚛 Transportation booking available through our partners\n\n`
   bookingSection += `*Affiliate partnerships help keep GalaGPT.ph free for all travelers!*`
-  
-  console.log('Final booking section preview:', bookingSection.substring(0, 100))
-  
+
   return response + bookingSection
 }
 
@@ -310,7 +287,7 @@ Where would you like to explore? ✨`
 // Helper function to detect destination type
 function detectDestination(message: string): string {
   const userMessage = message.toLowerCase()
-  
+
   // Philippines destinations
   if (userMessage.includes('palawan') || userMessage.includes('el nido') || userMessage.includes('coron')) {
     return 'palawan'
@@ -318,7 +295,7 @@ function detectDestination(message: string): string {
   if (userMessage.includes('baguio')) {
     return 'baguio'
   }
-  
+
   // International destinations
   if (userMessage.includes('japan') || userMessage.includes('tokyo') || userMessage.includes('kyoto')) {
     return 'japan'
@@ -326,7 +303,7 @@ function detectDestination(message: string): string {
   if (userMessage.includes('thailand') || userMessage.includes('bangkok') || userMessage.includes('phuket')) {
     return 'thailand'
   }
-  
+
   return 'default'
 }
 
@@ -354,8 +331,9 @@ export async function POST(request: NextRequest) {
       message
     ].join(' \n ')
 
-  // Prefer cities mentioned in current user message; fall back to history/combined if none
-  let detectedCities = applyCityAliases(message, extractCityNames(message))
+    // Prefer cities mentioned in current user message; fall back to history/combined if none
+    let detectedCities = applyCityAliases(message, extractCityNames(message))
+
     if (detectedCities.length === 0) {
       // Try last user turn from history
       const lastUser = [...safeHistory].reverse().find(h => h.role === 'user')
@@ -368,36 +346,26 @@ export async function POST(request: NextRequest) {
       detectedCities = applyCityAliases(combinedText, extractCityNames(combinedText))
     }
 
-    // Anchor to initial prompt or provided primaryCity if present and no explicit new city override
-    const initialText = meta?.initialPrompt || ''
-    const initialCities = initialText ? applyCityAliases(initialText, extractCityNames(initialText)) : []
-    // Change 'const' to 'let' for preferredPrimary to allow reassignment
-    let preferredPrimary = meta?.primaryCity || initialCities[0];
-    // Ensure Quick Booking Options link updates to the current detected city when explicitly changed
-    if (detectedCities.length > 0) {
-      const currentCity = detectedCities[0];
-      if (currentCity !== preferredPrimary) {
-        // Override primary city with current detected city
-        preferredPrimary = currentCity;
-      }
-    }
-    if (preferredPrimary) {
-      const messageHasNewCity = detectedCities.length > 0 && !detectedCities.includes(preferredPrimary)
-      // If the current message did not clearly specify a new destination, keep the initial primary on top
-      if (!messageHasNewCity) {
-        const filtered = detectedCities.filter(c => c !== preferredPrimary)
-        detectedCities = [preferredPrimary, ...filtered]
+    // SIMPLIFIED LOGIC: Current message city detection always takes priority
+    // Only use historical/meta data if no city is detected in current message
+    if (detectedCities.length === 0) {
+      const initialText = meta?.initialPrompt || ''
+      const initialCities = initialText ? applyCityAliases(initialText, extractCityNames(initialText)) : []
+      const preferredPrimary = meta?.primaryCity || initialCities[0];
+
+      if (preferredPrimary) {
+        detectedCities = [preferredPrimary]
       }
     }
 
     // Check if OpenAI API key is available
     if (!process.env.OPENAI_API_KEY) {
       console.log('OpenAI API key not found, using fallback responses')
-      
-  const destination = detectDestination(combinedText)
+
+      const destination = detectDestination(combinedText)
       const fallbackResponse = FALLBACK_RESPONSES[destination as keyof typeof FALLBACK_RESPONSES]
       const responseWithLinks = addBookingLinks(fallbackResponse, detectedCities)
-      
+
       return NextResponse.json({ response: responseWithLinks })
     }
 
@@ -405,7 +373,7 @@ export async function POST(request: NextRequest) {
     if (!openai) {
       throw new Error('OpenAI client not initialized')
     }
-    
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -424,29 +392,36 @@ export async function POST(request: NextRequest) {
       throw new Error('No response from OpenAI')
     }
 
-    // Add booking links to the AI response
-    const responseWithLinks = addBookingLinks(response, detectedCities)
+    // First enhance hotel mentions with clickable links
+    const responseWithHotelLinks = enhanceResponseWithHotelLinks(response)
+
+
+
+    // Then add booking links to the AI response
+    const responseWithLinks = addBookingLinks(responseWithHotelLinks, detectedCities)
 
     return NextResponse.json({ response: responseWithLinks })
 
   } catch (error) {
     console.error('API Error:', error)
-    
+
     // Fallback to mock responses if API fails
     let parsed: any = {}
-    try { parsed = await request.json() } catch {}
+    try { parsed = await request.json() } catch { }
     const userMessage = (parsed?.message || '').toLowerCase()
     const history: Array<{ role: 'user' | 'assistant'; content: string }> = Array.isArray(parsed?.history) ? parsed.history : []
-  const combinedText = [
+    const combinedText = [
       ...history.map(h => h.content?.toLowerCase?.() || ''),
       userMessage
     ].join(' ')
-  const destination = detectDestination(combinedText)
-  const detectedCities = applyCityAliases(combinedText, extractCityNames(combinedText))
-    
-    const fallbackResponse = FALLBACK_RESPONSES[destination as keyof typeof FALLBACK_RESPONSES] + '\n\n*Note: I\'m currently experiencing some technical difficulties, but I can still help you plan your adventure!*'
-    
-    // Don't add booking links in error case to prevent duplication
-  return NextResponse.json({ response: fallbackResponse })
+    const destination = detectDestination(combinedText)
+    const detectedCities = applyCityAliases(combinedText, extractCityNames(combinedText))
+
+    const baseFallbackResponse = FALLBACK_RESPONSES[destination as keyof typeof FALLBACK_RESPONSES] + '\n\n*Note: I\'m currently experiencing some technical difficulties, but I can still help you plan your adventure!*'
+
+    // Enhance fallback response with hotel links
+    const fallbackWithHotelLinks = enhanceResponseWithHotelLinks(baseFallbackResponse)
+
+    return NextResponse.json({ response: fallbackWithHotelLinks })
   }
 }
