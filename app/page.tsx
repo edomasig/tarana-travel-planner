@@ -11,7 +11,7 @@ import { AdBanner } from '@/components/ads/ad-banner'
 import { FallbackAgodaBanner } from '@/components/affiliate/fallback-agoda-banner'
 import { FloatingTagaytaySearch } from '@/components/affiliate/floating-agoda-search'
 import { MonetagLink } from '@/components/monetag-link' // Add this import
-import { FloatingMonetagButton } from '@/components/floating-monetag'
+
 
 export default function MarketingHomePage() {
   return (
@@ -62,8 +62,7 @@ export default function MarketingHomePage() {
       {/* Floating Agoda Search Box */}
       <FloatingTagaytaySearch position="bottom-right" />
 
-      {/* Floating Monetag Button */}
-      <FloatingMonetagButton />
+      
     </main>
   )
 }
