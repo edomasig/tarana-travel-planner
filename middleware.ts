@@ -1,27 +1,22 @@
-import { withAuth } from 'next-auth/middleware'
+import { withAuth } from "next-auth/middleware"
 
-export default withAuth(
-  function middleware(req) {
-    // Additional middleware logic can go here
+export default withAuth({
+  pages: {
+    signIn: "/cms/login",
   },
-  {
-    callbacks: {
-      authorized: ({ token, req }) => {
-        // Check if user is accessing CMS routes
-        if (req.nextUrl.pathname.startsWith('/cms')) {
-          // Allow access to login page
-          if (req.nextUrl.pathname === '/cms/login') {
-            return true
-          }
-          // Require authentication for other CMS pages
-          return !!token
-        }
+  callbacks: {
+    authorized: ({ token, req }) => {
+      const { pathname } = req.nextUrl
+      // Always allow hitting the login route
+      if (pathname.startsWith("/cms/login") || pathname.startsWith("/api/auth")) {
         return true
-      },
+      }
+      // Require a valid session token for all other /cms paths
+      return !!token
     },
-  }
-)
+  },
+})
 
 export const config = {
-  matcher: ['/cms/:path*']
+  matcher: ["/cms/:path*"],
 }

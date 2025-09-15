@@ -40,7 +40,7 @@ export function FloatingMonetagButton({
   if (!isVisible) return null
 
   return (
-    <div className={`fixed ${positionStyles[position]} z-50 animate-fade-in`}>
+    <div className={`fixed ${positionStyles[position]} z-[101] animate-fade-in`}>
       <div className="relative">
         {/* Close button */}
         <button

@@ -1,373 +1,196 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, MapPin, Clock, Star, Camera, Utensils, Building, History } from 'lucide-react'
+import { ArrowLeft, MapPin, Clock, Star, Camera, Utensils, Building, History, Train, Shield, Wallet, Lightbulb } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Footer } from '@/components/footer'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Manila Travel Guide 2025: Intramuros, Food & Insider Tips | GalaGPT',
+  description: 'Your ultimate guide to Manila, Philippines. Explore historic Intramuros, discover the best food in Binondo, and get insider tips for navigating the vibrant capital. Perfect for first-timers and returning visitors.',
+  keywords: 'Manila travel guide, Intramuros, Binondo Chinatown, things to do in Manila, Manila food trip, Manila itinerary, Philippines travel',
+  openGraph: {
+    title: 'Manila Travel Guide: Old Meets New in the Heart of the Philippines',
+    description: 'Navigate the capital city\'s rich history, modern attractions, and vibrant food scene with our in-depth guide.',
+    images: ['/Guides_Manila.jpeg'],
+  },
+}
 
 export default function ManilaGuidePage() {
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto max-w-4xl px-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+      <div className="container mx-auto max-w-5xl px-4 py-8">
         <Link href="/guides" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6">
           <ArrowLeft className="h-4 w-4" />
           Back to Guides
         </Link>
-        
+
         <article className="space-y-8">
-          {/* Header */}
-          <Card>
-            <div className="relative h-64 md:h-80">
+          <Card className="overflow-hidden shadow-2xl">
+            <div className="relative h-80 md:h-96">
               <Image
                 src="/Guides_Manila.jpeg"
-                alt="Manila skyline"
+                alt="Jeepney in front of a modern building in Manila"
                 fill
-                className="object-cover rounded-t-lg"
+                className="object-cover"
+                priority
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute bottom-6 left-6 text-white">
+                <div className="flex items-center gap-2 mb-2">
+                  <MapPin className="h-5 w-5" />
+                  <span className="text-sm font-medium">Metro Manila • Philippines</span>
+                </div>
+                <h1 className="text-5xl font-bold mb-2">Manila Travel Guide</h1>
+                <p className="text-xl text-gray-200">Where History, Chaos, and Charm Collide</p>
+              </div>
             </div>
-            <CardHeader>
-              <div className="flex items-center gap-2 text-blue-600 mb-2">
-                <Building className="h-4 w-4" />
-                <span className="text-sm font-medium">Cities • Manila</span>
-              </div>
-              <CardTitle className="text-4xl">Manila Travel Guide: Old Meets New</CardTitle>
-              <div className="flex items-center gap-4 text-gray-500 text-sm">
-                <div className="flex items-center gap-1">
-                  <Clock className="h-4 w-4" />
-                  12 min read
-                </div>
-                <div className="flex items-center gap-1">
-                  <Star className="h-4 w-4" />
-                  Last updated: January 2025
-                </div>
-              </div>
-            </CardHeader>
           </Card>
 
-          {/* Introduction */}
-          <Card>
-            <CardContent className="p-8">
-              <p className="text-lg leading-relaxed text-gray-700 mb-6">
-                Manila, the bustling capital of the Philippines, is a city where centuries-old churches stand 
-                alongside gleaming skyscrapers, and street food vendors serve up local delicacies steps away 
-                from world-class shopping malls. This vibrant metropolis offers visitors a unique blend of 
-                Spanish colonial heritage, American influences, and distinctly Filipino culture.
-              </p>
-              <p className="text-lg leading-relaxed text-gray-700">
-                From the historic walls of Intramuros to the modern business district of Makati, Manila 
-                provides an authentic urban Philippine experience that serves as the perfect introduction 
-                to the country's rich history and dynamic future.
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Quick Facts */}
-          <Card>
+          <Card id="overview">
             <CardHeader>
-              <CardTitle className="text-2xl">Quick Facts About Manila</CardTitle>
+              <CardTitle className="text-3xl">A City of Beautiful Contradictions</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold mb-2">Basic Information</h4>
-                  <ul className="text-gray-600 space-y-1">
-                    <li>• Population: 1.8 million (13+ million metro area)</li>
-                    <li>• Founded: 1571 by Spanish colonizers</li>
-                    <li>• Language: Filipino, English, Tagalog</li>
-                    <li>• Currency: Philippine Peso (PHP)</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2">Travel Info</h4>
-                  <ul className="text-gray-600 space-y-1">
-                    <li>• Best time: November to April (dry season)</li>
-                    <li>• Main airport: Ninoy Aquino International</li>
-                    <li>• Getting around: LRT, MRT, buses, jeepneys</li>
-                    <li>• Time zone: Philippine Standard Time (UTC+8)</li>
-                  </ul>
-                </div>
-              </div>
+              <p className="text-lg leading-relaxed text-gray-700 mb-4">
+                Manila gets a bad rap. Often seen as just a chaotic stopover on the way to the Philippines' famous beaches, the nation's capital is a city that rewards those who give it a chance. It's a sprawling, energetic metropolis where centuries-old churches sit in the shadow of gleaming skyscrapers, and the symphony of roaring jeepneys is the soundtrack to daily life.
+              </p>
+              <p className="text-lg leading-relaxed text-gray-700">
+                To truly experience Manila is to embrace its beautiful chaos. It's about getting lost in the cobblestone streets of a 16th-century walled city, haggling for treasures in a bustling market, and indulging in a food scene that's as diverse as its people. This guide will help you peel back the layers of this complex and captivating city.
+              </p>
             </CardContent>
           </Card>
 
-          {/* Top Attractions */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">Must-Visit Attractions</CardTitle>
+              <CardTitle className="text-2xl">Top Attractions: Beyond the Obvious</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              
+            <CardContent className="space-y-8">
               <div className="border-l-4 border-orange-500 pl-6">
-                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
-                  <History className="h-5 w-5 text-orange-500" />
-                  Intramuros (The Walled City)
-                </h3>
-                <div className="relative h-48 mb-4 rounded-lg overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                    alt="Intramuros Manila"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <p className="text-gray-600 mb-3">
-                  The historic heart of Manila, this 16th-century Spanish colonial fortress city features 
-                  well-preserved walls, cobblestone streets, and significant landmarks including Manila Cathedral, 
-                  San Agustin Church, and Fort Santiago.
-                </p>
-                <div className="text-sm text-gray-500">
-                  <strong>Highlights:</strong> Kalesa rides, Casa Manila Museum, Bahay Tsinoy, historic churches
-                </div>
-              </div>
-
-              <div className="border-l-4 border-blue-500 pl-6">
-                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
-                  <Building className="h-5 w-5 text-blue-500" />
-                  Rizal Park (Luneta)
-                </h3>
-                <div className="relative h-48 mb-4 rounded-lg overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                    alt="Rizal Park Manila"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <p className="text-gray-600 mb-3">
-                  A historic urban park dedicated to the Philippines' national hero, Dr. José Rizal. The park 
-                  features the iconic Rizal Monument, beautiful gardens, and serves as a popular gathering 
-                  place for locals and tourists alike.
-                </p>
-                <div className="text-sm text-gray-500">
-                  <strong>Best for:</strong> Morning walks, picnics, cultural shows, sunset viewing
-                </div>
+                <h3 className="text-2xl font-bold mb-2 flex items-center gap-2"><History className="h-6 w-6"/>Intramuros (The Walled City)</h3>
+                <p className="text-gray-700 leading-relaxed mb-4">The historic soul of Manila. This 64-hectare Spanish colonial fortress is a time capsule of a bygone era. While here, don't just see the sights; feel the history.</p>
+                <h4 className="font-semibold mb-2">What to Do:</h4>
+                <ul className="list-disc ml-6 text-gray-600 space-y-2">
+                  <li><b>Walk the Walls:</b> For a small fee, you can walk along the top of the ancient walls, offering a unique perspective of the city inside and out.</li>
+                  <li><b>Rent a Bamboo Bicycle:</b> Explore the cobblestone streets in style with a locally-made bamboo bike from Bambike Ecotours.</li>
+                  <li><b>Visit San Agustin Church:</b> A UNESCO World Heritage site and one of the oldest stone churches in the Philippines. Don't miss the adjacent museum.</li>
+                  <li><b>Explore Fort Santiago:</b> This is where the national hero, Dr. José Rizal, was imprisoned before his execution. The Rizal Shrine is a poignant tribute.</li>
+                </ul>
+                <p className="text-sm text-orange-800 bg-orange-50 p-3 rounded-md mt-4"><b>Insider Tip:</b> Visit late in the afternoon to catch the golden hour light, then head to a rooftop bar like Sky Deck at The Bayleaf for stunning sunset views over the city.</p>
               </div>
 
               <div className="border-l-4 border-green-500 pl-6">
-                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
-                  <Camera className="h-5 w-5 text-green-500" />
-                  National Museum Complex
-                </h3>
-                <div className="relative h-48 mb-4 rounded-lg overflow-hidden">
-                  <Image
-                    src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                    alt="National Museum Manila"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <p className="text-gray-600 mb-3">
-                  Home to the country's most important artifacts, including the Spoliarium by Juan Luna, 
-                  extensive collections of Philippine art, natural history specimens, and cultural treasures 
-                  that tell the story of Filipino heritage.
-                </p>
-                <div className="text-sm text-gray-500">
-                  <strong>Museums:</strong> Fine Arts, Anthropology, Natural History, Planetarium
-                </div>
+                <h3 className="text-2xl font-bold mb-2 flex items-center gap-2"><Camera className="h-6 w-6"/>National Museum Complex</h3>
+                <p className="text-gray-700 leading-relaxed mb-4">A cluster of world-class museums that are all free to the public. It's the perfect way to spend a hot afternoon immersing yourself in Filipino art, history, and natural wonders.</p>
+                <h4 className="font-semibold mb-2">The Museums:</h4>
+                <ul className="list-disc ml-6 text-gray-600 space-y-2">
+                  <li><b>National Museum of Fine Arts:</b> Home to Juan Luna's massive and moving "Spoliarium."</li>
+                  <li><b>National Museum of Anthropology:</b> Showcases the Philippines' rich ethnographic and archaeological heritage.</li>
+                  <li><b>National Museum of Natural History:</b> A beautifully restored building housing the country's diverse flora and fauna.</li>
+                </ul>
+                 <p className="text-sm text-green-800 bg-green-50 p-3 rounded-md mt-4"><b>Insider Tip:</b> Don't try to see all three in one day. Pick one or two to fully appreciate the exhibits. The Museum of Natural History is particularly stunning, both inside and out.</p>
               </div>
 
+              <div className="border-l-4 border-purple-500 pl-6">
+                <h3 className="text-2xl font-bold mb-2 flex items-center gap-2"><Utensils className="h-6 w-6"/>Binondo (The World\'s Oldest Chinatown)</h3>
+                <p className="text-gray-700 leading-relaxed mb-4">Established in 1594, Binondo is a chaotic, colorful, and delicious assault on the senses. This is the place to go for an unforgettable food trip.</p>
+                <h4 className="font-semibold mb-2">Must-Try Food Stops:</h4>
+                <ul className="list-disc ml-6 text-gray-600 space-y-2">
+                  <li><b>Dong Bei Dumplings:</b> For freshly made dumplings (get the kuchay pork).</li>
+                  <li><b>Sincerity Cafe & Restaurant:</b> Famous for their fried chicken and oyster cake.</li>
+                  <li><b>Eng Bee Tin:</b> The place to buy hopia (a flaky pastry with a sweet filling) and other Chinese delicacies.</li>
+                </ul>
+                <p className="text-sm text-purple-800 bg-purple-50 p-3 rounded-md mt-4"><b>Insider Tip:</b> The best way to experience Binondo is on an empty stomach. Join a guided food tour or simply wander the streets and sample whatever looks good. Don't be afraid to try the street food!</p>
+              </div>
             </CardContent>
           </Card>
 
-          {/* Neighborhoods */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">Explore Manila's Diverse Neighborhoods</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              
-              <div className="bg-purple-50 p-6 rounded-lg">
-                <h4 className="font-bold text-lg mb-3">Binondo (Chinatown)</h4>
-                <p className="text-gray-700 mb-3">
-                  The world's oldest Chinatown, established in 1594. A food lover's paradise with authentic 
-                  Chinese-Filipino cuisine, traditional medicine shops, and historic temples.
-                </p>
-                <div className="text-sm text-purple-700">
-                  <strong>Must-try:</strong> Hopia, tikoy, fresh noodles, authentic dim sum
-                </div>
-              </div>
-
-              <div className="bg-blue-50 p-6 rounded-lg">
-                <h4 className="font-bold text-lg mb-3">Makati Business District</h4>
-                <p className="text-gray-700 mb-3">
-                  The financial heart of the Philippines, featuring luxury shopping malls, upscale restaurants, 
-                  rooftop bars, and modern skyscrapers. Perfect for shopping and fine dining.
-                </p>
-                <div className="text-sm text-blue-700">
-                  <strong>Highlights:</strong> Greenbelt Mall, Ayala Museum, vibrant nightlife
-                </div>
-              </div>
-
-              <div className="bg-green-50 p-6 rounded-lg">
-                <h4 className="font-bold text-lg mb-3">Malate & Ermita</h4>
-                <p className="text-gray-700 mb-3">
-                  Historic districts known for budget accommodations, art galleries, cafes, and Manila Bay 
-                  sunset views. Great base for backpackers and culture enthusiasts.
-                </p>
-                <div className="text-sm text-green-700">
-                  <strong>Perfect for:</strong> Budget travelers, art scene, Manila Bay walks
-                </div>
-              </div>
-
-            </CardContent>
-          </Card>
-
-          {/* Food Scene */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl flex items-center gap-2">
-                <Utensils className="h-6 w-6 text-orange-500" />
-                Manila's Food Scene
-              </CardTitle>
+              <CardTitle className="text-2xl">Sample Itineraries</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold mb-3">Must-Try Local Dishes</h4>
-                  <ul className="space-y-2 text-gray-600">
-                    <li>• <strong>Adobo:</strong> Philippines' national dish</li>
-                    <li>• <strong>Halo-halo:</strong> Famous shaved ice dessert</li>
-                    <li>• <strong>Sisig:</strong> Sizzling pork dish</li>
-                    <li>• <strong>Lechon:</strong> Roasted whole pig</li>
-                    <li>• <strong>Kare-kare:</strong> Peanut stew with vegetables</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-3">Best Food Areas</h4>
-                  <ul className="space-y-2 text-gray-600">
-                    <li>• <strong>Binondo:</strong> Chinese-Filipino cuisine</li>
-                    <li>• <strong>Maginhawa Street:</strong> Hip food corridor</li>
-                    <li>• <strong>Poblacion, Makati:</strong> Trendy restaurants</li>
-                    <li>• <strong>Malate:</strong> Street food and budget eats</li>
-                    <li>• <strong>BGC:</strong> International dining</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="bg-orange-50 p-6 rounded-lg">
-                <h4 className="font-semibold mb-3">Food Market Recommendations</h4>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <strong>Mercato Centrale</strong><br/>
-                    <span className="text-sm text-gray-600">Weekend night market in BGC with gourmet food trucks</span>
-                  </div>
-                  <div>
-                    <strong>Salcedo Saturday Market</strong><br/>
-                    <span className="text-sm text-gray-600">Upscale weekend market in Makati</span>
-                  </div>
-                </div>
-              </div>
-
-            </CardContent>
-          </Card>
-
-          {/* Transportation */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl">Getting Around Manila</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold mb-3">Public Transportation</h4>
-                  <ul className="space-y-2 text-gray-600">
-                    <li>• <strong>MRT/LRT:</strong> Fast rail system (₱15-30)</li>
-                    <li>• <strong>Jeepneys:</strong> Iconic public transport (₱10-15)</li>
-                    <li>• <strong>Buses:</strong> City and provincial routes (₱12-25)</li>
-                    <li>• <strong>Tricycles:</strong> Short distances (₱30-50)</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-3">Private Options</h4>
-                  <ul className="space-y-2 text-gray-600">
-                    <li>• <strong>Grab:</strong> Ride-hailing app</li>
-                    <li>• <strong>Taxi:</strong> Metered and negotiated fares</li>
-                    <li>• <strong>Habal-habal:</strong> Motorcycle taxi</li>
-                    <li>• <strong>Car rental:</strong> For day trips outside city</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="bg-yellow-50 p-6 rounded-lg">
-                <h4 className="font-semibold mb-3">Transportation Tips</h4>
-                <ul className="space-y-2 text-yellow-700">
-                  <li>• Download offline maps before traveling</li>
-                  <li>• Avoid rush hours (7-9 AM, 5-7 PM) when possible</li>
-                  <li>• Always carry exact change for public transport</li>
-                  <li>• Use Grab for convenience and safety, especially at night</li>
-                  <li>• Walking is often faster than driving in heavy traffic</li>
+              <div>
+                <h4 className="font-semibold mb-2">2-Day Historical & Foodie Tour</h4>
+                <ul className="list-decimal ml-6 text-gray-600 space-y-2">
+                  <li><b>Day 1:</b> Morning in Intramuros (Fort Santiago, San Agustin). Afternoon at the National Museum of Fine Arts. Sunset drinks at a rooftop bar.</li>
+                  <li><b>Day 2:</b> Morning food trip in Binondo. Afternoon shopping for souvenirs at Quiapo Market. Evening exploring the modern side of Manila in BGC.</li>
                 </ul>
               </div>
-
+              <div>
+                <h4 className="font-semibold mb-2">4-Day Manila Deep Dive</h4>
+                <ul className="list-decimal ml-6 text-gray-600 space-y-2">
+                  <li><b>Day 1 & 2:</b> As above.</li>
+                  <li><b>Day 3:</b> Day trip to Tagaytay to see the Taal Volcano.</li>
+                  <li><b>Day 4:</b> Explore the trendy neighborhoods of Poblacion in Makati, visit the Ayala Museum, and enjoy a final Filipino feast.</li>
+                </ul>
+              </div>
             </CardContent>
           </Card>
 
-          {/* Practical Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">Practical Information</CardTitle>
+              <CardTitle className="text-2xl">Navigating Manila: A Survival Guide</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-semibold mb-3">Safety Tips</h4>
+                  <h4 className="font-semibold mb-3 flex items-center gap-2"><Train className="h-5 w-5"/>Public Transport</h4>
                   <ul className="space-y-2 text-gray-600">
-                    <li>• Keep valuables secure and hidden</li>
-                    <li>• Avoid displaying expensive electronics</li>
-                    <li>• Use reputable transportation</li>
-                    <li>• Stay in well-lit, populated areas at night</li>
-                    <li>• Keep copies of important documents</li>
+                    <li><b>Jeepneys:</b> The iconic "kings of the road." A cheap and authentic way to get around, but can be confusing for first-timers.</li>
+                    <li><b>LRT/MRT:</b> The train system is a fast way to travel long distances and avoid traffic, but it gets extremely crowded during rush hour.</li>
+                    <li><b>Tricycles & Pedicabs:</b> Good for short distances within a neighborhood. Always agree on the fare before you get in.</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-3">Money Matters</h4>
+                  <h4 className="font-semibold mb-3 flex items-center gap-2"><Building className="h-5 w-5"/>Private Transport</h4>
                   <ul className="space-y-2 text-gray-600">
-                    <li>• ATMs widely available</li>
-                    <li>• Credit cards accepted in malls/hotels</li>
-                    <li>• Always carry some cash</li>
-                    <li>• Tipping is appreciated (10%)</li>
-                    <li>• Bargaining acceptable in markets</li>
+                    <li><b>Grab:</b> The most convenient and recommended option for tourists. It's the Southeast Asian version of Uber.</li>
+                    <li><b>Taxis:</b> Metered taxis are available, but always insist on using the meter.</li>
                   </ul>
                 </div>
               </div>
-
-              <div className="bg-blue-50 p-6 rounded-lg">
-                <h4 className="font-semibold mb-3">Budget Estimates (Per Day)</h4>
-                <div className="grid md:grid-cols-3 gap-4">
-                  <div>
-                    <strong>Budget:</strong> ₱1,500-2,500<br/>
-                    <span className="text-sm text-gray-600">Hostels, street food, public transport</span>
-                  </div>
-                  <div>
-                    <strong>Mid-range:</strong> ₱3,000-5,000<br/>
-                    <span className="text-sm text-gray-600">Hotels, restaurants, mix of transport</span>
-                  </div>
-                  <div>
-                    <strong>Luxury:</strong> ₱5,000+<br/>
-                    <span className="text-sm text-gray-600">5-star hotels, fine dining, private transport</span>
-                  </div>
-                </div>
-              </div>
-
+              <p className="text-sm text-yellow-800 bg-yellow-50 p-3 rounded-md mt-4"><b>Traffic Tip:</b> Traffic in Manila is notoriously bad. Plan your day to minimize travel time, and avoid traveling during rush hour (7-9 AM and 5-8 PM) if possible. Sometimes, walking is faster!</p>
             </CardContent>
           </Card>
 
-          {/* Call to Action */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl">Safety & Practical Tips</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-start gap-4">
+                <Shield className="h-6 w-6 text-red-500 mt-1"/>
+                <div>
+                  <h4 className="font-semibold">Be Street Smart</h4>
+                  <p className="text-gray-600">Like any major city, be aware of your surroundings. Keep your valuables secure and out of sight. Avoid walking in poorly lit areas at night.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <Wallet className="h-6 w-6 text-blue-500 mt-1"/>
+                <div>
+                  <h4 className="font-semibold">Money Matters</h4>
+                  <p className="text-gray-600">Credit cards are widely accepted in malls and hotels, but you'll need cash for smaller restaurants, markets, and transportation. ATMs are everywhere.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <Lightbulb className="h-6 w-6 text-green-500 mt-1"/>
+                <div>
+                  <h4 className="font-semibold">Embrace the Culture</h4>
+                  <p className="text-gray-600">Filipinos are incredibly friendly and hospitable. A smile and a polite "Salamat po" (thank you) will go a long way.</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <Card className="bg-blue-50 border-blue-200">
             <CardContent className="p-8 text-center">
-              <h3 className="text-2xl font-bold mb-4">Ready to Explore Manila?</h3>
+              <h3 className="text-2xl font-bold mb-4">Ready to Conquer Manila?</h3>
               <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                Let our AI travel planner create a personalized Manila itinerary that includes the best 
-                historical sites, food experiences, and cultural attractions based on your interests.
+                Manila is a city that will surprise and delight you if you let it. Use our AI travel planner to create a personalized itinerary that matches your interests and travel style.
               </p>
-              <Link 
-                href="/chat?prompt=Plan a trip to Manila Philippines"
-                className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <MapPin className="h-5 w-5" />
-                Plan My Manila Adventure
+              <Link href="/plan" className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                <MapPin className="h-5 w-5" /> Plan My Manila Adventure
               </Link>
             </CardContent>
           </Card>

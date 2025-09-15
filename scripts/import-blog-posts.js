@@ -7,6 +7,76 @@ const prisma = new PrismaClient()
 // Static blog posts data extracted from existing pages
 const staticBlogPosts = [
   {
+    title: "10 Must-Try Filipino Street Foods (and Where to Find Them in Manila)",
+    slug: "filipino-street-food-guide-manila",
+    excerpt: "A delicious and adventurous guide to the best street food in the Philippines. From the savory Isaw to the sweet Taho, we tell you what to eat and where to find it in Manila.",
+    featuredImage: "/food-ad.png",
+    author: "GalaGPT Team",
+    published: true,
+    featured: false,
+    metaTitle: "10 Must-Try Filipino Street Foods | Manila Street Food Guide | GalaGPT",
+    metaDescription: "A guide to the best Filipino street food. Learn about Isaw, Kwek-Kwek, Taho, and more, and find out where to eat them in Manila.",
+    tags: ["Food & Culture", "Street Food", "Manila"],
+    content: `
+      <div class="space-y-8">
+        <p class='text-lg leading-relaxed'>Filipino street food is a vibrant and essential part of the country's culture. It's a delicious, affordable, and adventurous way to experience the local flavors. This guide will walk you through 10 must-try street foods and where to find them in the bustling streets of Manila.</p>
+        
+        <h2 class='text-2xl font-bold'>Top 10 Street Foods to Try</h2>
+        
+        <div class='space-y-6'>
+            <div>
+                <h3 class='text-xl font-semibold'>1. Isaw</h3>
+                <p>Grilled chicken or pork intestines, cleaned thoroughly and marinated in a savory sauce. It's a local favorite and a must-try for the adventurous eater.</p>
+            </div>
+            <div>
+                <h3 class='text-xl font-semibold'>2. Kwek-Kwek</h3>
+                <p>Hard-boiled quail eggs coated in a bright orange batter and deep-fried. Served with a sweet and sour or spicy vinegar sauce.</p>
+            </div>
+            <div>
+                <h3 class='text-xl font-semibold'>3. Taho</h3>
+                <p>A sweet treat made of soft tofu, arnibal (brown sugar syrup), and sago pearls. Usually sold by vendors in the morning.</p>
+            </div>
+            <div>
+                <h3 class='text-xl font-semibold'>4. Banana Cue</h3>
+                <p>Saba bananas deep-fried with brown sugar until caramelized and served on a bamboo skewer.</p>
+            </div>
+            <div>
+                <h3 class='text-xl font-semibold'>5. Turon</h3>
+                <p>A spring roll filled with sliced saba bananas and jackfruit, deep-fried with a brown sugar glaze.</p>
+            </div>
+            <div>
+                <h3 class='text-xl font-semibold'>6. Fish Balls, Squid Balls, and Kikiam</h3>
+                <p>A popular street food trio. These are deep-fried balls of fish or squid paste and a sausage-like dish, served with a variety of dipping sauces.</p>
+            </div>
+            <div>
+                <h3 class='text-xl font-semibold'>7. Betamax</h3>
+                <p>Grilled cubes of coagulated pork or chicken blood. It has a mild, savory flavor and a texture similar to firm tofu.</p>
+            </div>
+            <div>
+                <h3 class='text-xl font-semibold'>8. Adidas</h3>
+                <p>Grilled chicken feet, named after the famous shoe brand because of its three 'stripes'.</p>
+            </div>
+            <div>
+                <h3 class='text-xl font-semibold'>9. Balut</h3>
+                <p>A developing duck embryo that is boiled and eaten from the shell. A famous Filipino delicacy.</p>
+            </div>
+            <div>
+                <h3 class='text-xl font-semibold'>10. Sorbetes (Dirty Ice Cream)</h3>
+                <p>A traditional Filipino ice cream sold by street vendors from colorful carts. It comes in unique flavors like cheese, ube, and mango.</p>
+            </div>
+        </div>
+
+        <h2 class='text-2xl font-bold'>Where to Find Street Food in Manila</h2>
+        <ul class='list-disc ml-6'>
+            <li><b>Mercato Centrale:</b> A popular night market in Bonifacio Global City (BGC) with a wide variety of food stalls.</li>
+            <li><b>Banawe Street, Quezon City:</b> Known for its many street food vendors.</li>
+            <li><b>University Belt:</b> The area around the universities in Manila is a hotspot for cheap and delicious street food.</li>
+            <li><b>Quiapo Market:</b> A bustling market where you can find a wide variety of local street food.</li>
+        </ul>
+      </div>
+    `
+  },
+  {
     title: "Ultimate Filipino Food Guide 2025: Regional Dishes, Where to Eat, and Budget Tips",
     slug: "ultimate-filipino-food-guide",
     excerpt: "A comprehensive guide to Filipino cuisine across Luzon, Visayas, and Mindanao. Discover regional specialties, market tips, karinderia hacks, and sample foodie itineraries—on any budget.",
@@ -249,7 +319,7 @@ const staticBlogPosts = [
     author: "Maria Santos",
     published: true,
     featured: true, // Make this the featured post
-    metaTitle: "Hidden Gems of Northern Philippines: Beyond Baguio and Sagada | GalaGPT",
+    metaTitle: "Hidden Gems of Northern Philippines: Beyond Bagu-io and Sagada | GalaGPT",
     metaDescription: "Discover lesser-known destinations in Luzon that offer incredible experiences without the crowds. From pristine beaches to mountain adventures, Northern Philippines has secrets waiting to be explored.",
     tags: ["Adventure", "Hidden Gems", "Northern Philippines"],
     content: `
