@@ -6,7 +6,7 @@ async function clearOldDestinationImages() {
     console.log('Clearing old destination image paths...')
     
     // Find all destinations with local image paths (not URLs)
-    const destinations = await prisma.destination.findMany({
+    const destinations = await prisma.seasonalDestination.findMany({
       where: {
         image: {
           not: {
@@ -19,7 +19,7 @@ async function clearOldDestinationImages() {
     console.log(`Found ${destinations.length} destinations with local image paths`)
     
     // Clear the old image paths
-    const result = await prisma.destination.updateMany({
+    const result = await prisma.seasonalDestination.updateMany({
       where: {
         image: {
           not: {
