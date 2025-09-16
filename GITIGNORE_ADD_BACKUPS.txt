@@ -1,0 +1,7 @@
+Add these lines to your .gitignore if not present:
+
+node_modules
+.next
+.env*
+.DS_Store
+backups/

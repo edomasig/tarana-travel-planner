@@ -95,3 +95,96 @@ enum UserRole {
   ADMIN
   EDITOR
 }
+
+model SeasonalContent {
+  id          String   @id @default(cuid())
+  season      String   @unique // holiday, summer, rainy, dry
+  title       String
+  description String
+  featuredImage String?
+  months      String
+  temperature String
+  weather     String
+  bestFor     String
+  events      String
+  metaTitle   String?
+  metaDescription String?
+  status      PostStatus @default(DRAFT)
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  destinations SeasonalDestination[]
+  itinerary   SeasonalItinerary?
+  tips        SeasonalTips?
+  
+  @@map("seasonal_content")
+}
+
+model SeasonalDestination {
+  id          String   @id @default(cuid())
+  seasonId    String
+  name        String
+  location    String
+  description String
+  image       String?
+  rating      String?
+  bestTime    String?
+  budget      String?
+  highlights  String[] // Array of highlight strings
+  prompt      String?
+  order       Int      @default(0)
+  season      SeasonalContent @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  
+  @@map("seasonal_destinations")
+}
+
+model SeasonalItinerary {
+  id          String   @id @default(cuid())
+  seasonId    String   @unique
+  title       String
+  duration    String
+  budget      String
+  difficulty  String
+  prompt      String?
+  season      SeasonalContent @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  days        SeasonalItineraryDay[]
+  
+  @@map("seasonal_itineraries")
+}
+
+model SeasonalItineraryDay {
+  id          String   @id @default(cuid())
+  itineraryId String
+  day         Int
+  location    String
+  image       String?
+  itinerary   SeasonalItinerary @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+  activities  SeasonalActivity[]
+  
+  @@map("seasonal_itinerary_days")
+}
+
+model SeasonalActivity {
+  id          String   @id @default(cuid())
+  dayId       String
+  time        String
+  activity    String
+  description String
+  cost        String?
+  type        String   // attraction, food, accommodation, transport
+  tips        String?
+  order       Int      @default(0)
+  day         SeasonalItineraryDay @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  
+  @@map("seasonal_activities")
+}
+
+model SeasonalTips {
+  id          String   @id @default(cuid())
+  seasonId    String   @unique
+  packing     String[] // Array of packing tips
+  advice      String[] // Array of advice tips
+  season      SeasonalContent @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  
+  @@map("seasonal_tips")
+}

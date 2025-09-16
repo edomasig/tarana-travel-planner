@@ -10,6 +10,7 @@ export interface SeasonalData {
     weather: string
     bestFor: string
     events: string
+    featuredImage?: string
   }
   destinations: Array<{
     name: string
@@ -74,6 +75,44 @@ export function getCurrentSeason(): string {
 }
 
 export async function getSeasonalRecommendations(season: string): Promise<SeasonalData> {
+  // First try to fetch from CMS
+  try {
+    const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/seasonal?season=${season}`, {
+      next: { revalidate: 300 } // Revalidate every 5 minutes
+    })
+    
+    if (response.ok) {
+      const cmsData = await response.json()
+      
+      // Transform CMS data to match expected format
+      return {
+        season: {
+          name: cmsData.season.name,
+          title: cmsData.season.title,
+          description: cmsData.season.description,
+          months: cmsData.season.months,
+          temperature: cmsData.season.temperature,
+          weather: cmsData.season.weather,
+          bestFor: cmsData.season.bestFor,
+          events: cmsData.season.events,
+        },
+        destinations: cmsData.destinations || [],
+        featuredItinerary: cmsData.featuredItinerary || {
+          title: '',
+          duration: '',
+          budget: '',
+          difficulty: '',
+          season: '',
+          days: []
+        },
+        tips: cmsData.tips || { packing: [], advice: [] }
+      }
+    }
+  } catch (error) {
+    console.warn('Failed to fetch from CMS, falling back to static content:', error)
+  }
+  
+  // Fallback to static content
   const data = await loadSeason(season)
   if (!data) throw new Error(`Season data not found for: ${season}`)
   return data

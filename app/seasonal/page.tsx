@@ -1,5 +1,3 @@
-// 'use client'
-
 import { loadSeason } from '@/lib/seasonal-loader'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -10,11 +8,110 @@ import Link from 'next/link'
 import { getSeasonalRecommendations, getCurrentSeason, type SeasonalData } from '@/lib/seasonal-service'
 import { AdBanner } from '@/components/ads/ad-banner'
 import { Footer } from '@/components/footer'
+import { prisma } from '@/lib/prisma'
+
+// Helper function to convert CMS data to SeasonalData format
+function convertCMSToSeasonalData(cmsData: any): SeasonalData {
+  return {
+    season: {
+      name: cmsData.season,
+      title: cmsData.title,
+      description: cmsData.description,
+      temperature: cmsData.temperature || "Variable",
+      months: cmsData.months || "Year-round",
+      weather: cmsData.weather || "Variable conditions",
+      bestFor: cmsData.bestFor || "Various activities",
+      events: cmsData.events || "Local festivities",
+      featuredImage: cmsData.featuredImage
+    },
+    destinations: cmsData.destinations?.map((dest: any) => ({
+      name: dest.name,
+      location: dest.location,
+      description: dest.description,
+      image: dest.image || "/placeholder.svg",
+      rating: dest.rating || "4.5",
+      bestTime: dest.bestTime || "Anytime",
+      budget: dest.budget || "Moderate",
+      highlights: dest.highlights || [],
+      prompt: dest.prompt || ""
+    })) || [],
+    featuredItinerary: cmsData.itinerary ? {
+      title: cmsData.itinerary.title,
+      duration: cmsData.itinerary.duration || "7 days",
+      budget: cmsData.itinerary.budget || "Moderate",
+      difficulty: cmsData.itinerary.difficulty || "Easy",
+      season: cmsData.season,
+      prompt: cmsData.itinerary.prompt || "",
+      days: cmsData.itinerary.days?.map((day: any) => ({
+        day: day.day,
+        location: day.location,
+        image: day.image || "/placeholder.svg",
+        activities: day.activities?.map((activity: any) => ({
+          activity: activity.activity,
+          time: activity.time || "All day",
+          type: activity.type || "sightseeing",
+          cost: activity.cost || "Free",
+          description: activity.description,
+          tips: activity.tips || ""
+        })) || []
+      })) || []
+    } : {
+      title: "Explore " + cmsData.season,
+      duration: "7 days",
+      budget: "Moderate",
+      difficulty: "Easy", 
+      season: cmsData.season,
+      prompt: "",
+      days: []
+    },
+    tips: cmsData.tips ? {
+      packing: cmsData.tips.packing || [],
+      advice: cmsData.tips.advice || []
+    } : {
+      packing: [],
+      advice: []
+    }
+  }
+}
+
+async function getSeasonalContent(season: string): Promise<SeasonalData | null> {
+  try {
+    // Try to fetch from CMS first
+    const cmsData = await prisma.seasonalContent.findUnique({
+      where: { season: season },
+      include: {
+        destinations: true,
+        itinerary: {
+          include: {
+            days: {
+              include: {
+                activities: true
+              },
+              orderBy: { day: 'asc' }
+            }
+          }
+        },
+        tips: true
+      }
+    })
+
+    if (cmsData) {
+      return convertCMSToSeasonalData(cmsData)
+    }
+
+    // Fall back to static file content
+    return await loadSeason(season)
+  } catch (error) {
+    console.error('Error fetching seasonal content from CMS:', error)
+    // Fall back to static file content
+    return await loadSeason(season)
+  }
+}
 
 export default async function SeasonalPage({ searchParams }: { searchParams: Promise<{ season?: string }> }) {
   const params = await searchParams
   const target = params?.season || getCurrentSeason()
-  const seasonalData = await loadSeason(target)
+  const seasonalData = await getSeasonalContent(target)
   const currentSeason = target
   const isLoading = false
 
@@ -113,10 +210,10 @@ export default async function SeasonalPage({ searchParams }: { searchParams: Pro
         {/* Weather & Travel Tips */}
         <Card className="bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200">
           <CardContent className="p-6">
-            {/* Added illustrative seasonal image */}
+            {/* Featured seasonal image */}
             <div className="mb-6">
               <img
-                src={'/philippine-landscape.png'}               
+                src={seasonalData.season.featuredImage || '/philippine-landscape.png'}               
                 alt={`${seasonalData.season.name} season in the Philippines`}
                 className="w-full h-40 md:h-56 object-cover rounded-xl shadow-sm"
                 loading="lazy"

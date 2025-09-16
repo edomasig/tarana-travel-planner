@@ -16,13 +16,15 @@ import {
   X,
   Home,
   LogOut,
-  User
+  User,
+  Calendar
 } from 'lucide-react'
 
 const navigation = [
   { name: 'Dashboard', href: '/cms', icon: LayoutDashboard },
   { name: 'Blog Posts', href: '/cms/blog-posts', icon: FileText },
   { name: 'Travel Guides', href: '/cms/travel-guides', icon: MapPin },
+  { name: 'Seasonal Content', href: '/cms/seasonal', icon: Calendar },
   { name: 'Tags', href: '/cms/tags', icon: Tags },
   { name: 'Settings', href: '/cms/settings', icon: Settings },
 ]
