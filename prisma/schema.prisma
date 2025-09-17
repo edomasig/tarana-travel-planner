@@ -1,88 +1,175 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 model BlogPost {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
-  content     String
-  excerpt     String?
-  featuredImage String?
-  metaTitle   String?
+  id              String     @id @default(cuid())
+  title           String
+  slug            String     @unique
+  content         String
+  excerpt         String?
+  featuredImage   String?
+  metaTitle       String?
   metaDescription String?
-  status      PostStatus @default(DRAFT)
-  published   Boolean  @default(false)
-  featured    Boolean  @default(false)
-  publishedAt DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  tags        Tag[]    @relation("BlogPostTags")
-  author      String?
-  facebookPostId String?
+  status          PostStatus @default(DRAFT)
+  published       Boolean    @default(false)
+  publishedAt     DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  author          String?
+  featured        Boolean    @default(false)
+  facebookPostId  String?
   facebookPostUrl String?
-  
+  tags            Tag[]      @relation("BlogPostTags")
+
   @@map("blog_posts")
 }
 
 model TravelGuide {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
-  destination String
-  content     String
-  excerpt     String?
-  featuredImage String?
-  images      String[] // Array of image URLs
+  id              String     @id @default(cuid())
+  title           String
+  slug            String     @unique
+  destination     String
+  content         String
+  excerpt         String?
+  featuredImage   String?
+  images          String[]
   bestTimeToVisit String?
-  budgetRange String?
-  duration    String?
-  difficulty  String?
-  metaTitle   String?
+  budgetRange     String?
+  duration        String?
+  difficulty      String?
+  metaTitle       String?
   metaDescription String?
-  status      PostStatus @default(DRAFT)
-  published   Boolean  @default(false)
-  publishedAt DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  tags        Tag[]    @relation("TravelGuideTags")
-  
+  status          PostStatus @default(DRAFT)
+  published       Boolean    @default(false)
+  publishedAt     DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  tags            Tag[]      @relation("TravelGuideTags")
+
   @@map("travel_guides")
 }
 
 model Tag {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  slug        String   @unique
-  color       String?
-  createdAt   DateTime @default(now())
-  blogPosts   BlogPost[] @relation("BlogPostTags")
+  id           String        @id @default(cuid())
+  name         String        @unique
+  slug         String        @unique
+  color        String?
+  createdAt    DateTime      @default(now())
+  blogPosts    BlogPost[]    @relation("BlogPostTags")
   travelGuides TravelGuide[] @relation("TravelGuideTags")
-  
+
   @@map("tags")
 }
 
 model User {
-  id          String   @id @default(cuid())
-  email       String   @unique
-  name        String
-  role        UserRole @default(EDITOR)
-  password    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  role      UserRole @default(EDITOR)
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("users")
+}
+
+model SeasonalContent {
+  id              String                @id @default(cuid())
+  season          String                @unique
+  title           String
+  description     String
+  months          String
+  temperature     String
+  weather         String
+  bestFor         String
+  events          String
+  metaTitle       String?
+  metaDescription String?
+  status          PostStatus            @default(DRAFT)
+  published       Boolean               @default(false)
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  featuredImage   String?
+  destinations    SeasonalDestination[]
+  itinerary       SeasonalItinerary?
+  tips            SeasonalTips?
+
+  @@map("seasonal_content")
+}
+
+model SeasonalDestination {
+  id          String          @id @default(cuid())
+  seasonId    String
+  name        String
+  location    String
+  description String
+  image       String?
+  rating      String?
+  bestTime    String?
+  budget      String?
+  highlights  String[]
+  prompt      String?
+  order       Int             @default(0)
+  season      SeasonalContent @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+
+  @@map("seasonal_destinations")
+}
+
+model SeasonalItinerary {
+  id         String                 @id @default(cuid())
+  seasonId   String                 @unique
+  title      String
+  duration   String
+  budget     String
+  difficulty String
+  prompt     String?
+  season     SeasonalContent        @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  days       SeasonalItineraryDay[]
+
+  @@map("seasonal_itineraries")
+}
+
+model SeasonalItineraryDay {
+  id          String             @id @default(cuid())
+  itineraryId String
+  day         Int
+  location    String
+  image       String?
+  activities  SeasonalActivity[]
+  itinerary   SeasonalItinerary  @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+
+  @@map("seasonal_itinerary_days")
+}
+
+model SeasonalActivity {
+  id          String               @id @default(cuid())
+  dayId       String
+  time        String
+  activity    String
+  description String
+  cost        String?
+  type        String
+  tips        String?
+  order       Int                  @default(0)
+  day         SeasonalItineraryDay @relation(fields: [dayId], references: [id], onDelete: Cascade)
+
+  @@map("seasonal_activities")
+}
+
+model SeasonalTips {
+  id       String          @id @default(cuid())
+  seasonId String          @unique
+  packing  String[]
+  advice   String[]
+  season   SeasonalContent @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+
+  @@map("seasonal_tips")
 }
 
 enum PostStatus {
@@ -94,97 +181,4 @@ enum PostStatus {
 enum UserRole {
   ADMIN
   EDITOR
-}
-
-model SeasonalContent {
-  id          String   @id @default(cuid())
-  season      String   @unique // holiday, summer, rainy, dry
-  title       String
-  description String
-  featuredImage String?
-  months      String
-  temperature String
-  weather     String
-  bestFor     String
-  events      String
-  metaTitle   String?
-  metaDescription String?
-  status      PostStatus @default(DRAFT)
-  published   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  destinations SeasonalDestination[]
-  itinerary   SeasonalItinerary?
-  tips        SeasonalTips?
-  
-  @@map("seasonal_content")
-}
-
-model SeasonalDestination {
-  id          String   @id @default(cuid())
-  seasonId    String
-  name        String
-  location    String
-  description String
-  image       String?
-  rating      String?
-  bestTime    String?
-  budget      String?
-  highlights  String[] // Array of highlight strings
-  prompt      String?
-  order       Int      @default(0)
-  season      SeasonalContent @relation(fields: [seasonId], references: [id], onDelete: Cascade)
-  
-  @@map("seasonal_destinations")
-}
-
-model SeasonalItinerary {
-  id          String   @id @default(cuid())
-  seasonId    String   @unique
-  title       String
-  duration    String
-  budget      String
-  difficulty  String
-  prompt      String?
-  season      SeasonalContent @relation(fields: [seasonId], references: [id], onDelete: Cascade)
-  days        SeasonalItineraryDay[]
-  
-  @@map("seasonal_itineraries")
-}
-
-model SeasonalItineraryDay {
-  id          String   @id @default(cuid())
-  itineraryId String
-  day         Int
-  location    String
-  image       String?
-  itinerary   SeasonalItinerary @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
-  activities  SeasonalActivity[]
-  
-  @@map("seasonal_itinerary_days")
-}
-
-model SeasonalActivity {
-  id          String   @id @default(cuid())
-  dayId       String
-  time        String
-  activity    String
-  description String
-  cost        String?
-  type        String   // attraction, food, accommodation, transport
-  tips        String?
-  order       Int      @default(0)
-  day         SeasonalItineraryDay @relation(fields: [dayId], references: [id], onDelete: Cascade)
-  
-  @@map("seasonal_activities")
-}
-
-model SeasonalTips {
-  id          String   @id @default(cuid())
-  seasonId    String   @unique
-  packing     String[] // Array of packing tips
-  advice      String[] // Array of advice tips
-  season      SeasonalContent @relation(fields: [seasonId], references: [id], onDelete: Cascade)
-  
-  @@map("seasonal_tips")
 }
