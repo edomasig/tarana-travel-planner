@@ -9,10 +9,12 @@ import {
   BarChart3,
   Plus
 } from 'lucide-react'
+import CMSAuthWrapper from '@/components/cms-auth-wrapper'
 
 export default function CMSDashboard() {
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <CMSAuthWrapper>
+      <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -206,5 +208,6 @@ export default function CMSDashboard() {
         </div>
       </div>
     </div>
+    </CMSAuthWrapper>
   )
 }
